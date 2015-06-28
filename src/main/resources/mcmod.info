@@ -1,0 +1,16 @@
+[
+{
+  "modid": "defaultkeys",
+  "name": "Default Keyconfig",
+  "description": "A way for modpacks to ship a default key configuration without having to include an options.txt file.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BlayTheNinth"],
+  "credits": "BlayTheNinth",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
