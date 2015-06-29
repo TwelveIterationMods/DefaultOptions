@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,8 +32,43 @@ public class DefaultKeys {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        ClientCommandHandler.instance.registerCommand(new CommandDefaultKeys());
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @SubscribeEvent
+    public void finishMinecraftLoading(GuiScreenEvent.InitGuiEvent event) {
+        if(initialized) {
+            return;
+        }
+        if(event.gui instanceof GuiMainMenu) {
+            reloadDefaultMappings();
+            initialized = true;
+        }
+    }
+
+    public boolean saveDefaultMappings() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(event.getModConfigurationDirectory(), "defaultkeys.txt")));
+            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")));
+            for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
+                writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode());
+            }
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void reloadDefaultMappings() {
+        // Clear old values
+        defaultKeys.clear();
+        knownKeys.clear();
+
+        // Load the default keys from the config
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")));
             String line;
             while((line = reader.readLine()) != null) {
                 if(line.isEmpty()) {
@@ -53,6 +89,7 @@ public class DefaultKeys {
             e.printStackTrace();
         }
 
+        // Load the known keys from the Minecraft directory
         try {
             BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")));
             String line;
@@ -66,38 +103,26 @@ public class DefaultKeys {
             e.printStackTrace();
         }
 
-        ClientCommandHandler.instance.registerCommand(new CommandDefaultKeys());
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public void finishMinecraftLoading(GuiScreenEvent.InitGuiEvent event) {
-        if(initialized) {
-            return;
-        }
-        if(event.gui instanceof GuiMainMenu) {
-            for(KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
-                if(defaultKeys.containsKey(keyBinding.getKeyDescription())) {
-                    keyBinding.keyCodeDefault = defaultKeys.get(keyBinding.getKeyDescription());
-                    if(!knownKeys.contains(keyBinding.getKeyDescription())) {
-                        keyBinding.setKeyCode(keyBinding.getKeyCodeDefault());
-                        knownKeys.add(keyBinding.getKeyDescription());
-                    }
+        // Override the default mappings and set the initial key codes, if the key is not known yet
+        for(KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
+            if(defaultKeys.containsKey(keyBinding.getKeyDescription())) {
+                keyBinding.keyCodeDefault = defaultKeys.get(keyBinding.getKeyDescription());
+                if(!knownKeys.contains(keyBinding.getKeyDescription())) {
+                    keyBinding.setKeyCode(keyBinding.getKeyCodeDefault());
+                    knownKeys.add(keyBinding.getKeyDescription());
                 }
             }
+        }
 
-            try {
-                PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")));
-                for(String s : knownKeys) {
-                    writer.println(s);
-                }
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        // Save the updated known keys to the knownkeys.txt file in the Minecraft directory
+        try {
+            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")));
+            for(String s : knownKeys) {
+                writer.println(s);
             }
-
-            initialized = true;
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
 }
