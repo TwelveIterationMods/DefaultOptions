@@ -25,6 +25,7 @@ public class DefaultKeys {
     @Mod.Instance
     public static DefaultKeys instance;
 
+    private static boolean initialized;
     private static Map<String, Integer> defaultKeys = new HashMap<String, Integer>();
     private static List<String> knownKeys = new ArrayList<String>();
 
@@ -71,6 +72,9 @@ public class DefaultKeys {
 
     @SubscribeEvent
     public void finishMinecraftLoading(GuiScreenEvent.InitGuiEvent event) {
+        if(initialized) {
+            return;
+        }
         if(event.gui instanceof GuiMainMenu) {
             for(KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
                 if(defaultKeys.containsKey(keyBinding.getKeyDescription())) {
@@ -91,6 +95,8 @@ public class DefaultKeys {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            initialized = true;
         }
     }
 
