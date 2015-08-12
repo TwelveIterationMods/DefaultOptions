@@ -5,16 +5,16 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
 
-public class CommandDefaultKeys extends CommandBase {
+public class CommandDefaultOptions extends CommandBase {
 
     @Override
     public String getCommandName() {
-        return "defaultkeys";
+        return "defaultoptions";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/defaultkeys save";
+        return "/defaultoptions save";
     }
 
     @Override
@@ -28,11 +28,10 @@ public class CommandDefaultKeys extends CommandBase {
             throw new WrongUsageException(getCommandUsage(sender));
         }
         if(args[0].equals("save")) {
-            if(DefaultKeys.instance.saveDefaultMappings()) {
-                sender.addChatMessage(new ChatComponentText("Successfully saved the key configuration."));
-                DefaultKeys.instance.reloadDefaultMappings();
+            if(DefaultKeys.instance.saveDefaultOptions()) {
+                sender.addChatMessage(new ChatComponentText("Successfully saved the configuration."));
             } else {
-                sender.addChatMessage(new ChatComponentText("Failed saving the key configuration. See the log for more information."));
+                sender.addChatMessage(new ChatComponentText("Failed saving the configuration. See the log for more information."));
             }
         } else {
             throw new WrongUsageException(getCommandUsage(sender));
