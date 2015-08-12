@@ -44,16 +44,9 @@ public class DefaultKeys {
         }
         if(event.gui instanceof GuiMainMenu) {
             reloadDefaultMappings();
-            File optionsLock = new File(Minecraft.getMinecraft().mcDataDir, "defaultoptions.lock");
-            if(!optionsLock.exists()) {
+            File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+            if(!optionsFile.exists()) {
                 applyDefaultOptions();
-                try {
-                    if(!optionsLock.createNewFile()) {
-                        System.err.println("Failed to create defaultoptions.lock file. Options WILL reset to default on next restart!");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
             initialized = true;
         }
@@ -69,7 +62,7 @@ public class DefaultKeys {
                 if(line.startsWith("key_")) {
                     continue;
                 }
-                writer.write(line);
+                writer.println(line);
             }
             writer.close();
             reader.close();
@@ -81,33 +74,19 @@ public class DefaultKeys {
     }
 
     public boolean applyDefaultOptions() {
-        Map<String, String> properties = new HashMap<String, String>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")));
+            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")));
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] s = line.split(":");
-                if(s.length == 2) {
-                    properties.put(s[0], s[1]);
-                }
-            }
-            reader.close();
-            reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")));
             while ((line = reader.readLine()) != null) {
                 if(line.startsWith("key_")) {
                     continue;
                 }
-                String[] s = line.split(":");
-                if(s.length == 2) {
-                    properties.put(s[0], s[1]);
-                }
-            }
-            reader.close();
-            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")));
-            for(Map.Entry<String, String> entry : properties.entrySet()) {
-                writer.println(entry.getKey() + ":" + entry.getValue());
+                writer.println(line);
             }
             writer.close();
+            reader.close();
+            Minecraft.getMinecraft().gameSettings.loadOptions();
             return true;
         } catch(IOException e) {
             e.printStackTrace();
