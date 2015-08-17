@@ -29,8 +29,6 @@ archivesBaseName = "defaultkeys"
 minecraft {
     version = "1.7.10-10.13.4.1481-1.7.10"
     runDir = "eclipse"
-    
-    mappings = "stable_12"
 }
 
 jar {
