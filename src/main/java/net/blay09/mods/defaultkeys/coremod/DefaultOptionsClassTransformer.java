@@ -9,8 +9,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.util.Iterator;
-
 public class DefaultOptionsClassTransformer implements IClassTransformer {
 
     public static final String OBF_CLASS = "bao";
@@ -32,12 +30,11 @@ public class DefaultOptionsClassTransformer implements IClassTransformer {
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
-        Iterator<MethodNode> methods = classNode.methods.iterator();
-        while(methods.hasNext()) {
-            MethodNode method = methods.next();
-            if(method.name.equals(methodName) && method.desc.equals(METHOD_DESC)) {
+        for (MethodNode method : classNode.methods) {
+            if (method.name.equals(methodName) && method.desc.equals(METHOD_DESC)) {
                 AbstractInsnNode node = method.instructions.get(0);
                 method.instructions.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "net/blay09/mods/defaultkeys/DefaultKeys", "preStartGame", "()V", false));
+                break;
             }
         }
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
