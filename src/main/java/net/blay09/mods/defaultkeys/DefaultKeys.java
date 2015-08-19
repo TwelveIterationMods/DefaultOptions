@@ -36,6 +36,34 @@ public class DefaultKeys {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+    @SuppressWarnings("unused")
+    public static void preStartGame() {
+        File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+        if(!optionsFile.exists()) {
+            applyDefaultOptions();
+        }
+    }
+
+    public static boolean applyDefaultOptions() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")));
+            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if(line.startsWith("key_")) {
+                    continue;
+                }
+                writer.println(line);
+            }
+            writer.close();
+            reader.close();
+            return true;
+        } catch(IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @SubscribeEvent
     public void finishMinecraftLoading(GuiScreenEvent.InitGuiEvent event) {
         if(initialized) {
@@ -43,10 +71,6 @@ public class DefaultKeys {
         }
         if(event.gui instanceof GuiMainMenu) {
             reloadDefaultMappings();
-            File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
-            if(!optionsFile.exists()) {
-                applyDefaultOptions();
-            }
             initialized = true;
         }
     }
@@ -67,27 +91,6 @@ public class DefaultKeys {
             reader.close();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean applyDefaultOptions() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")));
-            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if(line.startsWith("key_")) {
-                    continue;
-                }
-                writer.println(line);
-            }
-            writer.close();
-            reader.close();
-            Minecraft.getMinecraft().gameSettings.loadOptions();
-            return true;
-        } catch(IOException e) {
             e.printStackTrace();
             return false;
         }
