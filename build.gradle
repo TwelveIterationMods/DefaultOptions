@@ -23,6 +23,8 @@ buildscript {
 apply plugin: 'forge'
 
 version = "1.0." + BUILD_NUMBER
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 group= "net.blay09.mods"
 archivesBaseName = "defaultkeys"
 

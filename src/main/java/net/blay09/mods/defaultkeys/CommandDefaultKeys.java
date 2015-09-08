@@ -5,6 +5,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
 
+@Deprecated
 public class CommandDefaultKeys extends CommandBase {
 
     @Override
@@ -14,7 +15,7 @@ public class CommandDefaultKeys extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/defaultkeys save";
+        return "/defaultkeys was removed, use /defaultoptions";
     }
 
     @Override
@@ -24,19 +25,7 @@ public class CommandDefaultKeys extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        if (args.length != 1) {
-            throw new WrongUsageException(getCommandUsage(sender));
-        }
-        if(args[0].equals("save")) {
-            if(DefaultKeys.instance.saveDefaultMappings()) {
-                sender.addChatMessage(new ChatComponentText("Successfully saved the key configuration."));
-                DefaultKeys.instance.reloadDefaultMappings();
-            } else {
-                sender.addChatMessage(new ChatComponentText("Failed saving the key configuration. See the log for more information."));
-            }
-        } else {
-            throw new WrongUsageException(getCommandUsage(sender));
-        }
+        throw new WrongUsageException(getCommandUsage(sender));
     }
 
 }
