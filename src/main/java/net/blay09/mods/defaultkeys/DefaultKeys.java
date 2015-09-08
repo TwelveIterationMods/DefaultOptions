@@ -54,11 +54,9 @@ public class DefaultKeys {
         if (!optionsFile.exists()) {
             applyDefaultOptions();
         }
-        if (FMLClientHandler.instance().hasOptifine()) {
-            File optionsFileOF = new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt");
-            if (!optionsFileOF.exists()) {
-                applyDefaultOptionsOptiFine();
-            }
+        File optionsFileOF = new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt");
+        if (!optionsFileOF.exists()) {
+            applyDefaultOptionsOptiFine();
         }
         File localConfigDefs = new File(Minecraft.getMinecraft().mcDataDir, "config/localconfig.txt");
         if(!localConfigDefs.exists()) {
