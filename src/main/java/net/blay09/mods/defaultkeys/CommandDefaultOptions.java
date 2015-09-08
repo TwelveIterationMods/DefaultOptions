@@ -28,7 +28,7 @@ public class CommandDefaultOptions extends CommandBase {
             throw new WrongUsageException(getCommandUsage(sender));
         }
         if(args[0].equals("save")) {
-            if(DefaultKeys.instance.saveDefaultOptions()) {
+            if(DefaultKeys.instance.saveDefaultOptions() && DefaultKeys.instance.saveDefaultOptionsOptiFine()) {
                 sender.addChatMessage(new ChatComponentText("Successfully saved the configuration."));
             } else {
                 sender.addChatMessage(new ChatComponentText("Failed saving the configuration. See the log for more information."));

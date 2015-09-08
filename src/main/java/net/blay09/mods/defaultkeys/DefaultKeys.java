@@ -1,5 +1,6 @@
 package net.blay09.mods.defaultkeys;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -8,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -42,6 +44,12 @@ public class DefaultKeys {
         if(!optionsFile.exists()) {
             applyDefaultOptions();
         }
+        if(FMLClientHandler.instance().hasOptifine()) {
+            File optionsFileOF = new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt");
+            if (!optionsFileOF.exists()) {
+                applyDefaultOptionsOptiFine();
+            }
+        }
     }
 
     public static boolean applyDefaultOptions() {
@@ -64,14 +72,49 @@ public class DefaultKeys {
         }
     }
 
-    @SubscribeEvent
-    public void finishMinecraftLoading(GuiScreenEvent.InitGuiEvent event) {
-        if(initialized) {
-            return;
+    public static boolean applyDefaultOptionsOptiFine() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptionsof.txt")));
+            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.println(line);
+            }
+            writer.close();
+            reader.close();
+            return true;
+        } catch(IOException e) {
+            e.printStackTrace();
+            return false;
         }
-        if(event.gui instanceof GuiMainMenu) {
+    }
+
+    @SubscribeEvent
+    public void finishMinecraftLoading(GuiOpenEvent event) {
+        if(!initialized && event.gui instanceof GuiMainMenu) {
             reloadDefaultMappings();
             initialized = true;
+        }
+    }
+
+    public boolean saveDefaultOptionsOptiFine() {
+        if(!FMLClientHandler.instance().hasOptifine()) {
+            return true;
+        }
+        try {
+            Minecraft.getMinecraft().gameSettings.saveOptions();
+            PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptionsof.txt")));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")));
+            String line;
+            while((line = reader.readLine()) != null) {
+                writer.println(line);
+            }
+            writer.close();
+            reader.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
