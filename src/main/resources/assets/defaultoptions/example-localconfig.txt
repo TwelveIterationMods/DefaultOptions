@@ -8,7 +8,6 @@
 # Applied Energistics 2
 [AppliedEnergistics2/AppliedEnergistics2.cfg]/client/*
 [AppliedEnergistics2/VersionChecker.cfg]/client/*
-[AppliedEnergistics2/VersionChecker.cfg]/client/*
 
 # Aroma1997Core
 [aroma1997/Aroma1997Core.cfg]/sound/muffleSounds
@@ -31,7 +30,7 @@ BiblioCraft.cfg/"text colors"/*
 
 # BiomesOPlenty
 [biomesoplenty/misc.cfg]/"miscellanious settings"/"Enable Biomes O' Plenty Main Menu Panorama"
-[biomesoplenty/misc.cfg]/"hardcoded colors"/"Enable Sky Colors"
+[biomesoplenty/misc.cfg]/"hard-coded colors"/"Enable Sky Colors"
 
 # Blood Magic
 AWWayofTime.cfg/clientsettings/*
@@ -68,8 +67,8 @@ CodeChickenCore.cfg/tweaks/replaceWaterFX $format=simple
 
 # Draconic Evolution
 DraconicEvolution.cfg/general/"Enable HUD info"
-DraconicEvolution.cfg/general/"HUD Display X pos"
-DraconicEvolution.cfg/general/"HUD Display Y pos"
+DraconicEvolution.cfg/general/"Hud Display X pos"
+DraconicEvolution.cfg/general/"Hud Display Y pos"
 DraconicEvolution.cfg/general/InvertDPDSB
 DraconicEvolution.cfg/general/"Show Unlocalized Names"
 
@@ -126,7 +125,7 @@ ExtraUtilities.cfg/client_options/*
 
 # Forestry
 [forestry/common.conf]//performance.particleFX.enabled $format=simple
-[forestry/apiculture.conf]//(render.bees.fancy $format=simple
+[forestry/apiculture.conf]//render.bees.fancy $format=simple
 
 # Gendustry
 [gendustry/client.config]/*/*
@@ -134,7 +133,7 @@ ExtraUtilities.cfg/client_options/*
 # GraviSuite
 GraviSuite.cfg/"hud settings"/"Display hud"
 GraviSuite.cfg/"hud settings"/hudPosition
-GraviSuite.cfg/"sound settings"/"Disable all sounds"
+GraviSuite.cfg/"sounds settings"/"Disable all sounds"
 
 # Hats
 Hats.cfg/clientonly/*
@@ -163,7 +162,7 @@ LogisticsPipes.cfg/general/enableParticleFX
 [powercrystals/minefactoryreloaded/client.cfg]/general/*
 
 # MystCraft
-[mystcraft/core.cfg]/general/options.renderLabels
+[mystcraft/core.cfg]/general/options.renderlabels
 
 # NEI
 [NEI/client.cfg]/*/* $format=simple
@@ -233,7 +232,7 @@ Waila.cfg/general/*
 Waila.cfg/modules/*
 
 # Wireless Redstone
-WirelessRedstone.cfg/addon.sniffer.gui/*
+WirelessRedstone.cfg/addon.sniffer.gui/* $format=simple
 
 # Witchery
 witchery.cfg/general/GUIOnLeft

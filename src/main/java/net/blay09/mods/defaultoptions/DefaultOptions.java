@@ -114,7 +114,7 @@ public class DefaultOptions {
                     LocalConfigEntry first = list.get(0);
                     File configFile = new File(mcDataDir, "config/" + first.file);
                     if (!configFile.exists()) {
-                        logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
+                        logger.warn("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
                         continue;
                     }
                     switch (first.getFormat()) {
@@ -170,7 +170,7 @@ public class DefaultOptions {
                     LocalConfigEntry first = list.get(0);
                     File configFile = new File(mcDataDir, "config/" + first.file);
                     if (!configFile.exists()) {
-                        logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
+                        logger.warn("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
                         continue;
                     }
                     switch (first.getFormat()) {

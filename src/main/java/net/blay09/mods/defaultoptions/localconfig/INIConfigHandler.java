@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class INIConfigHandler {
@@ -41,6 +40,7 @@ public class INIConfigHandler {
                                 break charLoop;
                             case '"':
                                 isInQuotes = true;
+                                buffer.append(c);
                                 break;
                             case '[':
                                 buffer = new StringBuilder();
@@ -58,12 +58,12 @@ public class INIConfigHandler {
                                         foundProperty[j] = true;
                                         if(entry.containsWildcard()) {
                                             for(LocalConfigEntry notEntry : notEntries) {
-                                                if(entry.passesNotEntry(notEntry)) {
+                                                if(notEntry.passesProperty(category, name, "*")) {
                                                     continue lineLoop;
                                                 }
                                             }
                                         }
-                                        writer.println(entry.file + "/" + category + "/" + name + "=" + value);
+                                        writer.println(entry.getIdentifier(entry.file, category, "*", name) + "=" + value);
                                         break;
                                     }
                                 }
@@ -76,7 +76,7 @@ public class INIConfigHandler {
             }
             for(int i = 0; i < foundProperty.length; i++) {
                 if(!foundProperty[i] && !entries.get(i).not) {
-                    logger.warn("Failed to backup value {}: property not found", entries.get(i).getIdentifier());
+                    logger.warn("Failed to backup local value {}: property not found", entries.get(i).getIdentifier());
                 }
             }
         } catch (IOException e) {
@@ -113,6 +113,7 @@ public class INIConfigHandler {
                                     break charLoop;
                                 case '"':
                                     isInQuotes = true;
+                                    buffer.append(c);
                                     break;
                                 case '[':
                                     buffer = new StringBuilder();
@@ -129,7 +130,7 @@ public class INIConfigHandler {
                                             foundProperty[j] = true;
                                             if(entry.containsWildcard()) {
                                                 for(LocalConfigEntry notEntry : notEntries) {
-                                                    if(entry.passesNotEntry(notEntry)) {
+                                                    if(notEntry.passesProperty(category, name, "*")) {
                                                         break charLoop;
                                                     }
                                                 }
@@ -149,7 +150,7 @@ public class INIConfigHandler {
             }
             for(int i = 0; i < foundProperty.length; i++) {
                 if(!foundProperty[i] && !entries.get(i).not) {
-                    logger.warn("Failed to backup value {}: property not found", entries.get(i).getIdentifier());
+                    logger.warn("Failed to restore local value {}: property not found", entries.get(i).getIdentifier());
                 }
             }
         } catch (IOException e) {
