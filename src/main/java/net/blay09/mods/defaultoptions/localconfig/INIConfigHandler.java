@@ -13,7 +13,8 @@ public class INIConfigHandler {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static void backup(PrintWriter writer, Collection<LocalConfigEntry> entries, File configFile) {
+    public static void backup(PrintWriter writer, List<LocalConfigEntry> entries, File configFile) {
+        boolean[] foundProperty = new boolean[entries.size()];
         List<LocalConfigEntry> notEntries = new ArrayList<>();
         for(LocalConfigEntry entry : entries) {
             if (entry.not) {
@@ -31,9 +32,8 @@ public class INIConfigHandler {
                     if(isInQuotes) {
                         if (c == '"') {
                             isInQuotes = false;
-                        } else {
-                            buffer.append(c);
                         }
+                        buffer.append(c);
                     } else {
                         String name;
                         switch (c) {
@@ -52,8 +52,10 @@ public class INIConfigHandler {
                             case '=':
                                 name = buffer.toString().trim();
                                 String value = line.substring(i + 1);
-                                for(LocalConfigEntry entry : entries) {
+                                for(int j = 0; j < entries.size(); j++) {
+                                    LocalConfigEntry entry = entries.get(j);
                                     if(entry.passesProperty(category, name, "*")) {
+                                        foundProperty[j] = true;
                                         if(entry.containsWildcard()) {
                                             for(LocalConfigEntry notEntry : notEntries) {
                                                 if(entry.passesNotEntry(notEntry)) {
@@ -72,12 +74,18 @@ public class INIConfigHandler {
                     }
                 }
             }
+            for(int i = 0; i < foundProperty.length; i++) {
+                if(!foundProperty[i] && !entries.get(i).not) {
+                    logger.warn("Failed to backup value {}: property not found", entries.get(i).getIdentifier());
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void restore(Collection<LocalConfigEntry> entries, File configFile) {
+    public static void restore(List<LocalConfigEntry> entries, File configFile) {
+        boolean[] foundProperty = new boolean[entries.size()];
         List<LocalConfigEntry> notEntries = new ArrayList<>();
         for(LocalConfigEntry entry : entries) {
             if (entry.not) {
@@ -96,9 +104,8 @@ public class INIConfigHandler {
                         if(isInQuotes) {
                             if (c == '"') {
                                 isInQuotes = false;
-                            } else {
-                                buffer.append(c);
                             }
+                            buffer.append(c);
                         } else {
                             String name;
                             switch (c) {
@@ -116,8 +123,10 @@ public class INIConfigHandler {
                                     break;
                                 case '=':
                                     name = buffer.toString().trim();
-                                    for(LocalConfigEntry entry : entries) {
+                                    for(int j = 0; j < entries.size(); j++) {
+                                        LocalConfigEntry entry = entries.get(j);
                                         if(entry.passesProperty(category, name, "*")) {
+                                            foundProperty[j] = true;
                                             if(entry.containsWildcard()) {
                                                 for(LocalConfigEntry notEntry : notEntries) {
                                                     if(entry.passesNotEntry(notEntry)) {
@@ -136,6 +145,11 @@ public class INIConfigHandler {
                         }
                     }
                     writer.println(line);
+                }
+            }
+            for(int i = 0; i < foundProperty.length; i++) {
+                if(!foundProperty[i] && !entries.get(i).not) {
+                    logger.warn("Failed to backup value {}: property not found", entries.get(i).getIdentifier());
                 }
             }
         } catch (IOException e) {
