@@ -99,34 +99,30 @@ public class DefaultOptions {
                     entries.add(entry);
                 }
             }
-            String currentConfigName = null;
-            Configuration currentConfig = null;
+            ArrayListMultimap<String, LocalConfigEntry> fileEntries = ArrayListMultimap.create();
             for (LocalConfigEntry entry : entries) {
-                if (!entry.name.equals(currentConfigName)) {
-                    File configFile = new File(mcDataDir, "config/" + entry.file);
-                    if (!configFile.exists()) {
-                        logger.error("Skipping entry for {}: file at {} not found", entry.getIdentifier(), configFile);
-                        continue;
-                    }
-                    currentConfigName = entry.name;
-                    currentConfig = new Configuration(configFile);
+                fileEntries.put(entry.file + "//" + entry.getFormat(), entry);
+            }
+            for (String key : fileEntries.keySet()) {
+                List<LocalConfigEntry> list = fileEntries.get(key);
+                LocalConfigEntry first = list.get(0);
+                File configFile = new File(mcDataDir, "config/" + first.file);
+                if (!configFile.exists()) {
+                    logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
+                    continue;
                 }
-                if (currentConfig.hasCategory(entry.path)) {
-                    ConfigCategory category = currentConfig.getCategory(entry.path);
-                    Property property = category.get(entry.name);
-                    if (property != null) {
-                        if (entry.type.charAt(0) == property.getType().getID() && property.isList() == entry.type.endsWith("<>")) {
-                            if (property.isList()) {
-                                writer.println(entry.getIdentifier() + "=" + StringUtils.join(property.getStringList(), ", "));
-                            } else {
-                                writer.println(entry.getIdentifier() + "=" + property.getString());
-                            }
-                        } else {
-                            logger.error("Skipping entry for {}: type mismatch (found {})", entry.getIdentifier(), property.getType().getID());
-                        }
-                    } else {
-                        logger.error("Skipping entry for {}: property not found", entry.getIdentifier());
-                    }
+                switch(first.getFormat()) {
+                    case "forge":
+                        ForgeConfigHandler.backup(writer, list, configFile);
+                        break;
+                    case "simple":
+
+                        break;
+                    case "ini":
+
+                        break;
+                    default:
+                        logger.error("Skipping entry for {}: unknown format {}", first.getIdentifier(), first.getFormat());
                 }
             }
         } catch (IOException e) {
@@ -158,17 +154,29 @@ public class DefaultOptions {
             ArrayListMultimap<String, LocalConfigEntry> fileEntries = ArrayListMultimap.create();
             for (Map.Entry<String, LocalConfigEntry> entry : localConfig.entrySet()) {
                 LocalConfigEntry configEntry = entry.getValue();
-                fileEntries.put(configEntry.file, configEntry);
+                fileEntries.put(configEntry.file + "//" + configEntry.getFormat(), configEntry);
             }
             for (String key : fileEntries.keySet()) {
                 List<LocalConfigEntry> list = fileEntries.get(key);
                 LocalConfigEntry first = list.get(0);
-                File configFile = new File(mcDataDir, "config/" + key);
+                File configFile = new File(mcDataDir, "config/" + first.file);
                 if (!configFile.exists()) {
                     logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
                     continue;
                 }
-                ForgeConfigHandler.restore(list, configFile);
+                switch(first.getFormat()) {
+                    case "forge":
+                        ForgeConfigHandler.restore(list, configFile);
+                        break;
+                    case "simple":
+
+                        break;
+                    case "ini":
+
+                        break;
+                    default:
+                        logger.error("Skipping entry for {}: unknown format {}", first.getIdentifier(), first.getFormat());
+                }
             }
             return true;
         } catch (IOException e) {
