@@ -144,6 +144,6 @@ public class LocalConfigEntry {
     }
 
     private boolean passesWithWildcard(String s, String t) {
-        return s.equals("*") || t.matches(Pattern.quote(s).replace("\\*", ".*"));
+        return s.equals("*") || t.equals("*") || t.matches(Pattern.quote(s).replace("\\*", ".*"));
     }
 }

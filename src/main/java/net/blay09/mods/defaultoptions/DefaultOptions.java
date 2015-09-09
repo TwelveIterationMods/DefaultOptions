@@ -116,10 +116,10 @@ public class DefaultOptions {
                         ForgeConfigHandler.backup(writer, list, configFile);
                         break;
                     case "simple":
-
+                        SimpleConfigHandler.backup(writer, list, configFile);
                         break;
                     case "ini":
-
+                        INIConfigHandler.backup(writer, list, configFile);
                         break;
                     default:
                         logger.error("Skipping entry for {}: unknown format {}", first.getIdentifier(), first.getFormat());
@@ -169,10 +169,10 @@ public class DefaultOptions {
                         ForgeConfigHandler.restore(list, configFile);
                         break;
                     case "simple":
-
+                        SimpleConfigHandler.restore(list, configFile);
                         break;
                     case "ini":
-
+                        INIConfigHandler.restore(list, configFile);
                         break;
                     default:
                         logger.error("Skipping entry for {}: unknown format {}", first.getIdentifier(), first.getFormat());
