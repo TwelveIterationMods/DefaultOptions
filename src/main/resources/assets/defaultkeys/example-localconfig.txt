@@ -60,8 +60,8 @@ Botania.cfg/general/wandBeam.static
 Chisel.cfg/client/*
 
 # CodeChickenCore
-CodeChickenCore.cfg/tweaks/replaceLavaFX $notypes
-CodeChickenCore.cfg/tweaks/replaceWaterFX $notypes
+CodeChickenCore.cfg/tweaks/replaceLavaFX $format=simple
+CodeChickenCore.cfg/tweaks/replaceWaterFX $format=simple
 
 # COFHCore
 [cofh/core/client.cfg]/*/*
@@ -149,8 +149,8 @@ iChunUtil_KeyBinds.cfg/*/*
 iChunUtil_Stats.cfg/stats/statsOptOut
 
 # InventoryTweaks
-InvTweaks.cfg//* $notypes
-!InvTweaks.cfg//enableServerItemSwap
+InvTweaks.cfg//* $format=simple
+!InvTweaks.cfg//enableServerItemSwap $format=simple
 
 # LogisticsPipes
 LogisticsPipes.cfg/general/HUDRenderDistance
