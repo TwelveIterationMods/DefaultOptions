@@ -227,7 +227,7 @@ trashslot.cfg/general/*
 
 # ttCore
 ttCore.cfg/general/disableVoidFog
-ttCore.cfg/showOredictTooltips
+ttCore.cfg/general/showOredictTooltips
 
 # Waila
 Waila.cfg/general/*
