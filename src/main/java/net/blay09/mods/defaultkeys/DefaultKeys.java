@@ -1,23 +1,23 @@
 package net.blay09.mods.defaultkeys;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.blay09.mods.defaultkeys.localconfig.ForgeConfigHandler;
+import net.blay09.mods.defaultkeys.localconfig.INIConfigHandler;
+import net.blay09.mods.defaultkeys.localconfig.LocalConfigEntry;
+import net.blay09.mods.defaultkeys.localconfig.SimpleConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,12 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = DefaultKeys.MODID)
+@Mod(modid = DefaultKeys.MOD_ID, name = "Default Options")
 public class DefaultKeys {
 
-    public static final String MODID = "defaultkeys";
-
+    public static final String MOD_ID = "defaultkeys";
     public static final Logger logger = LogManager.getLogger();
+    private static final ResourceLocation defaultLocalConfig = new ResourceLocation(MOD_ID, "default-localconfig.txt");
+    private static final ResourceLocation exampleLocalConfig = new ResourceLocation(MOD_ID, "example-localconfig.txt");
 
     @Mod.Instance
     public static DefaultKeys instance;
@@ -50,31 +51,34 @@ public class DefaultKeys {
 
     @SuppressWarnings("unused")
     public static void preStartGame() {
-        File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+        File mcDataDir = Minecraft.getMinecraft().mcDataDir;
+        File optionsFile = new File(mcDataDir, "options.txt");
         if (!optionsFile.exists()) {
             applyDefaultOptions();
         }
-        File optionsFileOF = new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt");
+        File optionsFileOF = new File(mcDataDir, "optionsof.txt");
         if (!optionsFileOF.exists()) {
             applyDefaultOptionsOptiFine();
         }
-        File localConfigDefs = new File(Minecraft.getMinecraft().mcDataDir, "config/localconfig.txt");
+        File localConfigDefs = new File(mcDataDir, "config/localconfig.txt");
         if(!localConfigDefs.exists()) {
-            try(PrintWriter writer = new PrintWriter(localConfigDefs)) {
-                writer.println("# In this file, modpack creators can define config options that should NOT get overriden by modpack updates.");
-                writer.println("# The values for these options will be restored to what they were before the pack update.");
-                writer.println("# The format is the following: FILE/CATEGORY.TYPE:NAME");
-                writer.println("# If the config file is inside a sub-directory, encase the path inside square brackets, ex. [eirairc/shared.cfg]");
-                writer.println("# Categories and sub-categories are split by periods, ex. general.subcategory");
-                writer.println("# The type is a single-character just like Forge's configuration type prefix: B, I, S, D; for lists, append <> to the type character");
-                writer.println("# Full Example #1: trashslot.cfg/general.I:trashSlotX");
-                writer.println("# Full Example #2: [eirairc/client.cfg]/notifications.D:notificationSoundVolume");
-                writer.println();
-            } catch (FileNotFoundException e) {
+            try(InputStreamReader reader = new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(defaultLocalConfig).getInputStream());
+                FileWriter writer = new FileWriter(localConfigDefs)) {
+                IOUtils.copy(reader, writer);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        File modpackUpdate = new File(Minecraft.getMinecraft().mcDataDir, "config/modpack-update");
+        File exampleConfigDefs = new File(mcDataDir, "config/localconfig-example.txt");
+        if(!exampleConfigDefs.exists()) {
+            try(InputStreamReader reader = new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(exampleLocalConfig).getInputStream());
+                FileWriter writer = new FileWriter(exampleConfigDefs)) {
+                IOUtils.copy(reader, writer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        File modpackUpdate = new File(mcDataDir, "config/modpack-update");
         if (modpackUpdate.exists()) {
             if (restoreLocalConfig()) {
                 if (!modpackUpdate.delete()) {
@@ -103,34 +107,30 @@ public class DefaultKeys {
                     entries.add(entry);
                 }
             }
-            String currentConfigName = null;
-            Configuration currentConfig = null;
+            ArrayListMultimap<String, LocalConfigEntry> fileEntries = ArrayListMultimap.create();
             for (LocalConfigEntry entry : entries) {
-                if (!entry.name.equals(currentConfigName)) {
-                    File configFile = new File(mcDataDir, "config/" + entry.file);
-                    if (!configFile.exists()) {
-                        logger.error("Skipping entry for {}: file at {} not found", entry.getIdentifier(), configFile);
-                        continue;
-                    }
-                    currentConfigName = entry.name;
-                    currentConfig = new Configuration(configFile);
+                fileEntries.put(entry.file + "//" + entry.getFormat(), entry);
+            }
+            for (String key : fileEntries.keySet()) {
+                List<LocalConfigEntry> list = fileEntries.get(key);
+                LocalConfigEntry first = list.get(0);
+                File configFile = new File(mcDataDir, "config/" + first.file);
+                if (!configFile.exists()) {
+                    logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
+                    continue;
                 }
-                if (currentConfig.hasCategory(entry.path)) {
-                    ConfigCategory category = currentConfig.getCategory(entry.path);
-                    Property property = category.get(entry.name);
-                    if (property != null) {
-                        if (entry.type.charAt(0) == property.getType().getID() && property.isList() == entry.type.endsWith("<>")) {
-                            if (property.isList()) {
-                                writer.println(entry.getIdentifier() + "=" + StringUtils.join(property.getStringList(), ", "));
-                            } else {
-                                writer.println(entry.getIdentifier() + "=" + property.getString());
-                            }
-                        } else {
-                            logger.error("Skipping entry for {}: type mismatch (found {})", entry.getIdentifier(), property.getType().getID());
-                        }
-                    } else {
-                        logger.error("Skipping entry for {}: property not found", entry.getIdentifier());
-                    }
+                switch(first.getFormat()) {
+                    case "forge":
+                        ForgeConfigHandler.backup(writer, list, configFile);
+                        break;
+                    case "simple":
+                        SimpleConfigHandler.backup(writer, list, configFile);
+                        break;
+                    case "ini":
+                        INIConfigHandler.backup(writer, list, configFile);
+                        break;
+                    default:
+                        logger.error("Skipping entry for {}: unknown format {}", first.getIdentifier(), first.getFormat());
                 }
             }
         } catch (IOException e) {
@@ -162,17 +162,29 @@ public class DefaultKeys {
             ArrayListMultimap<String, LocalConfigEntry> fileEntries = ArrayListMultimap.create();
             for (Map.Entry<String, LocalConfigEntry> entry : localConfig.entrySet()) {
                 LocalConfigEntry configEntry = entry.getValue();
-                fileEntries.put(configEntry.file, configEntry);
+                fileEntries.put(configEntry.file + "//" + configEntry.getFormat(), configEntry);
             }
             for (String key : fileEntries.keySet()) {
                 List<LocalConfigEntry> list = fileEntries.get(key);
                 LocalConfigEntry first = list.get(0);
-                File configFile = new File(mcDataDir, "config/" + key);
+                File configFile = new File(mcDataDir, "config/" + first.file);
                 if (!configFile.exists()) {
                     logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
                     continue;
                 }
-                ForgeConfigHandler.restore(list, configFile);
+                switch(first.getFormat()) {
+                    case "forge":
+                        ForgeConfigHandler.restore(list, configFile);
+                        break;
+                    case "simple":
+                        SimpleConfigHandler.restore(list, configFile);
+                        break;
+                    case "ini":
+                        INIConfigHandler.restore(list, configFile);
+                        break;
+                    default:
+                        logger.error("Skipping entry for {}: unknown format {}", first.getIdentifier(), first.getFormat());
+                }
             }
             return true;
         } catch (IOException e) {
