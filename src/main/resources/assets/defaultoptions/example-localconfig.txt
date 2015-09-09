@@ -31,7 +31,7 @@ BiblioCraft.cfg/"text colors"/*
 
 # BiomesOPlenty
 [biomesoplenty/misc.cfg]/"miscellanious settings"/"Enable Biomes O' Plenty Main Menu Panorama"
-[biomesoplenty/misc.cfg]/"hard$coded colors"/"Enable Sky Colors"
+[biomesoplenty/misc.cfg]/"hardcoded colors"/"Enable Sky Colors"
 
 # Blood Magic
 AWWayofTime.cfg/clientsettings/*
@@ -189,7 +189,7 @@ props.cfg/general/displayOutline
 runicdungeons.cfg/misc/useConnected
 
 # Simply Jetpacks
-simplyjetpacks$client.cfg/*/*
+simplyjetpacks-client.cfg/*/*
 
 # Steve's Addons
 StevesAddons.cfg/general/waila_integration

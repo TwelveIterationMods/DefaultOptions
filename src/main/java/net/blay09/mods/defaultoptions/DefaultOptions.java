@@ -31,8 +31,6 @@ public class DefaultOptions {
 
     public static final String MOD_ID = "defaultoptions";
     public static final Logger logger = LogManager.getLogger();
-    private static final ResourceLocation defaultLocalConfig = new ResourceLocation(MOD_ID, "default-localconfig.txt");
-    private static final ResourceLocation exampleLocalConfig = new ResourceLocation(MOD_ID, "example-localconfig.txt");
 
     @Mod.Instance
     public static DefaultOptions instance;
@@ -60,7 +58,7 @@ public class DefaultOptions {
         }
         File localConfigDefs = new File(mcDataDir, "config/localconfig.txt");
         if(!localConfigDefs.exists()) {
-            try(InputStreamReader reader = new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(defaultLocalConfig).getInputStream());
+            try(InputStreamReader reader = new InputStreamReader(DefaultOptions.class.getResourceAsStream("/assets/defaultkeys/default-localconfig.txt"));
                 FileWriter writer = new FileWriter(localConfigDefs)) {
                 IOUtils.copy(reader, writer);
             } catch (IOException e) {
@@ -69,7 +67,7 @@ public class DefaultOptions {
         }
         File exampleConfigDefs = new File(mcDataDir, "config/localconfig-example.txt");
         if(!exampleConfigDefs.exists()) {
-            try(InputStreamReader reader = new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(exampleLocalConfig).getInputStream());
+            try(InputStreamReader reader = new InputStreamReader(DefaultOptions.class.getResourceAsStream("/assets/defaultkeys/example-localconfig.txt"));
                 FileWriter writer = new FileWriter(exampleConfigDefs)) {
                 IOUtils.copy(reader, writer);
             } catch (IOException e) {
