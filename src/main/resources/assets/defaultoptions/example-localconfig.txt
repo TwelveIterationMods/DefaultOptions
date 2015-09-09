@@ -186,7 +186,6 @@ props.cfg/general/displayOutline
 
 # RunicDungeons
 [RunicDungeons/RunicDungeons.cfg]/misc/useConnected
-runicdungeons.cfg/misc/useConnected
 
 # Simply Jetpacks
 simplyjetpacks-client.cfg/*/*
@@ -226,8 +225,8 @@ TinkersConstruct.cfg/looks/"Connected Textures Enabled"
 trashslot.cfg/general/*
 
 # ttCore
-ttCore.cfg/general/disableVoidFog
-ttCore.cfg/general/showOredictTooltips
+[ttCore/ttCore.cfg]/general/disableVoidFog
+[ttCore/ttCore.cfg]/general/showOredictTooltips
 
 # Waila
 Waila.cfg/general/*
