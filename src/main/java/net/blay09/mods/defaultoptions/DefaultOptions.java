@@ -1,20 +1,20 @@
 package net.blay09.mods.defaultoptions;
 
 import com.google.common.collect.ArrayListMultimap;
+import net.blay09.mods.defaultoptions.localconfig.ForgeConfigHandler;
+import net.blay09.mods.defaultoptions.localconfig.INIConfigHandler;
+import net.blay09.mods.defaultoptions.localconfig.LocalConfigEntry;
+import net.blay09.mods.defaultoptions.localconfig.SimpleConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

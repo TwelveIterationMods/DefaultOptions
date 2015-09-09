@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultoptions;
+package net.blay09.mods.defaultoptions.localconfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
