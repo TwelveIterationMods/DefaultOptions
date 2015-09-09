@@ -54,6 +54,9 @@ public class LocalConfigEntry {
             } else if(c == '/' && !isQuoted) {
                 if(fileName == null) {
                     fileName = buffer.toString();
+                    if(not) {
+                        fileName = fileName.substring(1);
+                    }
                 } else if(path == null) {
                     path = buffer.toString();
                 } else {
