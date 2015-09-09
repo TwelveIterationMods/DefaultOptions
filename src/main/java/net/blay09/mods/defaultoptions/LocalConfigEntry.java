@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultkeys;
+package net.blay09.mods.defaultoptions;
 
 import java.io.IOException;
 

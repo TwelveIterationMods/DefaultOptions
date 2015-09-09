@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultkeys.coremod;
+package net.blay09.mods.defaultoptions.coremod;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
@@ -11,7 +11,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 public class DefaultOptionsClassTransformer implements IClassTransformer {
 
-    public static final String OBF_CLASS = "bao";
+    public static final String OBF_CLASS = "bsu";
     public static final String MCP_CLASS = "net.minecraft.client.Minecraft";
     public static final String OBF_METHOD = "func_71384_a";
     public static final String MCP_METHOD = "startGame";
@@ -33,7 +33,7 @@ public class DefaultOptionsClassTransformer implements IClassTransformer {
         for (MethodNode method : classNode.methods) {
             if (method.name.equals(methodName) && method.desc.equals(METHOD_DESC)) {
                 AbstractInsnNode node = method.instructions.get(0);
-                method.instructions.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "net/blay09/mods/defaultkeys/DefaultKeys", "preStartGame", "()V", false));
+                method.instructions.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "net/blay09/mods/defaultoptions/DefaultOptions", "preStartGame", "()V", false));
                 break;
             }
         }

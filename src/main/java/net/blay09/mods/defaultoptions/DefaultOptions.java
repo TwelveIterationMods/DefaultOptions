@@ -1,13 +1,6 @@
-package net.blay09.mods.defaultkeys;
+package net.blay09.mods.defaultoptions;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
@@ -17,6 +10,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,23 +24,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = DefaultKeys.MODID)
-public class DefaultKeys {
+@Mod(modid = DefaultOptions.MODID, name = "Default Options")
+public class DefaultOptions {
 
-    public static final String MODID = "defaultkeys";
+    public static final String MODID = "defaultoptions";
 
     public static final Logger logger = LogManager.getLogger();
 
     @Mod.Instance
-    public static DefaultKeys instance;
+    public static DefaultOptions instance;
 
     private static boolean initialized;
     private static Map<String, Integer> defaultKeys = new HashMap<>();
     private static List<String> knownKeys = new ArrayList<>();
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ClientCommandHandler.instance.registerCommand(new CommandDefaultKeys());
         ClientCommandHandler.instance.registerCommand(new CommandDefaultOptions());
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -258,7 +254,7 @@ public class DefaultKeys {
     }
 
     public boolean saveDefaultMappings() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")))) {
             for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
                 writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode());
             }
@@ -275,36 +271,42 @@ public class DefaultKeys {
         knownKeys.clear();
 
         // Load the default keys from the config
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
-                    continue;
+        File defaultKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt");
+        if(defaultKeysFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(defaultKeysFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    String[] s = line.split(":");
+                    if (s.length != 2 || !s[0].startsWith("key_")) {
+                        continue;
+                    }
+                    try {
+                        defaultKeys.put(s[0].substring(4), Integer.parseInt(s[1]));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
-                String[] s = line.split(":");
-                if (s.length != 2 || !s[0].startsWith("key_")) {
-                    continue;
-                }
-                try {
-                    defaultKeys.put(s[0].substring(4), Integer.parseInt(s[1]));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
             }
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
         }
 
         // Load the known keys from the Minecraft directory
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    knownKeys.add(line);
+        File knownKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt");
+        if(knownKeysFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(knownKeysFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        knownKeys.add(line);
+                    }
                 }
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
             }
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
         }
 
         // Override the default mappings and set the initial key codes, if the key is not known yet

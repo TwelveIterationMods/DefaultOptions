@@ -1,72 +1,60 @@
+plugins {
+    id "net.minecraftforge.gradle.forge" version "2.0.1"
+}
+
 def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "0"
 def MAVEN_REPO = System.getenv("MAVEN_REPO") ?: ""
 def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
 def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-    }
-}
-
-apply plugin: 'forge'
-
-version = "1.0." + BUILD_NUMBER
+version = "2.0." + BUILD_NUMBER
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-group= "net.blay09.mods"
-archivesBaseName = "defaultkeys"
+group = "net.blay09.mods"
+archivesBaseName = "defaultoptions"
 
 minecraft {
-    version = "1.7.10-10.13.4.1481-1.7.10"
-    runDir = "eclipse"
+    version = "1.8-11.14.3.1512"
+    runDir = "run"
+    
+    mappings = "snapshot_20141130"
+}
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
 }
 
 jar {
     appendix "mc" + minecraft.version
     manifest {
-        attributes("FMLAT": "defaultkeys_at.cfg",
-                    "FMLCorePlugin": "net.blay09.mods.defaultkeys.coremod.DefaultOptionsLoadingPlugin",
-                    "FMLCorePluginContainsFMLMod": "true")
+        attributes("FMLAT": "defaultoptions_at.cfg",
+                "FMLCorePlugin": "net.blay09.mods.defaultkeys.coremod.DefaultOptionsLoadingPlugin",
+                "FMLCorePluginContainsFMLMod": "true")
     }
 }
 
-dependencies {
+sourceJar {
+    appendix "mc" + minecraft.version
 }
 
-idea {
-    module {
-        inheritOutputDirs = true;
-    }
+task devJar(type: Jar) {
+    from sourceSets.main.output
+    classifier "dev"
+    appendix "mc" + minecraft.version
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
+artifacts {
+    archives devJar
 }

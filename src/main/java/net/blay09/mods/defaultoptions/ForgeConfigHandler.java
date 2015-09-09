@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultkeys;
+package net.blay09.mods.defaultoptions;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

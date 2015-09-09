@@ -1,6 +1,7 @@
-package net.blay09.mods.defaultkeys;
+package net.blay09.mods.defaultoptions;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
@@ -8,7 +9,7 @@ import net.minecraft.util.ChatComponentText;
 public class CommandDefaultOptions extends CommandBase {
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "defaultoptions";
     }
 
@@ -23,7 +24,7 @@ public class CommandDefaultOptions extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    public void execute(ICommandSender sender, String[] args) throws CommandException {
         if (args.length != 1) {
             throw new WrongUsageException(getCommandUsage(sender));
         }
@@ -36,15 +37,15 @@ public class CommandDefaultOptions extends CommandBase {
         boolean saveOptions = args[0].equals("saveAll") || args[0].equals("saveOptions");
         boolean saveKeys = args[0].equals("saveAll") || args[0].equals("saveKeys");
         if(saveKeys) {
-            if (DefaultKeys.instance.saveDefaultMappings()) {
+            if (DefaultOptions.instance.saveDefaultMappings()) {
                 sender.addChatMessage(new ChatComponentText("Successfully saved the key configuration."));
-                DefaultKeys.instance.reloadDefaultMappings();
+                DefaultOptions.instance.reloadDefaultMappings();
             } else {
                 sender.addChatMessage(new ChatComponentText("Failed saving the key configuration. See the log for more information."));
             }
         }
         if(saveOptions) {
-            if (DefaultKeys.instance.saveDefaultOptions() && DefaultKeys.instance.saveDefaultOptionsOptiFine()) {
+            if (DefaultOptions.instance.saveDefaultOptions() && DefaultOptions.instance.saveDefaultOptionsOptiFine()) {
                 sender.addChatMessage(new ChatComponentText("Successfully saved the configuration."));
             } else {
                 sender.addChatMessage(new ChatComponentText("Failed saving the configuration. See the log for more information."));
