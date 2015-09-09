@@ -8,6 +8,7 @@ import net.blay09.mods.defaultoptions.localconfig.SimpleConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,12 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = DefaultOptions.MODID, name = "Default Options")
+@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options")
 public class DefaultOptions {
 
-    public static final String MODID = "defaultoptions";
-
+    public static final String MOD_ID = "defaultoptions";
     public static final Logger logger = LogManager.getLogger();
+    private static final ResourceLocation defaultLocalConfig = new ResourceLocation(MOD_ID, "default-localconfig.txt");
+    private static final ResourceLocation exampleLocalConfig = new ResourceLocation(MOD_ID, "example-localconfig.txt");
 
     @Mod.Instance
     public static DefaultOptions instance;
@@ -46,31 +49,34 @@ public class DefaultOptions {
 
     @SuppressWarnings("unused")
     public static void preStartGame() {
-        File optionsFile = new File(Minecraft.getMinecraft().mcDataDir, "options.txt");
+        File mcDataDir = Minecraft.getMinecraft().mcDataDir;
+        File optionsFile = new File(mcDataDir, "options.txt");
         if (!optionsFile.exists()) {
             applyDefaultOptions();
         }
-        File optionsFileOF = new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt");
+        File optionsFileOF = new File(mcDataDir, "optionsof.txt");
         if (!optionsFileOF.exists()) {
             applyDefaultOptionsOptiFine();
         }
-        File localConfigDefs = new File(Minecraft.getMinecraft().mcDataDir, "config/localconfig.txt");
+        File localConfigDefs = new File(mcDataDir, "config/localconfig.txt");
         if(!localConfigDefs.exists()) {
-            try(PrintWriter writer = new PrintWriter(localConfigDefs)) {
-                writer.println("# In this file, modpack creators can define config options that should NOT get overriden by modpack updates.");
-                writer.println("# The values for these options will be restored to what they were before the pack update.");
-                writer.println("# The format is the following: FILE/CATEGORY.TYPE:NAME");
-                writer.println("# If the config file is inside a sub-directory, encase the path inside square brackets, ex. [eirairc/shared.cfg]");
-                writer.println("# Categories and sub-categories are split by periods, ex. general.subcategory");
-                writer.println("# The type is a single-character just like Forge's configuration type prefix: B, I, S, D; for lists, append <> to the type character");
-                writer.println("# Full Example #1: trashslot.cfg/general.I:trashSlotX");
-                writer.println("# Full Example #2: [eirairc/client.cfg]/notifications.D:notificationSoundVolume");
-                writer.println();
-            } catch (FileNotFoundException e) {
+            try(InputStreamReader reader = new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(defaultLocalConfig).getInputStream());
+                FileWriter writer = new FileWriter(localConfigDefs)) {
+                IOUtils.copy(reader, writer);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        File modpackUpdate = new File(Minecraft.getMinecraft().mcDataDir, "config/modpack-update");
+        File exampleConfigDefs = new File(mcDataDir, "config/localconfig-example.txt");
+        if(!exampleConfigDefs.exists()) {
+            try(InputStreamReader reader = new InputStreamReader(Minecraft.getMinecraft().getResourceManager().getResource(exampleLocalConfig).getInputStream());
+                FileWriter writer = new FileWriter(exampleConfigDefs)) {
+                IOUtils.copy(reader, writer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        File modpackUpdate = new File(mcDataDir, "config/modpack-update");
         if (modpackUpdate.exists()) {
             if (restoreLocalConfig()) {
                 if (!modpackUpdate.delete()) {

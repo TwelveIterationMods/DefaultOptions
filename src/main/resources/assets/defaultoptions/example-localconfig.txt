@@ -1,9 +1,6 @@
 # This is a big local config file aiming to provide preset definitions for all widely used mods
 # Feel free to contribute by submitting pull requests on this file at https://github.com/blay09/DefaultKeyConfig
 
-# Note that this file doesn't actually work in the current version yet, it's more of a mockup.
-# Things like the $format parameters aren't implemented yet.
-
 # AgriCraft
 [agricraft/Configuration.cfg]/agricraft/"Enable NEI"
 [agricraft/Configuration.cfg]/agricraft/"Render journal in analyzer"
