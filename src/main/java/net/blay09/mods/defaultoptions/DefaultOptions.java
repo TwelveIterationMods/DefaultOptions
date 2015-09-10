@@ -77,9 +77,9 @@ public class DefaultOptions {
         File modpackUpdate = new File(mcDataDir, "config/modpack-update");
         if (modpackUpdate.exists()) {
             if (restoreLocalConfig()) {
-                if (!modpackUpdate.delete()) {
-                    logger.error("Could not delete modpack-update file. Delete manually or configs will keep restoring to this point.");
-                }
+//                if (!modpackUpdate.delete()) {
+//                    logger.error("Could not delete modpack-update file. Delete manually or configs will keep restoring to this point.");
+//                }
             }
         } else {
             backupLocalConfig();
@@ -146,24 +146,30 @@ public class DefaultOptions {
         if(localConfigFile.exists()) {
             try (BufferedReader defReader = new BufferedReader(new FileReader(localConfigFile));
                  BufferedReader valReader = new BufferedReader(new FileReader(new File(mcDataDir, "localconfig.cfg")))) {
-                Map<String, LocalConfigEntry> localConfig = new HashMap<>();
+                List<LocalConfigEntry> defEntries = new ArrayList<>();
                 String line;
                 while ((line = defReader.readLine()) != null) {
                     LocalConfigEntry entry = LocalConfigEntry.fromString(line, false);
                     if (entry != null) {
-                        localConfig.put(entry.getIdentifier(), null);
+                        defEntries.add(entry);
                     }
                 }
+                List<LocalConfigEntry> entries = new ArrayList<>();
                 while ((line = valReader.readLine()) != null) {
                     LocalConfigEntry entry = LocalConfigEntry.fromString(line, true);
-                    if (entry != null && localConfig.containsKey(entry.getIdentifier())) {
-                        localConfig.put(entry.getIdentifier(), entry);
+                    if (entry != null) {
+                        for(LocalConfigEntry defEntry : defEntries) {
+                            if(defEntry.file.equals(entry.file) && defEntry.passesProperty(entry.category, entry.name, entry.type)) {
+                                entry.parameters.putAll(defEntry.parameters);
+                                entries.add(entry);
+                                break;
+                            }
+                        }
                     }
                 }
                 ArrayListMultimap<String, LocalConfigEntry> fileEntries = ArrayListMultimap.create();
-                for (Map.Entry<String, LocalConfigEntry> entry : localConfig.entrySet()) {
-                    LocalConfigEntry configEntry = entry.getValue();
-                    fileEntries.put(configEntry.file + "//" + configEntry.getFormat(), configEntry);
+                for (LocalConfigEntry entry : entries) {
+                    fileEntries.put(entry.file + "//" + entry.getFormat(), entry);
                 }
                 for (String key : fileEntries.keySet()) {
                     List<LocalConfigEntry> list = fileEntries.get(key);

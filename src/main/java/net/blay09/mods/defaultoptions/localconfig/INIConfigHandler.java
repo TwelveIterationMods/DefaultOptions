@@ -51,7 +51,7 @@ public class INIConfigHandler {
                                 break;
                             case '=':
                                 name = buffer.toString().trim();
-                                String value = line.substring(i + 1);
+                                String value = line.substring(i + 1).trim();
                                 for(int j = 0; j < entries.size(); j++) {
                                     LocalConfigEntry entry = entries.get(j);
                                     if(entry.passesProperty(category, name, "*")) {

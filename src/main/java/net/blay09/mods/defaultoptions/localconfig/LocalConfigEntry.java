@@ -62,7 +62,7 @@ public class LocalConfigEntry {
                     }
                 } else if(path == null) {
                     path = buffer.toString();
-                } else {
+                } else if(name == null) {
                     logger.error("Error in line '{}': duplicate path indicator '/' - use [] to escape", line);
                     return null;
                 }

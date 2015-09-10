@@ -14,9 +14,6 @@ public class ForgeConfigHandler {
     private static final Logger logger = LogManager.getLogger();
 
     public static void backup(PrintWriter writer, List<LocalConfigEntry> entries, File configFile) {
-        if(!configFile.getName().equals("PortalGun.cfg")) {
-            return;
-        }
         boolean[] foundProperty = new boolean[entries.size()];
         List<LocalConfigEntry> notEntries = new ArrayList<>();
         for(LocalConfigEntry entry : entries) {
@@ -223,8 +220,10 @@ public class ForgeConfigHandler {
                                     name = buffer.toString().trim();
                                     type = name.substring(0, 1);
                                     name = name.substring(2);
-                                    for(LocalConfigEntry entry : entries) {
+                                    for(int j = 0; j < entries.size(); j++) {
+                                        LocalConfigEntry entry = entries.get(j);
                                         if(entry.passesProperty(category, name, type)) {
+                                            foundProperty[j] = true;
                                             if(entry.containsWildcard()) {
                                                 for(LocalConfigEntry notEntry : notEntries) {
                                                     if(notEntry.passesProperty(category, name, type)) {
