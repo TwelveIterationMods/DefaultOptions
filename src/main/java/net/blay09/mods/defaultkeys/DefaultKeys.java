@@ -3,7 +3,6 @@ package net.blay09.mods.defaultkeys;
 import com.google.common.collect.ArrayListMultimap;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.blay09.mods.defaultkeys.localconfig.ForgeConfigHandler;
@@ -13,7 +12,6 @@ import net.blay09.mods.defaultkeys.localconfig.SimpleConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,9 +38,8 @@ public class DefaultKeys {
     private static Map<String, Integer> defaultKeys = new HashMap<>();
     private static List<String> knownKeys = new ArrayList<>();
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ClientCommandHandler.instance.registerCommand(new CommandDefaultKeys());
         ClientCommandHandler.instance.registerCommand(new CommandDefaultOptions());
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -79,9 +76,9 @@ public class DefaultKeys {
         File modpackUpdate = new File(mcDataDir, "config/modpack-update");
         if (modpackUpdate.exists()) {
             if (restoreLocalConfig()) {
-                if (!modpackUpdate.delete()) {
-                    logger.error("Could not delete modpack-update file. Delete manually or configs will keep restoring to this point.");
-                }
+//                if (!modpackUpdate.delete()) {
+//                    logger.error("Could not delete modpack-update file. Delete manually or configs will keep restoring to this point.");
+//                }
             }
         } else {
             backupLocalConfig();
@@ -116,7 +113,7 @@ public class DefaultKeys {
                     LocalConfigEntry first = list.get(0);
                     File configFile = new File(mcDataDir, "config/" + first.file);
                     if (!configFile.exists()) {
-                        logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
+                        logger.warn("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
                         continue;
                     }
                     switch (first.getFormat()) {
@@ -148,31 +145,37 @@ public class DefaultKeys {
         if(localConfigFile.exists()) {
             try (BufferedReader defReader = new BufferedReader(new FileReader(localConfigFile));
                  BufferedReader valReader = new BufferedReader(new FileReader(new File(mcDataDir, "localconfig.cfg")))) {
-                Map<String, LocalConfigEntry> localConfig = new HashMap<>();
+                List<LocalConfigEntry> defEntries = new ArrayList<>();
                 String line;
                 while ((line = defReader.readLine()) != null) {
                     LocalConfigEntry entry = LocalConfigEntry.fromString(line, false);
                     if (entry != null) {
-                        localConfig.put(entry.getIdentifier(), null);
+                        defEntries.add(entry);
                     }
                 }
+                List<LocalConfigEntry> entries = new ArrayList<>();
                 while ((line = valReader.readLine()) != null) {
                     LocalConfigEntry entry = LocalConfigEntry.fromString(line, true);
-                    if (entry != null && localConfig.containsKey(entry.getIdentifier())) {
-                        localConfig.put(entry.getIdentifier(), entry);
+                    if (entry != null) {
+                        for(LocalConfigEntry defEntry : defEntries) {
+                            if(defEntry.file.equals(entry.file) && defEntry.passesProperty(entry.category, entry.name, entry.type)) {
+                                entry.parameters.putAll(defEntry.parameters);
+                                entries.add(entry);
+                                break;
+                            }
+                        }
                     }
                 }
                 ArrayListMultimap<String, LocalConfigEntry> fileEntries = ArrayListMultimap.create();
-                for (Map.Entry<String, LocalConfigEntry> entry : localConfig.entrySet()) {
-                    LocalConfigEntry configEntry = entry.getValue();
-                    fileEntries.put(configEntry.file + "//" + configEntry.getFormat(), configEntry);
+                for (LocalConfigEntry entry : entries) {
+                    fileEntries.put(entry.file + "//" + entry.getFormat(), entry);
                 }
                 for (String key : fileEntries.keySet()) {
                     List<LocalConfigEntry> list = fileEntries.get(key);
                     LocalConfigEntry first = list.get(0);
                     File configFile = new File(mcDataDir, "config/" + first.file);
                     if (!configFile.exists()) {
-                        logger.error("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
+                        logger.warn("Skipping entry for {}: file at {} not found", first.getIdentifier(), configFile);
                         continue;
                     }
                     switch (first.getFormat()) {
@@ -280,7 +283,7 @@ public class DefaultKeys {
     }
 
     public boolean saveDefaultMappings() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")))) {
             for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
                 writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode());
             }
@@ -297,36 +300,42 @@ public class DefaultKeys {
         knownKeys.clear();
 
         // Load the default keys from the config
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
-                    continue;
+        File defaultKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt");
+        if(defaultKeysFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(defaultKeysFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    String[] s = line.split(":");
+                    if (s.length != 2 || !s[0].startsWith("key_")) {
+                        continue;
+                    }
+                    try {
+                        defaultKeys.put(s[0].substring(4), Integer.parseInt(s[1]));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
-                String[] s = line.split(":");
-                if (s.length != 2 || !s[0].startsWith("key_")) {
-                    continue;
-                }
-                try {
-                    defaultKeys.put(s[0].substring(4), Integer.parseInt(s[1]));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
             }
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
         }
 
         // Load the known keys from the Minecraft directory
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    knownKeys.add(line);
+        File knownKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt");
+        if(knownKeysFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(knownKeysFile))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        knownKeys.add(line);
+                    }
                 }
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
             }
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
         }
 
         // Override the default mappings and set the initial key codes, if the key is not known yet

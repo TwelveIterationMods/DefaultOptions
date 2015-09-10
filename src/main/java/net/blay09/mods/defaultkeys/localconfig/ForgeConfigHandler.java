@@ -60,6 +60,7 @@ public class ForgeConfigHandler {
                                 break charLoop;
                             case '"':
                                 isInQuotes = true;
+                                buffer.append(c);
                                 break;
                             case '{':
                                 categoryPath.add(buffer.toString().trim());
@@ -81,13 +82,13 @@ public class ForgeConfigHandler {
                                         foundProperty[j] = true;
                                         if(entry.containsWildcard()) {
                                             for(LocalConfigEntry notEntry : notEntries) {
-                                                if(entry.passesNotEntry(notEntry)) {
+                                                if(notEntry.passesProperty(category, name, type)) {
                                                     continue lineLoop;
                                                 }
                                             }
                                         }
                                         consumeList = true;
-                                        writer.print(entry.file + "/" + category + "/" + type + ":" + name);
+                                        writer.print(entry.getIdentifier(entry.file, category, type, name));
                                         writer.print("=<");
                                         continue lineLoop;
                                     }
@@ -105,12 +106,12 @@ public class ForgeConfigHandler {
                                         foundProperty[j] = true;
                                         if(entry.containsWildcard()) {
                                             for(LocalConfigEntry notEntry : notEntries) {
-                                                if(entry.passesNotEntry(notEntry)) {
+                                                if(notEntry.passesProperty(category, name, type)) {
                                                     continue lineLoop;
                                                 }
                                             }
                                         }
-                                        writer.println(entry.file + "/" + category + "/" + type + ":" + name + "=" + value);
+                                        writer.println(entry.getIdentifier(entry.file, category, type, name) + "=" + value);
                                         break;
                                     }
                                 }
@@ -123,7 +124,7 @@ public class ForgeConfigHandler {
             }
             for(int i = 0; i < foundProperty.length; i++) {
                 if(!foundProperty[i] && !entries.get(i).not) {
-                    logger.warn("Failed to backup value {}: property not found", entries.get(i).getIdentifier());
+                    logger.warn("Failed to backup local value {}: property not found", entries.get(i).getIdentifier());
                 }
             }
         } catch (IOException e) {
@@ -171,6 +172,7 @@ public class ForgeConfigHandler {
                                     break charLoop;
                                 case '"':
                                     isInQuotes = true;
+                                    buffer.append(c);
                                     break;
                                 case '{':
                                     categoryPath.add(buffer.toString().trim());
@@ -192,7 +194,7 @@ public class ForgeConfigHandler {
                                             foundProperty[j] = true;
                                             if(entry.containsWildcard()) {
                                                 for(LocalConfigEntry notEntry : notEntries) {
-                                                    if(entry.passesNotEntry(notEntry)) {
+                                                    if(notEntry.passesProperty(category, name, type)) {
                                                         break charLoop;
                                                     }
                                                 }
@@ -218,11 +220,13 @@ public class ForgeConfigHandler {
                                     name = buffer.toString().trim();
                                     type = name.substring(0, 1);
                                     name = name.substring(2);
-                                    for(LocalConfigEntry entry : entries) {
+                                    for(int j = 0; j < entries.size(); j++) {
+                                        LocalConfigEntry entry = entries.get(j);
                                         if(entry.passesProperty(category, name, type)) {
+                                            foundProperty[j] = true;
                                             if(entry.containsWildcard()) {
                                                 for(LocalConfigEntry notEntry : notEntries) {
-                                                    if(entry.passesNotEntry(notEntry)) {
+                                                    if(notEntry.passesProperty(category, name, type)) {
                                                         break charLoop;
                                                     }
                                                 }
@@ -242,7 +246,7 @@ public class ForgeConfigHandler {
             }
             for(int i = 0; i < foundProperty.length; i++) {
                 if(!foundProperty[i] && !entries.get(i).not) {
-                    logger.warn("Failed to backup value {}: property not found", entries.get(i).getIdentifier());
+                    logger.warn("Failed to restore local value {}: property not found", entries.get(i).getIdentifier());
                 }
             }
         } catch (IOException e) {
