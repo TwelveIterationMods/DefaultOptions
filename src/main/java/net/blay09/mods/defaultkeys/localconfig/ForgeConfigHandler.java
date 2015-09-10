@@ -140,6 +140,12 @@ public class ForgeConfigHandler {
                 notEntries.add(entry);
             }
         }
+        File backupFile = new File(configFile.getParentFile(), configFile.getName() + ".bak");
+        try {
+            FileUtils.copyFile(configFile, backupFile);
+        } catch(IOException e) {
+            logger.error("Could not create backup file {}: {}", backupFile, e);
+        }
         try {
             List<String> lines = FileUtils.readLines(configFile);
             try(PrintWriter writer = new PrintWriter(configFile)) {
@@ -251,6 +257,11 @@ public class ForgeConfigHandler {
             }
         } catch (IOException e) {
             logger.error("Failed to restore local values in {}: {}", configFile, e);
+            try {
+                FileUtils.copyFile(backupFile, configFile);
+            } catch (IOException e2) {
+                logger.error("Could not restore config file {} from backup: {}", configFile, e2);
+            }
         }
     }
 
