@@ -66,6 +66,9 @@ CodeChickenCore.cfg/tweaks/replaceWaterFX $format=simple
 # COFHCore
 [cofh/core/client.cfg]/*/*
 
+# Cooking for Blockheads
+cookingbook.cfg/client/disableItemRender
+
 # Draconic Evolution
 DraconicEvolution.cfg/general/"Enable HUD info"
 DraconicEvolution.cfg/general/"HUD Display X pos"
