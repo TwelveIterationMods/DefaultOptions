@@ -9,7 +9,7 @@ import net.minecraft.util.ChatComponentText;
 public class CommandDefaultOptions extends CommandBase {
 
     @Override
-    public String getName() {
+    public String getCommandName() {
         return "defaultoptions";
     }
 
@@ -24,7 +24,7 @@ public class CommandDefaultOptions extends CommandBase {
     }
 
     @Override
-    public void execute(ICommandSender sender, String[] args) throws CommandException {
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (args.length != 1) {
             throw new WrongUsageException(getCommandUsage(sender));
         }
