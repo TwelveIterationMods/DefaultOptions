@@ -348,6 +348,7 @@ public class DefaultOptions {
                 }
             }
         }
+        KeyBinding.resetKeyBindingArrayAndHash();
 
         // Save the updated known keys to the knownkeys.txt file in the Minecraft directory
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")))) {
