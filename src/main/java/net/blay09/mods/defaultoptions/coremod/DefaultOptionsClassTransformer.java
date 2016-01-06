@@ -11,7 +11,6 @@ import org.objectweb.asm.tree.MethodNode;
 
 public class DefaultOptionsClassTransformer implements IClassTransformer {
 
-    public static final String OBF_CLASS = "bsu";
     public static final String MCP_CLASS = "net.minecraft.client.Minecraft";
     public static final String OBF_METHOD = "func_71384_a";
     public static final String MCP_METHOD = "startGame";
@@ -19,19 +18,14 @@ public class DefaultOptionsClassTransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String className, String transformedClassName, byte[] bytes) {
-        String methodName;
-        if(className.equals(OBF_CLASS)) {
-            methodName = OBF_METHOD;
-        } else if(className.equals(MCP_CLASS)) {
-            methodName = MCP_METHOD;
-        } else {
+        if(!transformedClassName.equals(MCP_CLASS)) {
             return bytes;
         }
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
         for (MethodNode method : classNode.methods) {
-            if (method.name.equals(methodName) && method.desc.equals(METHOD_DESC)) {
+            if ((method.name.equals(OBF_METHOD) || method.name.equals(MCP_METHOD)) && method.desc.equals(METHOD_DESC)) {
                 AbstractInsnNode node = method.instructions.get(0);
                 method.instructions.insertBefore(node, new MethodInsnNode(Opcodes.INVOKESTATIC, "net/blay09/mods/defaultoptions/DefaultOptions", "preStartGame", "()V", false));
                 break;

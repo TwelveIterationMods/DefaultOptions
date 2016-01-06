@@ -24,10 +24,10 @@ group = "net.blay09.mods"
 archivesBaseName = "defaultoptions"
 
 minecraft {
-    version = "1.8.8-11.15.0.1647-1.8.8"
+    version = "1.8.9-11.15.0.1684"
     runDir = "run"
     
-    mappings = "stable_18"
+    mappings = "stable_20"
 }
 
 processResources
@@ -63,6 +63,11 @@ task devJar(type: Jar) {
     from sourceSets.main.output
     classifier "dev"
     appendix "mc" + minecraft.version
+    manifest {
+        attributes("FMLAT": "defaultoptions_at.cfg",
+                "FMLCorePlugin": "net.blay09.mods.defaultkeys.coremod.DefaultOptionsLoadingPlugin",
+                "FMLCorePluginContainsFMLMod": "true")
+    }
 }
 
 artifacts {

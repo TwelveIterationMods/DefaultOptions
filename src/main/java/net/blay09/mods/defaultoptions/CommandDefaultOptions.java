@@ -1,10 +1,14 @@
 package net.blay09.mods.defaultoptions;
 
+import com.google.common.collect.Lists;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+
+import java.util.List;
 
 public class CommandDefaultOptions extends CommandBase {
 
@@ -56,4 +60,15 @@ public class CommandDefaultOptions extends CommandBase {
         }
     }
 
+    @Override
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+        List<String> list = Lists.newArrayList();
+        if(args.length < 2) {
+            list.add("saveAll");
+            list.add("saveKeys");
+            list.add("saveOptions");
+            list.add("createUpdateFile");
+        }
+        return list;
+    }
 }

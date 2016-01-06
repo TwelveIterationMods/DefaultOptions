@@ -76,9 +76,9 @@ public class DefaultOptions {
         File modpackUpdate = new File(mcDataDir, "config/modpack-update");
         if (modpackUpdate.exists()) {
             if (restoreLocalConfig()) {
-//                if (!modpackUpdate.delete()) {
-//                    logger.error("Could not delete modpack-update file. Delete manually or configs will keep restoring to this point.");
-//                }
+                if (!modpackUpdate.delete()) {
+                    logger.error("Could not delete modpack-update file. Delete manually or configs will keep restoring to this point.");
+                }
             }
         } else {
             backupLocalConfig();
