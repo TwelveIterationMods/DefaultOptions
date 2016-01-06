@@ -50,7 +50,7 @@ jar {
     appendix "mc" + minecraft.version
     manifest {
         attributes("FMLAT": "defaultoptions_at.cfg",
-                "FMLCorePlugin": "net.blay09.mods.defaultkeys.coremod.DefaultOptionsLoadingPlugin",
+                "FMLCorePlugin": "net.blay09.mods.defaultoptions.coremod.DefaultOptionsLoadingPlugin",
                 "FMLCorePluginContainsFMLMod": "true")
     }
 }
@@ -65,7 +65,7 @@ task devJar(type: Jar) {
     appendix "mc" + minecraft.version
     manifest {
         attributes("FMLAT": "defaultoptions_at.cfg",
-                "FMLCorePlugin": "net.blay09.mods.defaultkeys.coremod.DefaultOptionsLoadingPlugin",
+                "FMLCorePlugin": "net.blay09.mods.defaultoptions.coremod.DefaultOptionsLoadingPlugin",
                 "FMLCorePluginContainsFMLMod": "true")
     }
 }
