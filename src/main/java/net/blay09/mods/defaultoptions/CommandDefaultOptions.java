@@ -62,13 +62,9 @@ public class CommandDefaultOptions extends CommandBase {
 
     @Override
     public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        List<String> list = Lists.newArrayList();
         if(args.length < 2) {
-            list.add("saveAll");
-            list.add("saveKeys");
-            list.add("saveOptions");
-            list.add("createUpdateFile");
+            return getListOfStringsMatchingLastWord(args, "saveAll", "saveKeys", "saveOptions", "createUpdateFile");
         }
-        return list;
+        return super.addTabCompletionOptions(sender, args, pos);
     }
 }
