@@ -283,7 +283,7 @@ public class DefaultKeys {
     }
 
     public boolean saveDefaultMappings() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt")))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt")))) {
             for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
                 writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode());
             }
@@ -300,7 +300,7 @@ public class DefaultKeys {
         knownKeys.clear();
 
         // Load the default keys from the config
-        File defaultKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions.txt");
+        File defaultKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultkeys.txt");
         if(defaultKeysFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultKeysFile))) {
                 String line;
@@ -348,6 +348,7 @@ public class DefaultKeys {
                 }
             }
         }
+        KeyBinding.resetKeyBindingArrayAndHash();
 
         // Save the updated known keys to the knownkeys.txt file in the Minecraft directory
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")))) {

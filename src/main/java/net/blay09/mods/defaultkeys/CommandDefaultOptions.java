@@ -5,6 +5,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
 
+import java.util.List;
+
 public class CommandDefaultOptions extends CommandBase {
 
     @Override
@@ -55,4 +57,11 @@ public class CommandDefaultOptions extends CommandBase {
         }
     }
 
+    @Override
+    public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+        if(args.length < 2) {
+            return getListOfStringsMatchingLastWord(args, "saveAll", "saveKeys", "saveOptions", "createUpdateFile");
+        }
+        return super.addTabCompletionOptions(sender, args);
+    }
 }
