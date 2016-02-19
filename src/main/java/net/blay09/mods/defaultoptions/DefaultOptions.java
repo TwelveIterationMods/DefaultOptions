@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options")
+@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true)
 public class DefaultOptions {
 
     public static final String MOD_ID = "defaultoptions";
