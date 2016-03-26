@@ -240,7 +240,7 @@ public class DefaultOptions {
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void finishMinecraftLoading(GuiOpenEvent event) {
-        if (!initialized && event.gui instanceof GuiMainMenu) {
+        if (!initialized && event.getGui() instanceof GuiMainMenu) {
             reloadDefaultMappings();
             initialized = true;
         }
