@@ -1,7 +1,7 @@
 [
 {
   "modid": "defaultoptions",
-  "name": "Default Optons",
+  "name": "Default Options",
   "description": "A way for modpacks to ship a default (key) configuration without having to include an options.txt file. Also allows local options from any mod .cfg file.",
   "version": "${version}",
   "mcversion": "${mcversion}",

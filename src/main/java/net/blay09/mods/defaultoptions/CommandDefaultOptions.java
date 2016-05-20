@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class CommandDefaultOptions extends CommandBase {
@@ -19,7 +20,7 @@ public class CommandDefaultOptions extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/defaultoptions (saveAll|saveKeys|saveOptions|createUpdateFile)";
+        return "/defaultoptions (saveAll|saveKeys|saveOptions)";
     }
 
     @Override
@@ -31,12 +32,6 @@ public class CommandDefaultOptions extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length != 1) {
             throw new WrongUsageException(getCommandUsage(sender));
-        }
-        if(args[0].equals("createUpdateFile")) {
-            sender.addChatMessage(new TextComponentString("modpack-update file has been created inside the config directory."));
-            sender.addChatMessage(new TextComponentString("You should always ship that file in your modpack; just leave it there forever."));
-            sender.addChatMessage(new TextComponentString("This will ensure that local player configs defined in localconfig.txt will be restored on updates."));
-            return;
         }
         boolean saveOptions = args[0].equals("saveAll") || args[0].equals("saveOptions");
         boolean saveKeys = args[0].equals("saveAll") || args[0].equals("saveKeys");
@@ -61,9 +56,9 @@ public class CommandDefaultOptions extends CommandBase {
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if(args.length < 2) {
-            return getListOfStringsMatchingLastWord(args, "saveAll", "saveKeys", "saveOptions", "createUpdateFile");
+            return getListOfStringsMatchingLastWord(args, "saveAll", "saveKeys", "saveOptions");
         }
         return super.getTabCompletionOptions(server, sender, args, pos);
     }
