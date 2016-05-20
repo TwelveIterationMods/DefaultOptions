@@ -1,7 +1,7 @@
 package net.blay09.mods.defaultoptions;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.sun.istack.internal.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
@@ -19,14 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.nio.file.CopyOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +44,7 @@ public class DefaultOptions {
 
     private static boolean initialized;
     private static Map<String, DefaultBinding> defaultKeys = Maps.newHashMap();
-    private static List<String> knownKeys = new ArrayList<>();
+    private static List<String> knownKeys = Lists.newArrayList();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
