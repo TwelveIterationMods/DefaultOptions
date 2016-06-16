@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -54,7 +55,16 @@ public class DefaultOptions {
 
     public static void preStartGame() {
         File mcDataDir = Minecraft.getMinecraft().mcDataDir;
-        File defaultConfig = new File(mcDataDir, "default-config");
+        // Backwards compatibility
+        File oldDefaultConfig = new File(mcDataDir, "default-config");
+        if(oldDefaultConfig.exists()) {
+            try {
+                FileUtils.moveDirectory(oldDefaultConfig, getDefaultOptionsFolder());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        File defaultConfig = getDefaultOptionsFolder();
         //noinspection ResultOfMethodCallIgnored
         defaultConfig.mkdirs();
         File optionsFile = new File(mcDataDir, "options.txt");
@@ -66,6 +76,10 @@ public class DefaultOptions {
         if (!optionsFileOF.exists()) {
             applyDefaultOptionsOptiFine();
         }
+        File serversDatFile = new File(mcDataDir, "servers.dat");
+        if(!serversDatFile.exists()) {
+            applyDefaultServers();
+        }
         File overwriteConfig = new File(mcDataDir, "overwrite-config");
         if(firstRun || overwriteConfig.exists()) {
             applyDefaultConfig();
@@ -75,10 +89,24 @@ public class DefaultOptions {
         }
     }
 
-    public static boolean applyDefaultConfig() {
-        File mcDataDir = Minecraft.getMinecraft().mcDataDir;
+    private static boolean applyDefaultServers() {
         try {
-            FileUtils.copyDirectory( new File(mcDataDir, "default-config"), new File(mcDataDir, "config"), file -> !file.getName().equals("options.txt") && !file.getName().equals("optionsof.txt") && !file.getName().equals("keybindings"));
+            FileUtils.copyFile(new File(getDefaultOptionsFolder(), "servers.dat"), new File(Minecraft.getMinecraft().mcDataDir, "servers.dat"));
+            return true;
+        } catch (IOException e) {
+            logger.error(e);
+            return false;
+        }
+    }
+
+    public static boolean applyDefaultConfig() {
+        try {
+            FileUtils.copyDirectory(getDefaultOptionsFolder(), new File(Minecraft.getMinecraft().mcDataDir, "config"),
+                    file -> !file.getName().equals("options.txt")
+                            && !file.getName().equals("optionsof.txt")
+                            && !file.getName().equals("keybindings.txt")
+                            && !file.getName().equals("defaultoptions")
+                            && !file.getName().equals("servers.dat"));
             return true;
         } catch (IOException e) {
             logger.error(e);
@@ -87,10 +115,10 @@ public class DefaultOptions {
     }
 
     public static boolean applyDefaultOptions() {
-        File defaultOptionsFile = new File(Minecraft.getMinecraft().mcDataDir, "default-config/options.txt");
+        File defaultOptionsFile = new File(getDefaultOptionsFolder(), "options.txt");
         if(defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
-                 PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")))) {
+                PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("key_")) {
@@ -107,7 +135,7 @@ public class DefaultOptions {
     }
 
     public static boolean applyDefaultOptionsOptiFine() {
-        File defaultOptionsFile = new File(Minecraft.getMinecraft().mcDataDir, "default-config/optionsof.txt");
+        File defaultOptionsFile = new File(getDefaultOptionsFolder(), "optionsof.txt");
         if(defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
                  PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")))) {
@@ -127,16 +155,16 @@ public class DefaultOptions {
     public void finishMinecraftLoading(GuiOpenEvent event) {
         if (!initialized && event.getGui() instanceof GuiMainMenu) {
             // Create default files
-            File defaultOptions = new File(Minecraft.getMinecraft().mcDataDir, "default-config/options.txt");
+            File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
             if(!defaultOptions.exists()) {
                 saveDefaultOptions();
             }
-            File defaultOptionsOF = new File(Minecraft.getMinecraft().mcDataDir, "default-config/optionsof.txt");
+            File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
             if(!defaultOptionsOF.exists()) {
                 saveDefaultOptionsOptiFine();
             }
-            File defaultKeybindings = new File(Minecraft.getMinecraft().mcDataDir, "default-config/keybindings.txt");
-            if(!defaultOptionsOF.exists()) {
+            File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
+            if(!defaultKeybindings.exists()) {
                 saveDefaultMappings();
             }
             reloadDefaultMappings();
@@ -149,7 +177,7 @@ public class DefaultOptions {
             return true;
         }
         Minecraft.getMinecraft().gameSettings.saveOptions();
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "default-config/optionsof.txt")));
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "optionsof.txt")));
              BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -164,7 +192,7 @@ public class DefaultOptions {
 
     public boolean saveDefaultOptions() {
         Minecraft.getMinecraft().gameSettings.saveOptions();
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "default-config/options.txt")));
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "options.txt")));
              BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -180,8 +208,18 @@ public class DefaultOptions {
         return true;
     }
 
+    public boolean saveDefaultServers() {
+        try {
+            FileUtils.copyFile(new File(Minecraft.getMinecraft().mcDataDir, "servers.dat"), new File(getDefaultOptionsFolder(), "servers.dat"));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean saveDefaultMappings() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "default-config/keybindings.txt")))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "keybindings.txt")))) {
             for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
                 writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode() + ":" + keyBinding.getKeyModifier().name());
             }
@@ -198,7 +236,7 @@ public class DefaultOptions {
         knownKeys.clear();
 
         // Load the default keys from the config
-        File defaultKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "default-config/keybindings.txt");
+        File defaultKeysFile = new File(getDefaultOptionsFolder(), "keybindings.txt");
         if(defaultKeysFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultKeysFile))) {
                 String line;
@@ -256,5 +294,9 @@ public class DefaultOptions {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static File getDefaultOptionsFolder() {
+        return new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
     }
 }

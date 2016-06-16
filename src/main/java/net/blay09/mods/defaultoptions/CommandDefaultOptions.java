@@ -48,8 +48,9 @@ public class CommandDefaultOptions extends CommandBase {
             sender.addChatMessage(new TextComponentString("Failed to create overwrite-config file. Please create it manually."));
             return;
         }
-        boolean saveOptions = args[0].equals("saveAll") || args[0].equals("saveOptions");
-        boolean saveKeys = args[0].equals("saveAll") || args[0].equals("saveKeys");
+        boolean saveOptions = args[0].equalsIgnoreCase("saveAll") || args[0].equalsIgnoreCase("saveOptions");
+        boolean saveKeys = args[0].equalsIgnoreCase("saveAll") || args[0].equalsIgnoreCase("saveKeys");
+        boolean saveServers = args[0].equalsIgnoreCase("saveAll") || args[0].equalsIgnoreCase("saveServers");
         if(saveKeys) {
             if (DefaultOptions.instance.saveDefaultMappings()) {
                 sender.addChatMessage(new TextComponentString("Successfully saved the key configuration."));
@@ -65,7 +66,14 @@ public class CommandDefaultOptions extends CommandBase {
                 sender.addChatMessage(new TextComponentString("Failed saving the configuration. See the log for more information."));
             }
         }
-        if(!saveOptions && !saveKeys) {
+        if(saveServers) {
+            if (DefaultOptions.instance.saveDefaultServers()) {
+                sender.addChatMessage(new TextComponentString("Successfully saved the server list."));
+            } else {
+                sender.addChatMessage(new TextComponentString("Failed saving the server list. See the log for more information."));
+            }
+        }
+        if(!saveOptions && !saveKeys && !saveServers) {
             throw new WrongUsageException(getCommandUsage(sender));
         }
     }
@@ -73,7 +81,7 @@ public class CommandDefaultOptions extends CommandBase {
     @Override
     public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if(args.length < 2) {
-            return getListOfStringsMatchingLastWord(args, "saveAll", "saveKeys", "saveOptions", "overwriteConfig");
+            return getListOfStringsMatchingLastWord(args, "saveAll", "saveKeys", "saveServers", "saveOptions", "overwriteConfig");
         }
         return super.getTabCompletionOptions(server, sender, args, pos);
     }
