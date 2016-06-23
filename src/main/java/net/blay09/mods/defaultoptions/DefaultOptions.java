@@ -209,12 +209,17 @@ public class DefaultOptions {
     }
 
     public boolean saveDefaultServers() {
-        try {
-            FileUtils.copyFile(new File(Minecraft.getMinecraft().mcDataDir, "servers.dat"), new File(getDefaultOptionsFolder(), "servers.dat"));
+        File serversDat = new File(Minecraft.getMinecraft().mcDataDir, "servers.dat");
+        if (serversDat.exists()) {
+            try {
+                FileUtils.copyFile(serversDat, new File(getDefaultOptionsFolder(), "servers.dat"));
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 
