@@ -297,6 +297,9 @@ public class DefaultOptions {
     }
 
     public static File getDefaultOptionsFolder() {
-        return new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
+        File defaultOptions = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
+        //noinspection ResultOfMethodCallIgnored
+        defaultOptions.mkdirs();
+        return defaultOptions;
     }
 }
