@@ -212,12 +212,17 @@ public class DefaultOptions {
 	}
 
 	public boolean saveDefaultServers() {
-		try {
-			FileUtils.copyFile(new File(Minecraft.getMinecraft().mcDataDir, "servers.dat"), new File(getDefaultOptionsFolder(), "servers.dat"));
+		File serversDat = new File(Minecraft.getMinecraft().mcDataDir, "servers.dat");
+		if (serversDat.exists()) {
+			try {
+				FileUtils.copyFile(serversDat, new File(getDefaultOptionsFolder(), "servers.dat"));
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else {
 			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
 		}
 	}
 
@@ -293,7 +298,7 @@ public class DefaultOptions {
 
 		// Save the updated known keys to the knownkeys.txt file in the Minecraft directory
 		try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")))) {
-			for(String key : knownKeys) {
+			for (String key : knownKeys) {
 				writer.println(key);
 			}
 		} catch (IOException e) {
@@ -302,6 +307,9 @@ public class DefaultOptions {
 	}
 
 	public static File getDefaultOptionsFolder() {
-		return new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
+		File defaultOptions = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
+		//noinspection ResultOfMethodCallIgnored
+		defaultOptions.mkdirs();
+		return defaultOptions;
 	}
 }
