@@ -13,7 +13,7 @@ public class DefaultOptionsClassTransformer implements IClassTransformer {
 
     public static final String MCP_CLASS = "net.minecraft.client.Minecraft";
     public static final String OBF_METHOD = "func_71384_a";
-    public static final String MCP_METHOD = "startGame";
+    public static final String MCP_METHOD = "init";
     private static final String METHOD_DESC = "()V";
 
     @Override

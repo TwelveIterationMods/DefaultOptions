@@ -3,7 +3,6 @@ package net.blay09.mods.defaultoptions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 @Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true)
-@SuppressWarnings("unused")
 public class DefaultOptions {
 
 	private static class DefaultBinding {
@@ -52,20 +50,11 @@ public class DefaultOptions {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
+	@SuppressWarnings("unused")
 	public static void preStartGame() {
 		File mcDataDir = Minecraft.getMinecraft().mcDataDir;
 		// Backwards compatibility
-		File oldDefaultConfig = new File(mcDataDir, "default-config");
-		if (oldDefaultConfig.exists()) {
-			try {
-				FileUtils.moveDirectory(oldDefaultConfig, getDefaultOptionsFolder());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		File defaultConfig = getDefaultOptionsFolder();
-		//noinspection ResultOfMethodCallIgnored
-		defaultConfig.mkdirs();
 		File optionsFile = new File(mcDataDir, "options.txt");
 		boolean firstRun = !optionsFile.exists();
 		if (firstRun) {
@@ -156,7 +145,7 @@ public class DefaultOptions {
 
 	@SubscribeEvent
 	public void finishMinecraftLoading(GuiOpenEvent event) {
-		if (!initialized && event.getGui() instanceof GuiMainMenu) {
+		if (!initialized) {
 			// Create default files
 			File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
 			if (!defaultOptions.exists()) {
