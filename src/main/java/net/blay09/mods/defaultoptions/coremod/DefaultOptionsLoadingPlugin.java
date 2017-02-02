@@ -5,7 +5,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import java.util.Map;
 
 @IFMLLoadingPlugin.Name(value = "Default Options")
-@IFMLLoadingPlugin.MCVersion(value = "1.11")
+@IFMLLoadingPlugin.MCVersion(value = "1.11.2")
 @IFMLLoadingPlugin.TransformerExclusions(value = "net.blay09.mods.defaultoptions.coremod")
 @IFMLLoadingPlugin.SortingIndex(value = 1001)
 public class DefaultOptionsLoadingPlugin implements IFMLLoadingPlugin {
