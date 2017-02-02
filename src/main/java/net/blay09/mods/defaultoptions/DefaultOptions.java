@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true, acceptedMinecraftVersions = "1.11.2")
+@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true, acceptedMinecraftVersions = "[1.11.2]")
 public class DefaultOptions {
 
 	private static class DefaultBinding {
