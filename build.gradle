@@ -45,11 +45,3 @@ processResources{
         exclude 'mcmod.info'
     }
 }
-
-jar {
-    manifest {
-        attributes('FMLAT': 'defaultoptions_at.cfg',
-                "FMLCorePlugin": "net.blay09.mods.defaultoptions.coremod.DefaultOptionsLoadingPlugin",
-                "FMLCorePluginContainsFMLMod": "true")
-    }
-}

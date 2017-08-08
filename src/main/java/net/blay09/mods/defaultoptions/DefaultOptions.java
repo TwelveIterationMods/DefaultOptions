@@ -3,21 +3,27 @@ package net.blay09.mods.defaultoptions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.ResourcePackRepository;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,14 +41,47 @@ public class DefaultOptions {
 	}
 
 	public static final String MOD_ID = "defaultoptions";
-	public static final Logger logger = LogManager.getLogger();
+	public static final Logger logger = LogManager.getLogger(MOD_ID);
 
 	@Mod.Instance
 	public static DefaultOptions instance;
 
-	private static boolean initialized;
 	private static Map<String, DefaultBinding> defaultKeys = Maps.newHashMap();
 	private static List<String> knownKeys = Lists.newArrayList();
+
+	@Mod.EventHandler
+	public void construct(FMLConstructionEvent event) {
+		preStartGame();
+
+		Minecraft mc = Minecraft.getMinecraft();
+		GameSettings gameSettings = mc.gameSettings;
+		gameSettings.loadOptions();
+
+		// We need to update the language here manually because it's set prior to construct
+		mc.getLanguageManager().currentLanguage = gameSettings.language;
+
+		// We need to update the resource pack repository manually because it's set prior to construct
+		ResourcePackRepository resourcePackRepository = mc.getResourcePackRepository();
+		resourcePackRepository.updateRepositoryEntriesAll();
+		List<ResourcePackRepository.Entry> repositoryEntriesAll = resourcePackRepository.getRepositoryEntriesAll();
+		List<ResourcePackRepository.Entry> repositoryEntries = Lists.newArrayList();
+		Iterator<String> it = gameSettings.resourcePacks.iterator();
+		while(it.hasNext()) {
+			String packName = it.next();
+			for (ResourcePackRepository.Entry entry : repositoryEntriesAll) {
+				if (entry.getResourcePackName().equals(packName)) {
+					if (entry.getPackFormat() == 3 || gameSettings.incompatibleResourcePacks.contains(entry.getResourcePackName())) {
+						repositoryEntries.add(entry);
+						break;
+					}
+
+					it.remove();
+					logger.warn("[Vanilla Behaviour] Removed selected resource pack {} because it's no longer compatible", entry.getResourcePackName());
+				}
+			}
+		}
+		resourcePackRepository.setRepositories(repositoryEntries);
+	}
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -50,11 +89,25 @@ public class DefaultOptions {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@SuppressWarnings("unused")
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+		File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
+		if (!defaultOptions.exists()) {
+			saveDefaultOptions();
+		}
+		File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
+		if (!defaultOptionsOF.exists()) {
+			saveDefaultOptionsOptiFine();
+		}
+		File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
+		if (!defaultKeybindings.exists()) {
+			saveDefaultMappings();
+		}
+		reloadDefaultMappings();
+	}
+
 	public static void preStartGame() {
 		File mcDataDir = Minecraft.getMinecraft().mcDataDir;
-		// Backwards compatibility
-		File defaultConfig = getDefaultOptionsFolder();
 		File optionsFile = new File(mcDataDir, "options.txt");
 		boolean firstRun = !optionsFile.exists();
 		if (firstRun) {
@@ -141,27 +194,6 @@ public class DefaultOptions {
 			}
 		}
 		return true;
-	}
-
-	@SubscribeEvent
-	public void finishMinecraftLoading(GuiOpenEvent event) {
-		if (!initialized) {
-			// Create default files
-			File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
-			if (!defaultOptions.exists()) {
-				saveDefaultOptions();
-			}
-			File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
-			if (!defaultOptionsOF.exists()) {
-				saveDefaultOptionsOptiFine();
-			}
-			File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
-			if (!defaultKeybindings.exists()) {
-				saveDefaultMappings();
-			}
-			reloadDefaultMappings();
-			initialized = true;
-		}
 	}
 
 	public boolean saveDefaultOptionsOptiFine() {
