@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true, acceptedMinecraftVersions = "[1.12]")
+@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true, acceptedMinecraftVersions = "[1.12]", dependencies = "after:journeymap")
 public class DefaultOptions {
 
 	private static class DefaultBinding {
