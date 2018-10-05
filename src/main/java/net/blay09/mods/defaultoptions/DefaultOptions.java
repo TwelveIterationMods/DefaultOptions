@@ -9,11 +9,15 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true, acceptedMinecraftVersions = "[1.12]", dependencies = "after:journeymap")
+@Mod.EventBusSubscriber
 public class DefaultOptions {
 
     private static class DefaultBinding {
@@ -79,6 +84,7 @@ public class DefaultOptions {
                 }
             }
         }
+
         resourcePackRepository.setRepositories(repositoryEntries);
     }
 
@@ -86,6 +92,7 @@ public class DefaultOptions {
     public void preInit(FMLPreInitializationEvent event) {
         ClientCommandHandler.instance.registerCommand(new CommandDefaultOptions());
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new DefaultDifficultyHandler());
     }
 
     @Mod.EventHandler
@@ -94,15 +101,26 @@ public class DefaultOptions {
         if (!defaultOptions.exists()) {
             saveDefaultOptions();
         }
+
         File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
         if (!defaultOptionsOF.exists()) {
             saveDefaultOptionsOptiFine();
         }
+
         File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
         if (!defaultKeybindings.exists()) {
             saveDefaultMappings();
         }
+
         reloadDefaultMappings();
+    }
+
+    @SubscribeEvent
+    public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (event.getModID().equals(MOD_ID)) {
+            ConfigManager.sync(MOD_ID, Config.Type.INSTANCE);
+            DefaultOptionsConfig.onConfigReload();
+        }
     }
 
     public static void preStartGame() {
@@ -141,16 +159,11 @@ public class DefaultOptions {
 
     public static boolean applyDefaultConfig() {
         try {
-            FileUtils.copyDirectory(getDefaultOptionsFolder(), new File(Minecraft.getMinecraft().mcDataDir, "config"), new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return !file.getName().equals("options.txt")
-                            && !file.getName().equals("optionsof.txt")
-                            && !file.getName().equals("keybindings.txt")
-                            && !file.getName().equals("defaultoptions")
-                            && !file.getName().equals("servers.dat");
-                }
-            });
+            FileUtils.copyDirectory(getDefaultOptionsFolder(), new File(Minecraft.getMinecraft().mcDataDir, "config"), file -> !file.getName().equals("options.txt")
+                    && !file.getName().equals("optionsof.txt")
+                    && !file.getName().equals("keybindings.txt")
+                    && !file.getName().equals("defaultoptions")
+                    && !file.getName().equals("servers.dat"));
             return true;
         } catch (IOException e) {
             logger.error(e);
@@ -158,7 +171,7 @@ public class DefaultOptions {
         }
     }
 
-    public static boolean applyDefaultOptions() {
+    private static boolean applyDefaultOptions() {
         File defaultOptionsFile = new File(getDefaultOptionsFolder(), "options.txt");
         if (defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
@@ -178,7 +191,7 @@ public class DefaultOptions {
         return true;
     }
 
-    public static boolean applyDefaultOptionsOptiFine() {
+    private static boolean applyDefaultOptionsOptiFine() {
         File defaultOptionsFile = new File(getDefaultOptionsFolder(), "optionsof.txt");
         if (defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
@@ -331,7 +344,7 @@ public class DefaultOptions {
         }
     }
 
-    public static File getDefaultOptionsFolder() {
+    private static File getDefaultOptionsFolder() {
         File defaultOptions = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
         //noinspection ResultOfMethodCallIgnored
         defaultOptions.mkdirs();
