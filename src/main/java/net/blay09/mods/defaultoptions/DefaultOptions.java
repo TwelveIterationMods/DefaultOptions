@@ -2,23 +2,16 @@ package net.blay09.mods.defaultoptions;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.ResourcePackRepository;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,34 +23,22 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Mod(modid = DefaultOptions.MOD_ID, name = "Default Options", clientSideOnly = true, acceptedMinecraftVersions = "[1.12]", dependencies = "after:journeymap")
+@Mod(DefaultOptions.MOD_ID)
 @Mod.EventBusSubscriber
 public class DefaultOptions {
-
-    private static class DefaultBinding {
-        public final int keyCode;
-        public final KeyModifier modifier;
-
-        public DefaultBinding(int keyCode, KeyModifier modifier) {
-            this.keyCode = keyCode;
-            this.modifier = modifier;
-        }
-    }
 
     public static final String MOD_ID = "defaultoptions";
     public static final Logger logger = LogManager.getLogger(MOD_ID);
 
-    @Mod.Instance
-    public static DefaultOptions instance;
-
     private static Map<String, DefaultBinding> defaultKeys = Maps.newHashMap();
     private static List<String> knownKeys = Lists.newArrayList();
 
-    @Mod.EventHandler
-    public void construct(FMLConstructionEvent event) {
+    public DefaultOptions() {
+        MinecraftForge.EVENT_BUS.register(this);
+
         preStartGame();
 
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
         GameSettings gameSettings = mc.gameSettings;
         gameSettings.loadOptions();
 
@@ -86,17 +67,16 @@ public class DefaultOptions {
         }
 
         resourcePackRepository.setRepositories(repositoryEntries);
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::finishLoading);
     }
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        ClientCommandHandler.instance.registerCommand(new CommandDefaultOptions());
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new DefaultDifficultyHandler());
+    private void setupClient(FMLClientSetupEvent event) {
+        // TODO ClientCommandHandler.instance.registerCommand(new CommandDefaultOptions());
     }
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    private void finishLoading(FMLLoadCompleteEvent event) {
         File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
         if (!defaultOptions.exists()) {
             saveDefaultOptions();
@@ -104,7 +84,7 @@ public class DefaultOptions {
 
         File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
         if (!defaultOptionsOF.exists()) {
-            saveDefaultOptionsOptiFine();
+            saveDefaultOptionsOptifine();
         }
 
         File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
@@ -115,16 +95,8 @@ public class DefaultOptions {
         reloadDefaultMappings();
     }
 
-    @SubscribeEvent
-    public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.getModID().equals(MOD_ID)) {
-            ConfigManager.sync(MOD_ID, Config.Type.INSTANCE);
-            DefaultOptionsConfig.onConfigReload();
-        }
-    }
-
     public static void preStartGame() {
-        File mcDataDir = Minecraft.getMinecraft().mcDataDir;
+        File mcDataDir = getMinecraftDataDir();
         File optionsFile = new File(mcDataDir, "options.txt");
         boolean firstRun = !optionsFile.exists();
         if (firstRun) {
@@ -147,27 +119,23 @@ public class DefaultOptions {
         }
     }
 
-    private static boolean applyDefaultServers() {
+    private static void applyDefaultServers() {
         try {
-            FileUtils.copyFile(new File(getDefaultOptionsFolder(), "servers.dat"), new File(Minecraft.getMinecraft().mcDataDir, "servers.dat"));
-            return true;
+            FileUtils.copyFile(new File(getDefaultOptionsFolder(), "servers.dat"), new File(getMinecraftDataDir(), "servers.dat"));
         } catch (IOException e) {
             logger.error(e);
-            return false;
         }
     }
 
-    public static boolean applyDefaultConfig() {
+    public static void applyDefaultConfig() {
         try {
-            FileUtils.copyDirectory(getDefaultOptionsFolder(), new File(Minecraft.getMinecraft().mcDataDir, "config"), file -> !file.getName().equals("options.txt")
+            FileUtils.copyDirectory(getDefaultOptionsFolder(), new File(getMinecraftDataDir(), "config"), file -> !file.getName().equals("options.txt")
                     && !file.getName().equals("optionsof.txt")
                     && !file.getName().equals("keybindings.txt")
                     && !file.getName().equals("defaultoptions")
                     && !file.getName().equals("servers.dat"));
-            return true;
         } catch (IOException e) {
             logger.error(e);
-            return false;
         }
     }
 
@@ -175,7 +143,7 @@ public class DefaultOptions {
         File defaultOptionsFile = new File(getDefaultOptionsFolder(), "options.txt");
         if (defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
-                 PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")))) {
+                 PrintWriter writer = new PrintWriter(new FileWriter(new File(getMinecraftDataDir(), "options.txt")))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("key_")) {
@@ -195,7 +163,7 @@ public class DefaultOptions {
         File defaultOptionsFile = new File(getDefaultOptionsFolder(), "optionsof.txt");
         if (defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
-                 PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")))) {
+                 PrintWriter writer = new PrintWriter(new FileWriter(new File(getMinecraftDataDir(), "optionsof.txt")))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     writer.println(line);
@@ -208,13 +176,14 @@ public class DefaultOptions {
         return true;
     }
 
-    public boolean saveDefaultOptionsOptiFine() {
+    public static boolean saveDefaultOptionsOptifine() {
         if (!FMLClientHandler.instance().hasOptifine()) {
             return true;
         }
-        Minecraft.getMinecraft().gameSettings.saveOptions();
+
+        Minecraft.getInstance().gameSettings.saveOptions();
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "optionsof.txt")));
-             BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")))) {
+             BufferedReader reader = new BufferedReader(new FileReader(new File(getMinecraftDataDir(), "optionsof.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 writer.println(line);
@@ -226,10 +195,10 @@ public class DefaultOptions {
         return true;
     }
 
-    public boolean saveDefaultOptions() {
-        Minecraft.getMinecraft().gameSettings.saveOptions();
+    public static boolean saveDefaultOptions() {
+        Minecraft.getInstance().gameSettings.saveOptions();
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "options.txt")));
-             BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "options.txt")))) {
+             BufferedReader reader = new BufferedReader(new FileReader(new File(getMinecraftDataDir(), "options.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("key_")) {
@@ -244,8 +213,8 @@ public class DefaultOptions {
         return true;
     }
 
-    public boolean saveDefaultServers() {
-        File serversDat = new File(Minecraft.getMinecraft().mcDataDir, "servers.dat");
+    public static boolean saveDefaultServers() {
+        File serversDat = new File(getMinecraftDataDir(), "servers.dat");
         if (serversDat.exists()) {
             try {
                 FileUtils.copyFile(serversDat, new File(getDefaultOptionsFolder(), "servers.dat"));
@@ -259,10 +228,11 @@ public class DefaultOptions {
         }
     }
 
-    public boolean saveDefaultMappings() {
+    public static boolean saveDefaultMappings() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "keybindings.txt")))) {
-            for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
-                writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode() + ":" + keyBinding.getKeyModifier().name());
+            for (KeyBinding keyBinding : Minecraft.getInstance().gameSettings.keyBindings) {
+                // TODO Check how keybindings are stored now
+//                writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode() + ":" + keyBinding.getKeyModifier().name());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -271,9 +241,9 @@ public class DefaultOptions {
         return true;
     }
 
-    private Pattern PATTERN = Pattern.compile("key_(.+):([0-9\\-]+)(?::(.+))?");
+    private static final Pattern PATTERN = Pattern.compile("key_(.+):([0-9\\-]+)(?::(.+))?");
 
-    public void reloadDefaultMappings() {
+    public static void reloadDefaultMappings() {
         // Clear old values
         defaultKeys.clear();
         knownKeys.clear();
@@ -295,6 +265,7 @@ public class DefaultOptions {
 
                     try {
                         KeyModifier modifier = matcher.group(3) != null ? KeyModifier.valueFromString(matcher.group(3)) : KeyModifier.NONE;
+                        // TODO Check how KeyBindings are loaded now
                         defaultKeys.put(matcher.group(1), new DefaultBinding(Integer.parseInt(matcher.group(2)), modifier));
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
@@ -306,7 +277,7 @@ public class DefaultOptions {
         }
 
         // Load the known keys from the Minecraft directory
-        File knownKeysFile = new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt");
+        File knownKeysFile = new File(getMinecraftDataDir(), "knownkeys.txt");
         if (knownKeysFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(knownKeysFile))) {
                 String line;
@@ -321,13 +292,13 @@ public class DefaultOptions {
         }
 
         // Override the default mappings and set the initial key codes, if the key is not known yet
-        for (KeyBinding keyBinding : Minecraft.getMinecraft().gameSettings.keyBindings) {
+        for (KeyBinding keyBinding : Minecraft.getInstance().gameSettings.keyBindings) {
             if (defaultKeys.containsKey(keyBinding.getKeyDescription())) {
                 DefaultBinding defaultBinding = defaultKeys.get(keyBinding.getKeyDescription());
-                keyBinding.keyCodeDefault = defaultBinding.keyCode;
-                ReflectionHelper.setPrivateValue(KeyBinding.class, keyBinding, defaultBinding.modifier, "keyModifierDefault");
+                keyBinding.keyCodeDefault = defaultBinding.input;
+                ObfuscationReflectionHelper.setPrivateValue(KeyBinding.class, keyBinding, defaultBinding.modifier, "keyModifierDefault");
                 if (!knownKeys.contains(keyBinding.getKeyDescription())) {
-                    keyBinding.setKeyModifierAndCode(keyBinding.getKeyModifierDefault(), keyBinding.getKeyCodeDefault());
+                    keyBinding.setKeyModifierAndCode(keyBinding.getKeyModifierDefault(), keyBinding.getDefault());
                     knownKeys.add(keyBinding.getKeyDescription());
                 }
             }
@@ -335,7 +306,7 @@ public class DefaultOptions {
         KeyBinding.resetKeyBindingArrayAndHash();
 
         // Save the updated known keys to the knownkeys.txt file in the Minecraft directory
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "knownkeys.txt")))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getMinecraftDataDir(), "knownkeys.txt")))) {
             for (String key : knownKeys) {
                 writer.println(key);
             }
@@ -345,9 +316,13 @@ public class DefaultOptions {
     }
 
     private static File getDefaultOptionsFolder() {
-        File defaultOptions = new File(Minecraft.getMinecraft().mcDataDir, "config/defaultoptions");
+        File defaultOptions = new File(getMinecraftDataDir(), "config/defaultoptions");
         //noinspection ResultOfMethodCallIgnored
         defaultOptions.mkdirs();
         return defaultOptions;
+    }
+
+    public static File getMinecraftDataDir() {
+        return Minecraft.getInstance().gameDir;
     }
 }

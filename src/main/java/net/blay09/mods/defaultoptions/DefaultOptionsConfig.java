@@ -1,19 +1,35 @@
 package net.blay09.mods.defaultoptions;
 
 import net.minecraft.world.EnumDifficulty;
-import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.ForgeConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
-@Config(modid = DefaultOptions.MOD_ID)
 public class DefaultOptionsConfig {
 
-    @Config.Name("Default Difficulty")
-    @Config.Comment("The default difficulty selected for newly created worlds.")
-    public static EnumDifficulty defaultDifficulty = EnumDifficulty.NORMAL;
+    public static class Common {
+        public final ForgeConfigSpec.ConfigValue<EnumDifficulty> defaultDifficulty;
+        public final ForgeConfigSpec.BooleanValue lockDifficulty;
 
-    @Config.Name("Lock Difficulty")
-    @Config.Comment("Set to true if the difficulty for new world's should be locked ot the specific default. This cannot be unlocked by players without external tools! Probably a bad idea. I don't recommend. Why am I adding this option?")
-    public static boolean lockDifficulty = false;
+        Common(ForgeConfigSpec.Builder builder) {
+            defaultDifficulty = builder
+                    .comment("The default difficulty selected for newly created worlds.")
+                    .translation("defaultoptions.config.defaultDifficulty")
+                    .define("defaultDifficulty", EnumDifficulty.NORMAL);
 
-    public static void onConfigReload() {
+            lockDifficulty = builder
+                    .comment("Set to true if the difficulty for new world's should be locked ot the specific default. This cannot be unlocked by players without external tools! Probably a bad idea. I don't recommend. Why am I adding this option?")
+                    .translation("defaultoptions.config.lockDifficulty")
+                    .define("lockDifficulty", false);
+        }
     }
+
+    static final ForgeConfigSpec commonSpec;
+    public static final Common COMMON;
+
+    static {
+        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        commonSpec = specPair.getRight();
+        COMMON = specPair.getLeft();
+    }
+
 }

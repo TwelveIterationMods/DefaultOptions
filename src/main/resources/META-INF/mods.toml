@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[24,)"
+issueTrackerURL="https://github.com/blay09/DefaultOptions/issues"
+displayURL="https://minecraft.curseforge.com/projects/default-options"
+authors="BlayTheNinth"
+
+[[mods]]
+modId="defaultoptions"
+version="${file.jarVersion}"
+displayName="Default Options"
+description='''
+A way for modpacks to ship a default (key) configuration without having to include an options.txt file. Also allows local options from any mod .cfg file.
+'''
