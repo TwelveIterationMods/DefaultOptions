@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,13 +22,13 @@ public class CommandDefaultOptions {
                 .then(Commands.literal("overwriteConfig").executes(context -> {
                     try {
                         if (new File(DefaultOptions.getMinecraftDataDir(), "overwrite-config").createNewFile()) {
-                            context.getSource().sendFeedback(new TextComponentString("overwrite-config file created. Settings will be overwritten from default-config on next run."), true);
+                            context.getSource().sendFeedback(new StringTextComponent("overwrite-config file created. Settings will be overwritten from default-config on next run."), true);
                             return Command.SINGLE_SUCCESS;
                         }
                     } catch (IOException e) {
                         DefaultOptions.logger.error(e);
                     }
-                    context.getSource().sendFeedback(new TextComponentString("Failed to create overwrite-config file. Please create it manually."), true);
+                    context.getSource().sendFeedback(new StringTextComponent("Failed to create overwrite-config file. Please create it manually."), true);
                     return 0;
                 }))
         );
@@ -38,26 +38,26 @@ public class CommandDefaultOptions {
         CommandSource source = context.getSource();
         if (saveKeys) {
             if (DefaultOptions.saveDefaultMappings()) {
-                source.sendFeedback(new TextComponentString("Successfully saved the key configuration."), true);
+                source.sendFeedback(new StringTextComponent("Successfully saved the key configuration."), true);
                 DefaultOptions.reloadDefaultMappings();
             } else {
-                source.sendFeedback(new TextComponentString("Failed saving the key configuration. See the log for more information."), true);
+                source.sendFeedback(new StringTextComponent("Failed saving the key configuration. See the log for more information."), true);
             }
         }
 
         if (saveOptions) {
             if (DefaultOptions.saveDefaultOptions() && DefaultOptions.saveDefaultOptionsOptifine()) {
-                source.sendFeedback(new TextComponentString("Successfully saved the configuration."), true);
+                source.sendFeedback(new StringTextComponent("Successfully saved the configuration."), true);
             } else {
-                source.sendFeedback(new TextComponentString("Failed saving the configuration. See the log for more information."), true);
+                source.sendFeedback(new StringTextComponent("Failed saving the configuration. See the log for more information."), true);
             }
         }
 
         if (saveServers) {
             if (DefaultOptions.saveDefaultServers()) {
-                source.sendFeedback(new TextComponentString("Successfully saved the server list."), true);
+                source.sendFeedback(new StringTextComponent("Successfully saved the server list."), true);
             } else {
-                source.sendFeedback(new TextComponentString("Failed saving the server list. See the log for more information."), true);
+                source.sendFeedback(new StringTextComponent("Failed saving the server list. See the log for more information."), true);
             }
         }
 

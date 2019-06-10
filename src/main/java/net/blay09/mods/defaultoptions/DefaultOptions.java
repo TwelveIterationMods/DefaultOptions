@@ -5,26 +5,26 @@ import com.google.common.collect.Maps;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Mod(DefaultOptions.MOD_ID)
-@Mod.EventBusSubscriber
 public class DefaultOptions {
 
     public static final String MOD_ID = "defaultoptions";
@@ -36,44 +36,43 @@ public class DefaultOptions {
     public DefaultOptions() {
         MinecraftForge.EVENT_BUS.register(this);
 
-        preStartGame();
+        applyDefaults();
 
         Minecraft mc = Minecraft.getInstance();
         GameSettings gameSettings = mc.gameSettings;
         gameSettings.loadOptions();
 
-        // We need to update the language here manually because it's set prior to construct
-        mc.getLanguageManager().currentLanguage = gameSettings.language;
-
-        // We need to update the resource pack repository manually because it's set prior to construct
-        ResourcePackRepository resourcePackRepository = mc.getResourcePackRepository();
-        resourcePackRepository.updateRepositoryEntriesAll();
-        List<ResourcePackRepository.Entry> repositoryEntriesAll = resourcePackRepository.getRepositoryEntriesAll();
-        List<ResourcePackRepository.Entry> repositoryEntries = Lists.newArrayList();
-        Iterator<String> it = gameSettings.resourcePacks.iterator();
-        while (it.hasNext()) {
-            String packName = it.next();
-            for (ResourcePackRepository.Entry entry : repositoryEntriesAll) {
-                if (entry.getResourcePackName().equals(packName)) {
-                    if (entry.getPackFormat() == 3 || gameSettings.incompatibleResourcePacks.contains(entry.getResourcePackName())) {
-                        repositoryEntries.add(entry);
-                        break;
-                    }
-
-                    it.remove();
-                    logger.warn("[Vanilla Behaviour] Removed selected resource pack {} because it's no longer compatible", entry.getResourcePackName());
-                }
-            }
-        }
-
-        resourcePackRepository.setRepositories(repositoryEntries);
-
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::finishLoading);
+
+        MinecraftForge.EVENT_BUS.addListener(this::setupServer);
     }
 
-    private void setupClient(FMLClientSetupEvent event) {
-        // TODO ClientCommandHandler.instance.registerCommand(new CommandDefaultOptions());
+    private void setupServer(FMLServerStartingEvent event) {
+        CommandDefaultOptions.register(event.getCommandDispatcher());
+    }
+
+    public static void applyDefaults() {
+        File mcDataDir = getMinecraftDataDir();
+        File optionsFile = new File(mcDataDir, "options.txt");
+        boolean firstRun = !optionsFile.exists();
+        if (firstRun) {
+            applyDefaultOptions();
+        }
+        File optionsFileOF = new File(mcDataDir, "optionsof.txt");
+        if (!optionsFileOF.exists()) {
+            applyDefaultOptionsOptifine();
+        }
+        File serversDatFile = new File(mcDataDir, "servers.dat");
+        if (!serversDatFile.exists()) {
+            applyDefaultServers();
+        }
+        File overwriteConfig = new File(mcDataDir, "overwrite-config");
+        if (firstRun || overwriteConfig.exists()) {
+            applyDefaultConfig();
+            if (overwriteConfig.exists() && !overwriteConfig.delete()) {
+                logger.warn("Could not delete overwrite-config file. Configs will be overwritten from defaults upon next run unless you delete the file manually.");
+            }
+        }
     }
 
     private void finishLoading(FMLLoadCompleteEvent event) {
@@ -93,30 +92,6 @@ public class DefaultOptions {
         }
 
         reloadDefaultMappings();
-    }
-
-    public static void preStartGame() {
-        File mcDataDir = getMinecraftDataDir();
-        File optionsFile = new File(mcDataDir, "options.txt");
-        boolean firstRun = !optionsFile.exists();
-        if (firstRun) {
-            applyDefaultOptions();
-        }
-        File optionsFileOF = new File(mcDataDir, "optionsof.txt");
-        if (!optionsFileOF.exists()) {
-            applyDefaultOptionsOptiFine();
-        }
-        File serversDatFile = new File(mcDataDir, "servers.dat");
-        if (!serversDatFile.exists()) {
-            applyDefaultServers();
-        }
-        File overwriteConfig = new File(mcDataDir, "overwrite-config");
-        if (firstRun || overwriteConfig.exists()) {
-            applyDefaultConfig();
-            if (overwriteConfig.exists() && !overwriteConfig.delete()) {
-                logger.warn("Could not delete overwrite-config file. Configs will be overwritten from defaults upon next run unless you delete the file manually.");
-            }
-        }
     }
 
     private static void applyDefaultServers() {
@@ -159,7 +134,7 @@ public class DefaultOptions {
         return true;
     }
 
-    private static boolean applyDefaultOptionsOptiFine() {
+    private static void applyDefaultOptionsOptifine() {
         File defaultOptionsFile = new File(getDefaultOptionsFolder(), "optionsof.txt");
         if (defaultOptionsFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
@@ -170,14 +145,12 @@ public class DefaultOptions {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
             }
         }
-        return true;
     }
 
     public static boolean saveDefaultOptionsOptifine() {
-        if (!FMLClientHandler.instance().hasOptifine()) {
+        if (!ModList.get().isLoaded("optifine")) {
             return true;
         }
 
@@ -231,8 +204,7 @@ public class DefaultOptions {
     public static boolean saveDefaultMappings() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "keybindings.txt")))) {
             for (KeyBinding keyBinding : Minecraft.getInstance().gameSettings.keyBindings) {
-                // TODO Check how keybindings are stored now
-//                writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getKeyCode() + ":" + keyBinding.getKeyModifier().name());
+                writer.println("key_" + keyBinding.getKeyDescription() + ":" + keyBinding.getTranslationKey() + ":" + keyBinding.getKeyModifier().name());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -241,7 +213,7 @@ public class DefaultOptions {
         return true;
     }
 
-    private static final Pattern PATTERN = Pattern.compile("key_(.+):([0-9\\-]+)(?::(.+))?");
+    private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+))?");
 
     public static void reloadDefaultMappings() {
         // Clear old values
@@ -258,15 +230,14 @@ public class DefaultOptions {
                         continue;
                     }
 
-                    Matcher matcher = PATTERN.matcher(line);
+                    Matcher matcher = KEY_PATTERN.matcher(line);
                     if (!matcher.matches()) {
                         continue;
                     }
 
                     try {
                         KeyModifier modifier = matcher.group(3) != null ? KeyModifier.valueFromString(matcher.group(3)) : KeyModifier.NONE;
-                        // TODO Check how KeyBindings are loaded now
-                        defaultKeys.put(matcher.group(1), new DefaultBinding(Integer.parseInt(matcher.group(2)), modifier));
+                        defaultKeys.put(matcher.group(1), new DefaultBinding(InputMappings.getInputByName(matcher.group(2)), modifier));
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
@@ -317,8 +288,10 @@ public class DefaultOptions {
 
     private static File getDefaultOptionsFolder() {
         File defaultOptions = new File(getMinecraftDataDir(), "config/defaultoptions");
-        //noinspection ResultOfMethodCallIgnored
-        defaultOptions.mkdirs();
+        if (!defaultOptions.exists() && !defaultOptions.mkdirs()) {
+            throw new IllegalStateException("Could not create default options directory.");
+        }
+
         return defaultOptions;
     }
 
