@@ -9,8 +9,10 @@ import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -42,6 +44,7 @@ public class DefaultOptions {
         GameSettings gameSettings = mc.gameSettings;
         gameSettings.loadOptions();
 
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DefaultOptionsConfig.commonSpec);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::finishLoading);
 
         MinecraftForge.EVENT_BUS.addListener(this::setupServer);
