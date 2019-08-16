@@ -69,13 +69,6 @@ public class DefaultOptions {
         if (!serversDatFile.exists()) {
             applyDefaultServers();
         }
-        File overwriteConfig = new File(mcDataDir, "overwrite-config");
-        if (firstRun || overwriteConfig.exists()) {
-            applyDefaultConfig();
-            if (overwriteConfig.exists() && !overwriteConfig.delete()) {
-                logger.warn("Could not delete overwrite-config file. Configs will be overwritten from defaults upon next run unless you delete the file manually.");
-            }
-        }
     }
 
     private void finishLoading(FMLLoadCompleteEvent event) {
@@ -100,18 +93,6 @@ public class DefaultOptions {
     private static void applyDefaultServers() {
         try {
             FileUtils.copyFile(new File(getDefaultOptionsFolder(), "servers.dat"), new File(getMinecraftDataDir(), "servers.dat"));
-        } catch (IOException e) {
-            logger.error(e);
-        }
-    }
-
-    public static void applyDefaultConfig() {
-        try {
-            FileUtils.copyDirectory(getDefaultOptionsFolder(), new File(getMinecraftDataDir(), "config"), file -> !file.getName().equals("options.txt")
-                    && !file.getName().equals("optionsof.txt")
-                    && !file.getName().equals("keybindings.txt")
-                    && !file.getName().equals("defaultoptions")
-                    && !file.getName().equals("servers.dat"));
         } catch (IOException e) {
             logger.error(e);
         }

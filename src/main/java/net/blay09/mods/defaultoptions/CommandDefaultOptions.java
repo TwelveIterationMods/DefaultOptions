@@ -8,9 +8,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
 
-import java.io.File;
-import java.io.IOException;
-
 public class CommandDefaultOptions {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -19,18 +16,6 @@ public class CommandDefaultOptions {
                 .then(Commands.literal("saveKeys").executes(context -> saveDefaultOptions(context, false, true, false)))
                 .then(Commands.literal("saveOptions").executes(context -> saveDefaultOptions(context, true, false, false)))
                 .then(Commands.literal("saveServers").executes(context -> saveDefaultOptions(context, false, false, true)))
-                .then(Commands.literal("overwriteConfig").executes(context -> {
-                    try {
-                        if (new File(DefaultOptions.getMinecraftDataDir(), "overwrite-config").createNewFile()) {
-                            context.getSource().sendFeedback(new StringTextComponent("overwrite-config file created. Settings will be overwritten from default-config on next run."), true);
-                            return Command.SINGLE_SUCCESS;
-                        }
-                    } catch (IOException e) {
-                        DefaultOptions.logger.error(e);
-                    }
-                    context.getSource().sendFeedback(new StringTextComponent("Failed to create overwrite-config file. Please create it manually."), true);
-                    return 0;
-                }))
         );
     }
 
