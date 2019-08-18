@@ -7,14 +7,14 @@ import org.apache.commons.lang3.tuple.Pair;
 public class DefaultOptionsConfig {
 
     public static class Common {
-        public final ForgeConfigSpec.ConfigValue<Difficulty> defaultDifficulty;
+        public final ForgeConfigSpec.EnumValue<Difficulty> defaultDifficulty;
         public final ForgeConfigSpec.BooleanValue lockDifficulty;
 
         Common(ForgeConfigSpec.Builder builder) {
             defaultDifficulty = builder
                     .comment("The default difficulty selected for newly created worlds.")
                     .translation("defaultoptions.config.defaultDifficulty")
-                    .define("defaultDifficulty", Difficulty.NORMAL);
+                    .defineEnum("defaultDifficulty", Difficulty.NORMAL);
 
             lockDifficulty = builder
                     .comment("Set to true if the difficulty for new world's should be locked ot the specific default. This cannot be unlocked by players without external tools! Probably a bad idea. I don't recommend. Why am I adding this option?")
