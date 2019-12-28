@@ -8,6 +8,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -72,22 +73,24 @@ public class DefaultOptions {
     }
 
     private void finishLoading(FMLLoadCompleteEvent event) {
-        File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
-        if (!defaultOptions.exists()) {
-            saveDefaultOptions();
-        }
+        DeferredWorkQueue.runLater(() -> {
+            File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
+            if (!defaultOptions.exists()) {
+                saveDefaultOptions();
+            }
 
-        File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
-        if (!defaultOptionsOF.exists()) {
-            saveDefaultOptionsOptifine();
-        }
+            File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
+            if (!defaultOptionsOF.exists()) {
+                saveDefaultOptionsOptifine();
+            }
 
-        File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
-        if (!defaultKeybindings.exists()) {
-            saveDefaultMappings();
-        }
+            File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
+            if (!defaultKeybindings.exists()) {
+                saveDefaultMappings();
+            }
 
-        reloadDefaultMappings();
+            reloadDefaultMappings();
+        });
     }
 
     private static void applyDefaultServers() {
