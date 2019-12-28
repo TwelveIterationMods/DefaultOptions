@@ -6,9 +6,11 @@ import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -37,17 +39,17 @@ public class DefaultOptions {
     private static List<String> knownKeys = Lists.newArrayList();
 
     public DefaultOptions() {
-        MinecraftForge.EVENT_BUS.register(this);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            applyDefaults();
 
-        applyDefaults();
+            Minecraft mc = Minecraft.getInstance();
+            GameSettings gameSettings = mc.gameSettings;
+            gameSettings.loadOptions();
 
-        Minecraft mc = Minecraft.getInstance();
-        GameSettings gameSettings = mc.gameSettings;
-        gameSettings.loadOptions();
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::finishLoading);
+        });
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DefaultOptionsConfig.commonSpec);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::finishLoading);
-
         MinecraftForge.EVENT_BUS.addListener(this::setupServer);
     }
 
@@ -142,6 +144,7 @@ public class DefaultOptions {
         }
 
         Minecraft.getInstance().gameSettings.saveOptions();
+
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "optionsof.txt")));
              BufferedReader reader = new BufferedReader(new FileReader(new File(getMinecraftDataDir(), "optionsof.txt")))) {
             String line;
@@ -157,6 +160,7 @@ public class DefaultOptions {
 
     public static boolean saveDefaultOptions() {
         Minecraft.getInstance().gameSettings.saveOptions();
+
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "options.txt")));
              BufferedReader reader = new BufferedReader(new FileReader(new File(getMinecraftDataDir(), "options.txt")))) {
             String line;
