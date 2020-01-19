@@ -42,10 +42,6 @@ public class DefaultOptions {
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             applyDefaults();
 
-            Minecraft mc = Minecraft.getInstance();
-            GameSettings gameSettings = mc.gameSettings;
-            gameSettings.loadOptions();
-
             FMLJavaModLoadingContext.get().getModEventBus().addListener(this::finishLoading);
         });
 
