@@ -225,12 +225,12 @@ public class DefaultOptions {
                     try {
                         KeyModifier modifier = matcher.group(3) != null ? KeyModifier.valueFromString(matcher.group(3)) : KeyModifier.NONE;
                         defaultKeys.put(matcher.group(1), new DefaultBinding(InputMappings.getInputByName(matcher.group(2)), modifier));
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        logger.error("Error loading default key binding for {}", line, e);
                     }
                 }
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                logger.error("Error loading default key bindings", e);
             }
         }
 
