@@ -65,7 +65,7 @@ public class DefaultOptions {
             applyDefaultOptionsOptifine();
         }
         File optionsFileShaders = new File(mcDataDir, "optionsshaders.txt");
-        if (!optionsFileShaders.exists() {
+        if (!optionsFileShaders.exists()) {
             applyDefaultOptionsShaders();
         }
         File serversDatFile = new File(mcDataDir, "servers.dat");
