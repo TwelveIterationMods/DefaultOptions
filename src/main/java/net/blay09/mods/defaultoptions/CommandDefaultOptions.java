@@ -31,7 +31,7 @@ public class CommandDefaultOptions {
         }
 
         if (saveOptions) {
-            if (DefaultOptions.saveDefaultOptions() && DefaultOptions.saveDefaultOptionsOptifine()) {
+            if (DefaultOptions.saveDefaultOptions() && DefaultOptions.saveDefaultOptionsOptifine() && DefaultOptions.saveDefaultOptionsShaders()) {
                 source.sendFeedback(new StringTextComponent("Successfully saved the configuration."), true);
             } else {
                 source.sendFeedback(new StringTextComponent("Failed saving the configuration. See the log for more information."), true);
