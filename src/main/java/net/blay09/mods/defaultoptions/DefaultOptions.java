@@ -2,13 +2,13 @@ package net.blay09.mods.defaultoptions;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -46,11 +45,11 @@ public class DefaultOptions {
         });
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DefaultOptionsConfig.commonSpec);
-        MinecraftForge.EVENT_BUS.addListener(this::setupServer);
+        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
     }
 
-    private void setupServer(FMLServerStartingEvent event) {
-        CommandDefaultOptions.register(event.getCommandDispatcher());
+    private void registerCommands(RegisterCommandsEvent event) {
+        CommandDefaultOptions.register(event.getDispatcher());
     }
 
     public static void applyDefaults() {
