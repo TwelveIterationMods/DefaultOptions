@@ -3,6 +3,7 @@ loaderVersion="[24,)"
 issueTrackerURL="https://github.com/blay09/DefaultOptions/issues"
 displayURL="https://minecraft.curseforge.com/projects/default-options"
 authors="BlayTheNinth"
+license="MIT"
 
 [[mods]]
 modId="defaultoptions"

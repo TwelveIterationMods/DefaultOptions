@@ -14,8 +14,8 @@ public class DefaultDifficultyHandler {
         final IWorldInfo worldInfo = event.getWorld().getWorldInfo();
         if (worldInfo instanceof IServerConfiguration) {
             if (worldInfo.getGameTime() == 0) {
-                ((IServerConfiguration) worldInfo).func_230409_a_(DefaultOptionsConfig.COMMON.defaultDifficulty.get()); // setDifficulty
-                ((IServerConfiguration) worldInfo).func_230415_d_(DefaultOptionsConfig.COMMON.lockDifficulty.get()); // setDifficultyLocked
+                ((IServerConfiguration) worldInfo).setDifficulty(DefaultOptionsConfig.COMMON.defaultDifficulty.get());
+                ((IServerConfiguration) worldInfo).setDifficultyLocked(DefaultOptionsConfig.COMMON.lockDifficulty.get());
             }
         }
     }
