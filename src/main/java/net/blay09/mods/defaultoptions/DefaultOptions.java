@@ -106,6 +106,11 @@ public class DefaultOptions {
         if (!defaultOptionsOF.exists()) {
             saveDefaultOptionsOptiFine();
         }
+        
+        File defaultOptionsShaders = new File(getDefaultOptionsFolder(), "optionsshaders.txt");
+        if (!defaultOptionsShaders.exists()) {
+            saveDefaultOptionsShaders();
+        }
 
         File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
         if (!defaultKeybindings.exists()) {
@@ -133,6 +138,10 @@ public class DefaultOptions {
         File optionsFileOF = new File(mcDataDir, "optionsof.txt");
         if (!optionsFileOF.exists()) {
             applyDefaultOptionsOptiFine();
+        }
+        File optionsFileShaders = new File(mcDataDir, "optionsshaders.txt");
+        if (!optionsFileShaders.exists()) {
+            applyDefaultOptionsShaders();
         }
         File serversDatFile = new File(mcDataDir, "servers.dat");
         if (!serversDatFile.exists()) {
@@ -207,6 +216,23 @@ public class DefaultOptions {
         }
         return true;
     }
+    
+    private static boolean applyDefaultOptionsShaders() {
+        File defaultOptionsFile = new File(getDefaultOptionsFolder(), "optionsshaders.txt");
+        if (defaultOptionsFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(defaultOptionsFile));
+                 PrintWriter writer = new PrintWriter(new FileWriter(new File(Minecraft.getMinecraft().mcDataDir, "optionsshaders.txt")))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    writer.println(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
 
     public boolean saveDefaultOptionsOptiFine() {
         if (!FMLClientHandler.instance().hasOptifine()) {
@@ -215,6 +241,24 @@ public class DefaultOptions {
         Minecraft.getMinecraft().gameSettings.saveOptions();
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "optionsof.txt")));
              BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "optionsof.txt")))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean saveDefaultOptionsShaders() {
+        if (!FMLClientHandler.instance().hasOptifine()) {
+            return true;
+        }
+        Minecraft.getMinecraft().gameSettings.saveOptions();
+        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "optionsshaders.txt")));
+             BufferedReader reader = new BufferedReader(new FileReader(new File(Minecraft.getMinecraft().mcDataDir, "optionsshaders.txt")))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 writer.println(line);
