@@ -60,7 +60,7 @@ public class CommandDefaultOptions extends CommandBase {
             }
         }
         if(saveOptions) {
-            if (DefaultOptions.instance.saveDefaultOptions() && DefaultOptions.instance.saveDefaultOptionsOptifine() && DefaultOptions.instance.saveDefaultOptionsShaders()) {
+            if (DefaultOptions.instance.saveDefaultOptions() && DefaultOptions.instance.saveDefaultOptionsOptiFine() && DefaultOptions.instance.saveDefaultOptionsShaders()) {
                 sender.sendMessage(new TextComponentString("Successfully saved the configuration."));
             } else {
                 sender.sendMessage(new TextComponentString("Failed saving the configuration. See the log for more information."));
