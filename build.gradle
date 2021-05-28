@@ -1,15 +1,17 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
         mavenCentral()
+        maven { url = "https://maven.minecraftforge.net" }
+        maven { url = "https://repo.spongepowered.org/maven" }
     }
     dependencies {
         classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
 apply plugin: "net.minecraftforge.gradle"
+apply plugin: "org.spongepowered.mixin"
 
 def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: patch_version
 
@@ -22,6 +24,12 @@ version = major_version + "." + minor_version + "." + BUILD_NUMBER
 group = "net.blay09.mods"
 archivesBaseName = mod_name + "_" + minecraft_version
 
+sourceSets {
+    main {
+        ext.refMap = "refmap.defaultoptions.json"
+    }
+}
+
 minecraft {
     mappings channel: mappings_channel, version: mappings_version
 
@@ -32,6 +40,16 @@ minecraft {
             workingDirectory project.file('run')
 //            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+
+            arg "-mixin.config=mixins.defaultoptions.json"
+
+            property "mixin.env.disableRefMap", "true"
+            property "mixin.debug.export", "true"
+            property "mixin.debug.export.decompile", "false"
+            property "mixin.debug.verbose", "true"
+            property "mixin.debug.dumpTargetOnFailure", "true"
+            property "mixin.checks", "true"
+            property "mixin.hotSwap", "true"
 
             mods {
                 defaultoptions {
@@ -44,6 +62,16 @@ minecraft {
 //            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
+            arg "-mixin.config=mixins.defaultoptions.json"
+
+            property "mixin.env.disableRefMap", "true"
+            property "mixin.debug.export", "true"
+            property "mixin.debug.export.decompile", "false"
+            property "mixin.debug.verbose", "true"
+            property "mixin.debug.dumpTargetOnFailure", "true"
+            property "mixin.checks", "true"
+            property "mixin.hotSwap", "true"
+
             mods {
                 defaultoptions {
                     source sourceSets.main
@@ -52,10 +80,19 @@ minecraft {
         }
         data {
             workingDirectory project.file('run')
-//            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/')
+
+            arg "-mixin.config=mixins.defaultoptions.json"
+
+            property "mixin.env.disableRefMap", "true"
+            property "mixin.debug.export", "true"
+            property "mixin.debug.export.decompile", "false"
+            property "mixin.debug.verbose", "true"
+            property "mixin.debug.dumpTargetOnFailure", "true"
+            property "mixin.checks", "true"
+            property "mixin.hotSwap", "true"
 
             mods {
                 defaultoptions {
@@ -67,9 +104,6 @@ minecraft {
 }
 
 repositories {
-    maven {
-        url "https://minecraft.curseforge.com/api/maven/"
-    }
 }
 
 dependencies {
@@ -91,6 +125,7 @@ jar {
                     "Implementation-Title"    : project.name,
                     "Implementation-Version"  : "${version}",
                     "Implementation-Vendor"   : "BlayTheNinth",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "MixinConfigs": "mixins.defaultoptions.json"],)
     }
 }
