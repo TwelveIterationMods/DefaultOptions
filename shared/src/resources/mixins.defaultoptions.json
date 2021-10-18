@@ -1,0 +1,11 @@
+{
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "required": true,
+  "package": "net.blay09.mods.defaultoptions.mixin",
+  "mixins": [
+    "CreateWorldScreenAccessor",
+    "OptionsMixin"
+  ],
+  "refmap": "refmap.defaultoptions.json"
+}
