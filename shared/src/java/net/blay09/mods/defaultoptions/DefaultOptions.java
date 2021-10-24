@@ -169,7 +169,7 @@ public class DefaultOptions {
                     if (!line.isEmpty()) {
                         knownKeys.add(line);
                     }
-                }
+                    }
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }

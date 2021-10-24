@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[37,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/ModdingForBlockheads/DefaultOptions/issues"
+
 [[mods]]
 modId="defaultoptions"
 version="${file.jarVersion}"
@@ -11,8 +12,9 @@ logoFile="defaultoptions-icon.png"
 credits="BlayTheNinth"
 authors="BlayTheNinth"
 description='''
-
+A way for modpacks to ship a default (key) configuration without having to include an options.txt file. Also allows local options from any mod .cfg file.
 '''
+
 [[dependencies.defaultoptions]]
     modId="forge"
     mandatory=true
@@ -28,6 +30,6 @@ description='''
 [[dependencies.defaultoptions]]
     modId="balm"
     mandatory=true
-    versionRange="[1.6.0,)"
+    versionRange="[1.7.0,)"
     ordering="NONE"
     side="BOTH"
