@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.mixin.KeyMappingAccessor;
@@ -31,14 +30,14 @@ public class DefaultOptions {
     private static final Map<String, DefaultBinding> defaultKeys = Maps.newHashMap();
     private static final List<String> knownKeys = Lists.newArrayList();
 
-    public static void initialize() {
-        Balm.initialize(MOD_ID);
-        BalmClient.initialize(MOD_ID);
-
+    public static void initializeCommon() {
         DefaultOptionsConfig.initialize();
-
         Balm.getCommands().register(DefaultOptionsCommand::register);
         Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptions::finishLoading);
+    }
+
+    public static void initializeClient() {
+        DefaultDifficultyHandler.initialize();
     }
 
     private static void finishLoading(ClientStartedEvent event) {
@@ -117,7 +116,8 @@ public class DefaultOptions {
     public static boolean saveDefaultMappings() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "keybindings.txt")))) {
             for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
-                writer.println("key_" + keyMapping.getName() + ":" + keyMapping.saveString() + ":" + keyMapping.getKeyModifier().name());
+                KeyModifier keyModifier = PlatformBindings.INSTANCE.getKeyModifier(keyMapping);
+                writer.println("key_" + keyMapping.getName() + ":" + keyMapping.saveString() + ":" + keyModifier.name());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -169,7 +169,7 @@ public class DefaultOptions {
                     if (!line.isEmpty()) {
                         knownKeys.add(line);
                     }
-                    }
+                }
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
@@ -182,7 +182,9 @@ public class DefaultOptions {
                 ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultBinding.input);
                 PlatformBindings.INSTANCE.setDefaultKeyModifier(keyMapping, defaultBinding.modifier);
                 if (!knownKeys.contains(keyMapping.getName())) {
-                    keyMapping.setKeyModifierAndCode(keyMapping.getKeyModifierDefault(), keyMapping.getDefaultKey());
+                    KeyModifier defaultKeyModifier = PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping);
+                    PlatformBindings.INSTANCE.setKeyModifier(keyMapping, defaultKeyModifier);
+                    keyMapping.setKey(keyMapping.getDefaultKey());
                     knownKeys.add(keyMapping.getName());
                 }
             }
