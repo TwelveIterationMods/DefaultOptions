@@ -15,7 +15,7 @@ public class DefaultDifficultyHandler {
 
     public static void onInitGui(ScreenInitEvent.Post event) {
         if (event.getScreen() instanceof CreateWorldScreenAccessor screen) {
-            Difficulty difficulty = DefaultOptionsConfig.getActive().defaultDifficulty;
+            Difficulty difficulty = DefaultOptionsConfig.getActive().defaultDifficulty.toDifficulty();
             screen.setDifficulty(difficulty);
             screen.getDifficultyButton().setValue(difficulty);
             if (DefaultOptionsConfig.getActive().lockDifficulty) {
