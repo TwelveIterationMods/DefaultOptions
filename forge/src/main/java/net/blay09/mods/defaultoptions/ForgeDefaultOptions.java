@@ -8,7 +8,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
+import net.minecraftforge.network.NetworkConstants;
 
 @Mod(DefaultOptions.MOD_ID)
 public class ForgeDefaultOptions {
@@ -38,7 +38,7 @@ public class ForgeDefaultOptions {
 
             @Override
             public KeyModifier getDefaultKeyModifier(KeyMapping keyMapping) {
-                return fromForge(keyMapping.getKeyModifierDefault());
+                return fromForge(keyMapping.getDefaultKeyModifier());
             }
 
             private static KeyModifier fromForge(net.minecraftforge.client.settings.KeyModifier keyModifier) {
@@ -60,12 +60,12 @@ public class ForgeDefaultOptions {
             }
         };
 
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () -> {
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             DefaultOptions.initializeCommon();
             DefaultOptions.initializeClient();
         });
 
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
     }
 
 }
