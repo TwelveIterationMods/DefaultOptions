@@ -43,7 +43,10 @@ public class DefaultOptionsInitializer {
 
     private static void applyDefaultServers() {
         try {
-            FileUtils.copyFile(new File(getDefaultOptionsFolder(), "servers.dat"), new File(getMinecraftDataDir(), "servers.dat"));
+            File defaultServers = new File(getDefaultOptionsFolder(), "servers.dat");
+            if (defaultServers.exists()) {
+                FileUtils.copyFile(defaultServers, new File(getMinecraftDataDir(), "servers.dat"));
+            }
         } catch (IOException e) {
             logger.error(e);
         }
