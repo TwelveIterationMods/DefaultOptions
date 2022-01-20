@@ -32,7 +32,7 @@ public class FabricDefaultOptionsClient implements ClientModInitializer {
             }
         };
 
-        Balm.initialize(DefaultOptions.MOD_ID, DefaultOptions::initializeCommon);
-        BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initializeClient);
+        Balm.initialize(DefaultOptions.MOD_ID, () -> {});
+        BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initialize);
     }
 }

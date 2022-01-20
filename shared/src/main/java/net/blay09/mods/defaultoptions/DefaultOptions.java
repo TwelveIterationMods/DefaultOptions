@@ -30,13 +30,10 @@ public class DefaultOptions {
     private static final Map<String, DefaultBinding> defaultKeys = Maps.newHashMap();
     private static final List<String> knownKeys = Lists.newArrayList();
 
-    public static void initializeCommon() {
+    public static void initialize() {
         DefaultOptionsConfig.initialize();
         Balm.getCommands().register(DefaultOptionsCommand::register);
         Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptions::finishLoading);
-    }
-
-    public static void initializeClient() {
         DefaultDifficultyHandler.initialize();
     }
 

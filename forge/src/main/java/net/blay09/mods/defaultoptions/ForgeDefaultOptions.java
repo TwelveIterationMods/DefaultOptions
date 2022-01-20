@@ -63,8 +63,8 @@ public class ForgeDefaultOptions {
         };
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            Balm.initialize(DefaultOptions.MOD_ID, DefaultOptions::initializeCommon);
-            BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initializeClient);
+            Balm.initialize(DefaultOptions.MOD_ID, () -> {});
+            BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initialize);
         });
 
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
