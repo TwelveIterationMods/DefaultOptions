@@ -1,5 +1,7 @@
 package net.blay09.mods.defaultoptions;
 
+import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.defaultoptions.mixin.ForgeKeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
@@ -61,8 +63,8 @@ public class ForgeDefaultOptions {
         };
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            DefaultOptions.initializeCommon();
-            DefaultOptions.initializeClient();
+            Balm.initialize(DefaultOptions.MOD_ID, DefaultOptions::initializeCommon);
+            BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initializeClient);
         });
 
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
