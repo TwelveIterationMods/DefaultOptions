@@ -1,6 +1,9 @@
 ## Version 14.0.1 for Minecraft 1.18.x
 
-- Fixed mod not being loaded correctly on Forge
+- Added support for ViveCraft default options
+- Added support for ["extra default options"](https://github.com/ModdingForBlockheads/DefaultOptions#extra-default-options), e.g. for JourneyMap support
+- Added an API for other mods to add custom default option files
+- Fixed mod not being loaded correctly on Forge, resulting in key mappings not being defaulted
 
 ## Version 14.0.0 for Minecraft 1.18
 
