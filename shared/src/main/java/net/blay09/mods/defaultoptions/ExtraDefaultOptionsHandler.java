@@ -25,7 +25,7 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
 
     @Override
     public String getId() {
-        return "extra/*";
+        return "extra-folder";
     }
 
     @Override
