@@ -13,4 +13,8 @@ public class DefaultOptionsAPI {
     public static void registerOptionsHandler(DefaultOptionsHandler handler) {
         __internalMethods.registerOptionsHandler(handler);
     }
+
+    public static File getDefaultOptionsFolder() {
+        return __internalMethods.getDefaultOptionsFolder();
+    }
 }

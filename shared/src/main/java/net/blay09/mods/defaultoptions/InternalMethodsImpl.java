@@ -18,4 +18,9 @@ public class InternalMethodsImpl implements InternalMethods {
     public void registerOptionsHandler(DefaultOptionsHandler handler) {
         DefaultOptions.addDefaultOptionsHandler(handler);
     }
+
+    @Override
+    public File getDefaultOptionsFolder() {
+        return DefaultOptions.getDefaultOptionsFolder();
+    }
 }

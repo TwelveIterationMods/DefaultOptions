@@ -10,8 +10,9 @@ public class DefaultOptionsInitializer {
 
     public static void loadDefaults() {
         for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
-            if (!handler.shouldLoadDefaults()) {
+            if (handler.shouldLoadDefaults()) {
                 try {
+                    DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
                     handler.loadDefaults();
                 } catch (DefaultOptionsHandlerException e) {
                     DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);

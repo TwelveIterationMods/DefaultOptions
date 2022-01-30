@@ -8,6 +8,7 @@ import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.command.DefaultOptionsCommand;
 import net.blay09.mods.defaultoptions.config.DefaultOptionsConfig;
 import net.blay09.mods.defaultoptions.difficulty.DefaultDifficultyHandler;
+import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DefaultOptions {
 
@@ -42,6 +44,12 @@ public class DefaultOptions {
             DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "optionsof.txt"))
                     .withSaveHandler(() -> Minecraft.getInstance().options.save());
         }
+
+        if (ClientBrandRetriever.getClientModName().toLowerCase(Locale.ENGLISH).contains("vivecraft")) {
+            DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "optionsviveprofiles.txt"));
+        }
+
+        DefaultOptionsAPI.registerOptionsHandler(new ExtraDefaultOptionsHandler());
     }
 
     public static void saveDefaultOptions(DefaultOptionsCategory category) throws DefaultOptionsHandlerException {

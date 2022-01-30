@@ -6,5 +6,6 @@ public interface InternalMethods {
 
     SimpleDefaultOptionsHandler registerOptionsFile(File file);
     void registerOptionsHandler(DefaultOptionsHandler handler);
+    File getDefaultOptionsFolder();
 
 }
