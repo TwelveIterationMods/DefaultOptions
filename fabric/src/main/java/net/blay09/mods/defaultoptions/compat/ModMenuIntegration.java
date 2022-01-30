@@ -2,9 +2,8 @@ package net.blay09.mods.defaultoptions.compat;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.blay09.mods.balm.fabric.config.FabricBalmConfig;
-import net.blay09.mods.defaultoptions.DefaultOptionsConfigData;
+import net.blay09.mods.defaultoptions.config.DefaultOptionsConfigData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

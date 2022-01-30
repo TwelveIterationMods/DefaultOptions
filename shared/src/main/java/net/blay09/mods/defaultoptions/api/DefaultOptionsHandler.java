@@ -8,4 +8,6 @@ public interface DefaultOptionsHandler {
     void saveCurrentOptions();
     void saveCurrentOptionsAsDefault() throws DefaultOptionsHandlerException;
     boolean hasDefaults();
+    boolean shouldLoadDefaults();
+    void loadDefaults() throws DefaultOptionsHandlerException;
 }

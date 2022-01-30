@@ -1,15 +1,16 @@
-package net.blay09.mods.defaultoptions;
+package net.blay09.mods.defaultoptions.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.DefaultOptionsHandlerException;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
+import net.blay09.mods.defaultoptions.keys.DefaultKeyMappings;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
-
-import java.io.IOException;
 
 public class DefaultOptionsCommand {
 
@@ -25,9 +26,9 @@ public class DefaultOptionsCommand {
     private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) throws CommandRuntimeException {
         CommandSourceStack source = context.getSource();
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
-            if (DefaultOptions.saveDefaultMappings()) {
+            if (DefaultKeyMappings.saveDefaultMappings()) {
                 source.sendSuccess(new TextComponent("Successfully saved the key configuration."), true);
-                DefaultOptions.reloadDefaultMappings();
+                DefaultKeyMappings.reloadDefaultMappings();
             } else {
                 source.sendFailure(new TextComponent("Failed saving the key configuration. See the log for more information."));
             }

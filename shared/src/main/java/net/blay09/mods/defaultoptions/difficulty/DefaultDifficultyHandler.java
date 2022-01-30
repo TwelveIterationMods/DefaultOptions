@@ -1,8 +1,9 @@
-package net.blay09.mods.defaultoptions;
+package net.blay09.mods.defaultoptions.difficulty;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.event.client.screen.ScreenDrawEvent;
 import net.blay09.mods.balm.api.event.client.screen.ScreenInitEvent;
+import net.blay09.mods.defaultoptions.config.DefaultOptionsConfig;
 import net.blay09.mods.defaultoptions.mixin.CreateWorldScreenAccessor;
 import net.minecraft.world.Difficulty;
 

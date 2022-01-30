@@ -10,12 +10,12 @@ public class InternalMethodsImpl implements InternalMethods {
     @Override
     public SimpleDefaultOptionsHandler registerOptionsFile(File file) {
         SimpleDefaultOptionsFileHandler handler = new SimpleDefaultOptionsFileHandler(file);
-        DefaultOptions.defaultOptionsHandlers.add(handler);
+        DefaultOptions.addDefaultOptionsHandler(handler);
         return handler;
     }
 
     @Override
     public void registerOptionsHandler(DefaultOptionsHandler handler) {
-        DefaultOptions.defaultOptionsHandlers.add(handler);
+        DefaultOptions.addDefaultOptionsHandler(handler);
     }
 }

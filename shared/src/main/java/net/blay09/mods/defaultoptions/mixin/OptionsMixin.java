@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class OptionsMixin {
     @Inject(method = "load()V", at = @At("HEAD"))
     private void load(CallbackInfo ci) {
-        DefaultOptionsInitializer.applyDefaults();
+        DefaultOptionsInitializer.loadDefaults();
     }
 }

@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.function.Predicate;
 
-import static net.blay09.mods.defaultoptions.DefaultOptionsInitializer.getDefaultOptionsFolder;
-
 public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHandler {
 
     private final File file;
@@ -30,7 +28,7 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     }
 
     public File getDefaultsFile() {
-        return new File(getDefaultOptionsFolder(), file.getName());
+        return new File(DefaultOptions.getDefaultOptionsFolder(), file.getName());
     }
 
     @Override
@@ -59,6 +57,24 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
                 copyFileLineByLine(file, getDefaultsFile(), linePredicate);
             } else {
                 FileUtils.copyFile(file, getDefaultsFile());
+            }
+        } catch (IOException e) {
+            throw new DefaultOptionsHandlerException(this, e);
+        }
+    }
+
+    @Override
+    public boolean shouldLoadDefaults() {
+        return !file.exists() && hasDefaults();
+    }
+
+    @Override
+    public void loadDefaults() throws DefaultOptionsHandlerException {
+        try {
+            if (linePredicate != null) {
+                copyFileLineByLine(getDefaultsFile(), file, linePredicate);
+            } else {
+                FileUtils.copyFile(getDefaultsFile(), file);
             }
         } catch (IOException e) {
             throw new DefaultOptionsHandlerException(this, e);

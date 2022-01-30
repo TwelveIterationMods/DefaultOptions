@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultoptions;
+package net.blay09.mods.defaultoptions.difficulty;
 
 import net.minecraft.world.Difficulty;
 

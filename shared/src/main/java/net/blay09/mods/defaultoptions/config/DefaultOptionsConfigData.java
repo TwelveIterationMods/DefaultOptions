@@ -1,9 +1,10 @@
-package net.blay09.mods.defaultoptions;
+package net.blay09.mods.defaultoptions.config;
 
 import me.shedaniel.autoconfig.annotation.Config;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
-import net.minecraft.world.Difficulty;
+import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.difficulty.UnobfuscatedDifficulty;
 
 @Config(name = DefaultOptions.MOD_ID)
 public class DefaultOptionsConfigData implements BalmConfigData {
