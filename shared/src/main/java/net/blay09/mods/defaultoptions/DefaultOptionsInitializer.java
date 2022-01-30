@@ -1,34 +1,17 @@
 package net.blay09.mods.defaultoptions;
 
 import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
-import net.blay09.mods.defaultoptions.api.DefaultOptionsAPI;
-import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
-import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
-import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
-import net.blay09.mods.defaultoptions.keys.KeyMappingDefaultsHandler;
-import net.minecraft.client.Minecraft;
+import net.blay09.mods.defaultoptions.api.*;
 
-import java.io.File;
+import java.util.ServiceLoader;
 
 public class DefaultOptionsInitializer {
 
     static {
         DefaultOptionsAPI.__internalMethods = new InternalMethodsImpl();
 
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "options.txt"))
-                .withLinePredicate(line -> !line.startsWith("key_"))
-                .withSaveHandler(() -> Minecraft.getInstance().options.save());
-
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "servers.dat"))
-                .withCategory(DefaultOptionsCategory.SERVERS);
-
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "optionsof.txt"))
-                .withSaveHandler(() -> Minecraft.getInstance().options.save());
-
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "optionsviveprofiles.txt"));
-
-        DefaultOptionsAPI.registerOptionsHandler(new KeyMappingDefaultsHandler());
-        DefaultOptionsAPI.registerOptionsHandler(new ExtraDefaultOptionsHandler());
+        ServiceLoader<DefaultOptionsPlugin> loader = ServiceLoader.load(DefaultOptionsPlugin.class);
+        loader.forEach(DefaultOptionsPlugin::initialize);
     }
 
     public static void preLoad() {
