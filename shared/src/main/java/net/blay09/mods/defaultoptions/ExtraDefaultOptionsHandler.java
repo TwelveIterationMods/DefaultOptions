@@ -13,7 +13,7 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
     private File getCustomDefaultOptionsFolder() {
         File customDefaultOptionsFolder = new File(DefaultOptionsAPI.getDefaultOptionsFolder(), "extra");
         if (!customDefaultOptionsFolder.exists() && !customDefaultOptionsFolder.mkdirs()) {
-            throw new IllegalStateException("Could not create default options custom directory.");
+            throw new IllegalStateException("Could not create default options extra directory.");
         }
 
         return customDefaultOptionsFolder;
