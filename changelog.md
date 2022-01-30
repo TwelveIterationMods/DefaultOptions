@@ -1,4 +1,4 @@
-## Version 14.0.1 for Minecraft 1.18.x
+## Version 14.1.0 for Minecraft 1.18.x
 
 - Added support for ViveCraft default options
 - Added support for ["extra default options"](https://github.com/ModdingForBlockheads/DefaultOptions#extra-default-options), e.g. for JourneyMap support
