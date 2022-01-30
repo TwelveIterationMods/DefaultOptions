@@ -60,7 +60,7 @@ For example, to create default options for JourneyMap, you would:
 
 ## API
 
-Default Options starting in Minecraft 1.18 provides an API for other mods to register their own default option files.
+Starting in Minecraft 1.18, Default Options provides an API for other mods to register their own default option files.
 
 To use this API, you must specify Default Options as a build dependency in your Gradle file. You should only use classes
 from within the `net.blay09.mods.defaultoptions.api` package, as other classes may have unexpected breaking changes.
