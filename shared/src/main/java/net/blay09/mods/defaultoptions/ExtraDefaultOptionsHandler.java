@@ -8,6 +8,9 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
 
@@ -56,18 +59,19 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
 
     @Override
     public void loadDefaults() throws DefaultOptionsHandlerException {
-        File[] files = getCustomDefaultOptionsFolder().listFiles();
-        if (files != null) {
-            for (File defaultOptionsFile : files) {
-                File optionsFile = new File(DefaultOptions.getMinecraftDataDir(), defaultOptionsFile.getName());
-                if (!optionsFile.exists()) {
-                    try {
-                        FileUtils.copyFile(defaultOptionsFile, optionsFile);
-                    } catch (IOException e) {
-                        throw new DefaultOptionsHandlerException(this, e);
-                    }
+        Path defaultOptionsPath = getCustomDefaultOptionsFolder().toPath();
+        try {
+            List<Path> paths = Files.walk(defaultOptionsPath).toList();
+            for (Path path : paths) {
+                File defaultOptionsFile = path.toFile();
+                if (defaultOptionsFile.isFile()) {
+                    Path relativeDefaultOptionsPath = defaultOptionsPath.relativize(defaultOptionsFile.toPath());
+                    File optionsFile = new File(DefaultOptions.getMinecraftDataDir(), relativeDefaultOptionsPath.toString());
+                    FileUtils.copyFile(defaultOptionsFile, optionsFile);
                 }
             }
+        } catch (IOException e) {
+            throw new DefaultOptionsHandlerException(this, e);
         }
     }
 }

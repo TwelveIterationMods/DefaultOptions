@@ -27,31 +27,10 @@ public class DefaultOptions {
     private static final List<DefaultOptionsHandler> defaultOptionsHandlers = new ArrayList<>();
 
     public static void initialize() {
-        DefaultOptionsAPI.__internalMethods = new InternalMethodsImpl();
-
         DefaultOptionsConfig.initialize();
         Balm.getCommands().register(DefaultOptionsCommand::register);
         Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptionsInitializer::postLoad);
         DefaultDifficultyHandler.initialize();
-
-        DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "options.txt"))
-                .withLinePredicate(line -> !line.startsWith("key_"))
-                .withSaveHandler(() -> Minecraft.getInstance().options.save());
-
-        DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "servers.dat"))
-                .withCategory(DefaultOptionsCategory.SERVERS);
-
-        if (Balm.isModLoaded("optifine")) {
-            DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "optionsof.txt"))
-                    .withSaveHandler(() -> Minecraft.getInstance().options.save());
-        }
-
-        if (ClientBrandRetriever.getClientModName().toLowerCase(Locale.ENGLISH).contains("vivecraft")) {
-            DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "optionsviveprofiles.txt"));
-        }
-
-        DefaultOptionsAPI.registerOptionsHandler(new KeyMappingDefaultsHandler());
-        DefaultOptionsAPI.registerOptionsHandler(new ExtraDefaultOptionsHandler());
     }
 
     public static void saveDefaultOptions(DefaultOptionsCategory category) throws DefaultOptionsHandlerException {

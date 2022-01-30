@@ -59,14 +59,16 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     public void saveCurrentOptionsAsDefault() throws DefaultOptionsHandlerException {
         saveCurrentOptions();
 
-        try {
-            if (linePredicate != null) {
-                copyFileLineByLine(file, getDefaultsFile(), linePredicate);
-            } else {
-                FileUtils.copyFile(file, getDefaultsFile());
+        if (file.exists()) {
+            try {
+                if (linePredicate != null) {
+                    copyFileLineByLine(file, getDefaultsFile(), linePredicate);
+                } else {
+                    FileUtils.copyFile(file, getDefaultsFile());
+                }
+            } catch (IOException e) {
+                throw new DefaultOptionsHandlerException(this, e);
             }
-        } catch (IOException e) {
-            throw new DefaultOptionsHandlerException(this, e);
         }
     }
 
