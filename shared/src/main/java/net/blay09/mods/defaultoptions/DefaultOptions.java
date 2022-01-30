@@ -1,19 +1,21 @@
 package net.blay09.mods.defaultoptions;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsAPI;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.mixin.KeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,25 +29,42 @@ public class DefaultOptions {
     public static final String MOD_ID = "defaultoptions";
     public static final Logger logger = LogManager.getLogger(MOD_ID);
 
-    private static final Map<String, DefaultBinding> defaultKeys = Maps.newHashMap();
-    private static final List<String> knownKeys = Lists.newArrayList();
+    private static final Map<String, DefaultBinding> defaultKeys = new HashMap<>();
+    private static final List<String> knownKeys = new ArrayList<>();
+
+    public static final List<DefaultOptionsHandler> defaultOptionsHandlers = new ArrayList<>();
 
     public static void initialize() {
+        DefaultOptionsAPI.__internalMethods = new InternalMethodsImpl();
+
         DefaultOptionsConfig.initialize();
         Balm.getCommands().register(DefaultOptionsCommand::register);
         Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptions::finishLoading);
         DefaultDifficultyHandler.initialize();
+
+        DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "options.txt"))
+                .withLinePredicate(line -> !line.startsWith("key_"))
+                .withSaveHandler(() -> Minecraft.getInstance().options.save());
+
+        DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "servers.dat"))
+                .withCategory(DefaultOptionsCategory.SERVERS);
+
+        if (Balm.isModLoaded("optifine")) {
+            DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "optionsof.txt"))
+                    .withSaveHandler(() -> Minecraft.getInstance().options.save());
+        }
     }
 
     private static void finishLoading(ClientStartedEvent event) {
-        File defaultOptions = new File(getDefaultOptionsFolder(), "options.txt");
-        if (!defaultOptions.exists()) {
-            saveDefaultOptions();
-        }
-
-        File defaultOptionsOF = new File(getDefaultOptionsFolder(), "optionsof.txt");
-        if (!defaultOptionsOF.exists()) {
-            saveDefaultOptionsOptiFine();
+        // Once Minecraft has finished loading and there are no default settings yet, populate the default options with the current settings
+        for (DefaultOptionsHandler handler : defaultOptionsHandlers) {
+            if (!handler.hasDefaults()) {
+                try {
+                    handler.saveCurrentOptionsAsDefault();
+                } catch (DefaultOptionsHandlerException e) {
+                    logger.warn("Failed to create initial default options from current options for {}", e.getHandlerId(), e);
+                }
+            }
         }
 
         File defaultKeybindings = new File(getDefaultOptionsFolder(), "keybindings.txt");
@@ -53,60 +72,16 @@ public class DefaultOptions {
             saveDefaultMappings();
         }
 
+        // Reload default key mappings from the default options
         reloadDefaultMappings();
     }
 
-    public static boolean saveDefaultOptionsOptiFine() {
-        if (!Balm.isModLoaded("optifine")) {
-            return true;
-        }
 
-        Minecraft.getInstance().options.save();
-
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "optionsof.txt")));
-             BufferedReader reader = new BufferedReader(new FileReader(new File(getMinecraftDataDir(), "optionsof.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                writer.println(line);
+    public static void saveDefaultOptions(DefaultOptionsCategory category) throws DefaultOptionsHandlerException {
+        for (DefaultOptionsHandler handler : defaultOptionsHandlers) {
+            if (handler.getCategory() == category) {
+                handler.saveCurrentOptionsAsDefault();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean saveDefaultOptions() {
-        Minecraft.getInstance().options.save();
-
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(getDefaultOptionsFolder(), "options.txt")));
-             BufferedReader reader = new BufferedReader(new FileReader(new File(getMinecraftDataDir(), "options.txt")))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("key_")) {
-                    continue;
-                }
-                writer.println(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean saveDefaultServers() {
-        File serversDat = new File(getMinecraftDataDir(), "servers.dat");
-        if (serversDat.exists()) {
-            try {
-                FileUtils.copyFile(serversDat, new File(getDefaultOptionsFolder(), "servers.dat"));
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return true;
         }
     }
 
@@ -197,5 +172,4 @@ public class DefaultOptions {
             e.printStackTrace();
         }
     }
-
 }

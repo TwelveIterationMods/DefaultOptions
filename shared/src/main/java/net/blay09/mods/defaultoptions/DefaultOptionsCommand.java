@@ -3,25 +3,28 @@ package net.blay09.mods.defaultoptions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;
 
+import java.io.IOException;
+
 public class DefaultOptionsCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("defaultoptions")
-                .then(Commands.literal("saveAll").executes(context -> saveDefaultOptions(context, true, true, true)))
-                .then(Commands.literal("saveKeys").executes(context -> saveDefaultOptions(context, false, true, false)))
-                .then(Commands.literal("saveOptions").executes(context -> saveDefaultOptions(context, true, false, false)))
-                .then(Commands.literal("saveServers").executes(context -> saveDefaultOptions(context, false, false, true)))
+                .then(Commands.literal("saveAll").executes(context -> saveDefaultOptions(context, null)))
+                .then(Commands.literal("saveKeys").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.KEYS)))
+                .then(Commands.literal("saveOptions").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.OPTIONS)))
+                .then(Commands.literal("saveServers").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.SERVERS)))
         );
     }
 
-    private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, boolean saveOptions, boolean saveKeys, boolean saveServers) throws CommandRuntimeException {
+    private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) throws CommandRuntimeException {
         CommandSourceStack source = context.getSource();
-        if (saveKeys) {
+        if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
             if (DefaultOptions.saveDefaultMappings()) {
                 source.sendSuccess(new TextComponent("Successfully saved the key configuration."), true);
                 DefaultOptions.reloadDefaultMappings();
@@ -30,18 +33,22 @@ public class DefaultOptionsCommand {
             }
         }
 
-        if (saveOptions) {
-            if (DefaultOptions.saveDefaultOptions() && DefaultOptions.saveDefaultOptionsOptiFine()) {
+        if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.OPTIONS) {
+            try {
+                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.OPTIONS);
                 source.sendSuccess(new TextComponent("Successfully saved the configuration."), true);
-            } else {
+            } catch(DefaultOptionsHandlerException e) {
+                DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
                 source.sendFailure(new TextComponent("Failed saving the configuration. See the log for more information."));
             }
         }
 
-        if (saveServers) {
-            if (DefaultOptions.saveDefaultServers()) {
+        if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.SERVERS) {
+            try {
+                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.SERVERS);
                 source.sendSuccess(new TextComponent("Successfully saved the server list."), true);
-            } else {
+            } catch(DefaultOptionsHandlerException e) {
+                DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
                 source.sendFailure(new TextComponent("Failed saving the server list. See the log for more information."));
             }
         }
