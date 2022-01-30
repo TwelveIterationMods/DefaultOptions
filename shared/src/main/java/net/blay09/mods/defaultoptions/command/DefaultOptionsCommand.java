@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.DefaultOptionsHandlerException;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
-import net.blay09.mods.defaultoptions.keys.DefaultKeyMappings;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -26,10 +25,11 @@ public class DefaultOptionsCommand {
     private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) throws CommandRuntimeException {
         CommandSourceStack source = context.getSource();
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
-            if (DefaultKeyMappings.saveDefaultMappings()) {
+            try {
+                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.KEYS);
                 source.sendSuccess(new TextComponent("Successfully saved the key configuration."), true);
-                DefaultKeyMappings.reloadDefaultMappings();
-            } else {
+            } catch(DefaultOptionsHandlerException e) {
+                DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
                 source.sendFailure(new TextComponent("Failed saving the key configuration. See the log for more information."));
             }
         }

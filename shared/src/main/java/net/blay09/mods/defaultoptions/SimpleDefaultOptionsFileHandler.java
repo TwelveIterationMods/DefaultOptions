@@ -1,6 +1,7 @@
 package net.blay09.mods.defaultoptions;
 
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
 import net.blay09.mods.defaultoptions.api.SimpleDefaultOptionsHandler;
 import org.apache.commons.io.FileUtils;
 
@@ -11,6 +12,7 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
 
     private final File file;
     private DefaultOptionsCategory category = DefaultOptionsCategory.OPTIONS;
+    private DefaultOptionsLoadStage loadStage = DefaultOptionsLoadStage.PRE_LOAD;
     private Runnable saveHandler;
     private Predicate<String> linePredicate;
 
@@ -34,6 +36,11 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     @Override
     public DefaultOptionsCategory getCategory() {
         return category;
+    }
+
+    @Override
+    public DefaultOptionsLoadStage getLoadStage() {
+        return loadStage;
     }
 
     @Override
@@ -96,6 +103,12 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     @Override
     public SimpleDefaultOptionsHandler withCategory(DefaultOptionsCategory category) {
         this.category = category;
+        return this;
+    }
+
+    @Override
+    public SimpleDefaultOptionsHandler withLoadStage(DefaultOptionsLoadStage loadStage) {
+        this.loadStage = loadStage;
         return this;
     }
 

@@ -4,6 +4,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.PlatformBindings;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
 import net.blay09.mods.defaultoptions.mixin.KeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -16,27 +19,62 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DefaultKeyMappings {
+public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
 
+    private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+))?");
     private static final Map<String, DefaultKeyMapping> defaultKeys = new HashMap<>();
     private static final List<String> knownKeys = new ArrayList<>();
 
-    public static boolean saveDefaultMappings() {
+    private File getDefaultOptionsFile() {
+        return new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt");
+    }
+
+    @Override
+    public String getId() {
+        return "keymappings";
+    }
+
+    @Override
+    public DefaultOptionsCategory getCategory() {
+        return DefaultOptionsCategory.KEYS;
+    }
+
+    @Override
+    public DefaultOptionsLoadStage getLoadStage() {
+        return DefaultOptionsLoadStage.POST_LOAD;
+    }
+
+    @Override
+    public void saveCurrentOptions() {
+        Minecraft.getInstance().options.save();
+    }
+
+    @Override
+    public void saveCurrentOptionsAsDefault() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt")))) {
             for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
                 KeyModifier keyModifier = PlatformBindings.INSTANCE.getKeyModifier(keyMapping);
                 writer.println("key_" + keyMapping.getName() + ":" + keyMapping.saveString() + ":" + keyModifier.name());
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            DefaultOptions.logger.error("Failed to save default key mappings", e);
         }
+
+        loadDefaults();
+    }
+
+    @Override
+    public boolean hasDefaults() {
+        return getDefaultOptionsFile().exists();
+    }
+
+    @Override
+    public boolean shouldLoadDefaults() {
         return true;
     }
 
-    private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+))?");
-
-    public static void reloadDefaultMappings() {
+    @Override
+    public void loadDefaults() {
         // Clear old values
         defaultKeys.clear();
         knownKeys.clear();
@@ -78,8 +116,8 @@ public class DefaultKeyMappings {
                         knownKeys.add(line);
                     }
                 }
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                DefaultOptions.logger.error("Error loading known key bindings", e);
             }
         }
 
@@ -105,7 +143,7 @@ public class DefaultKeyMappings {
                 writer.println(key);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            DefaultOptions.logger.error("Error saving known key bindings", e);
         }
     }
 }

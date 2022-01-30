@@ -8,6 +8,7 @@ import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.command.DefaultOptionsCommand;
 import net.blay09.mods.defaultoptions.config.DefaultOptionsConfig;
 import net.blay09.mods.defaultoptions.difficulty.DefaultDifficultyHandler;
+import net.blay09.mods.defaultoptions.keys.KeyMappingDefaultsHandler;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,7 @@ public class DefaultOptions {
 
         DefaultOptionsConfig.initialize();
         Balm.getCommands().register(DefaultOptionsCommand::register);
-        Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptionsInitializer::finishLoading);
+        Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptionsInitializer::postLoad);
         DefaultDifficultyHandler.initialize();
 
         DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "options.txt"))
@@ -49,6 +50,7 @@ public class DefaultOptions {
             DefaultOptionsAPI.registerOptionsFile(new File(getMinecraftDataDir(), "optionsviveprofiles.txt"));
         }
 
+        DefaultOptionsAPI.registerOptionsHandler(new KeyMappingDefaultsHandler());
         DefaultOptionsAPI.registerOptionsHandler(new ExtraDefaultOptionsHandler());
     }
 

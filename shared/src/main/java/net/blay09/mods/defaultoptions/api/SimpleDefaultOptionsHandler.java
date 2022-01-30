@@ -6,4 +6,6 @@ public interface SimpleDefaultOptionsHandler extends DefaultOptionsHandler {
     SimpleDefaultOptionsHandler withCategory(DefaultOptionsCategory category);
     SimpleDefaultOptionsHandler withSaveHandler(Runnable saveHandler);
     SimpleDefaultOptionsHandler withLinePredicate(Predicate<String> linePredicate);
+
+    SimpleDefaultOptionsHandler withLoadStage(DefaultOptionsLoadStage loadStage);
 }

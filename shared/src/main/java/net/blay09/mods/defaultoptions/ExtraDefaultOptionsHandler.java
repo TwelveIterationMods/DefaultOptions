@@ -3,6 +3,7 @@ package net.blay09.mods.defaultoptions;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsAPI;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -27,6 +28,11 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
     @Override
     public DefaultOptionsCategory getCategory() {
         return DefaultOptionsCategory.OPTIONS;
+    }
+
+    @Override
+    public DefaultOptionsLoadStage getLoadStage() {
+        return DefaultOptionsLoadStage.PRE_LOAD;
     }
 
     @Override
