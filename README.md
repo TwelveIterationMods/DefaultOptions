@@ -47,7 +47,7 @@ This allows support for more complex use cases or mods with custom options files
 as JourneyMap.
 
 Note that this folder is not automatically populated when using the `/defaultoptions saveOptions` command. You are
-required to manually copy the folders/files into the `extra` folder.
+required to manually copy the folders/files into the `extra` folder after you've configured defaults.
 
 For example, to create default options for JourneyMap, you would:
 
