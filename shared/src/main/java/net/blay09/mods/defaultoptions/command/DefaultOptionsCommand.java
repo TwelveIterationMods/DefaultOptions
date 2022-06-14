@@ -9,7 +9,7 @@ import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 public class DefaultOptionsCommand {
 
@@ -27,30 +27,30 @@ public class DefaultOptionsCommand {
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
             try {
                 DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.KEYS);
-                source.sendSuccess(new TextComponent("Successfully saved the key configuration."), true);
+                source.sendSuccess(Component.literal("Successfully saved the key configuration."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
-                source.sendFailure(new TextComponent("Failed saving the key configuration. See the log for more information."));
+                source.sendFailure(Component.literal("Failed saving the key configuration. See the log for more information."));
             }
         }
 
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.OPTIONS) {
             try {
                 DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.OPTIONS);
-                source.sendSuccess(new TextComponent("Successfully saved the configuration."), true);
+                source.sendSuccess(Component.literal("Successfully saved the configuration."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
-                source.sendFailure(new TextComponent("Failed saving the configuration. See the log for more information."));
+                source.sendFailure(Component.literal("Failed saving the configuration. See the log for more information."));
             }
         }
 
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.SERVERS) {
             try {
                 DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.SERVERS);
-                source.sendSuccess(new TextComponent("Successfully saved the server list."), true);
+                source.sendSuccess(Component.literal("Successfully saved the server list."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
-                source.sendFailure(new TextComponent("Failed saving the server list. See the log for more information."));
+                source.sendFailure(Component.literal("Failed saving the server list. See the log for more information."));
             }
         }
 
