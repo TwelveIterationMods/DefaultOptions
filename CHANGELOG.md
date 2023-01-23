@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.19.3
+- Fixed extra default options always getting overwritten on startup
