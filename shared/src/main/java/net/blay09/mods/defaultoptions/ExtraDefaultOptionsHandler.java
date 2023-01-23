@@ -67,7 +67,9 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
                 if (defaultOptionsFile.isFile()) {
                     Path relativeDefaultOptionsPath = defaultOptionsPath.relativize(defaultOptionsFile.toPath());
                     File optionsFile = new File(DefaultOptions.getMinecraftDataDir(), relativeDefaultOptionsPath.toString());
-                    FileUtils.copyFile(defaultOptionsFile, optionsFile);
+                    if (!optionsFile.exists()) {
+                        FileUtils.copyFile(defaultOptionsFile, optionsFile);
+                    }
                 }
             }
         } catch (IOException e) {
