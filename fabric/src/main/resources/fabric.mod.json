@@ -10,8 +10,8 @@
   ],
   "contact": {
     "homepage": "https://blay09.net/mods/defaultoptions",
-    "sources": "https://github.com/ModdingForBlockheads/DefaultOptions",
-    "issues": "https://github.com/ModdingForBlockheads/DefaultOptions/issues"
+    "sources": "https://github.com/TwelveIterationMods/DefaultOptions",
+    "issues": "https://github.com/TwelveIterationMods/DefaultOptions/issues"
   },
 
   "license": "All Rights Reserved",
@@ -45,7 +45,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/scGAfXC"
+        "modmenu.discord": "https://discord.gg/VAfZ2Nau6j"
       }
     }
   }
