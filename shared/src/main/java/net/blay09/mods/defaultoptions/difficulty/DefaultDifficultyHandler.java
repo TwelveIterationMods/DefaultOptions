@@ -1,35 +1,49 @@
 package net.blay09.mods.defaultoptions.difficulty;
 
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.client.screen.ScreenDrawEvent;
 import net.blay09.mods.balm.api.event.client.screen.ScreenInitEvent;
 import net.blay09.mods.defaultoptions.config.DefaultOptionsConfig;
-import net.blay09.mods.defaultoptions.mixin.CreateWorldScreenAccessor;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.Difficulty;
 
 public class DefaultDifficultyHandler {
 
     public static void initialize() {
         Balm.getEvents().onEvent(ScreenInitEvent.Post.class, DefaultDifficultyHandler::onInitGui);
-        Balm.getEvents().onEvent(ScreenDrawEvent.Pre.class, DefaultDifficultyHandler::onDrawScreen);
     }
 
     public static void onInitGui(ScreenInitEvent.Post event) {
-        if (event.getScreen() instanceof CreateWorldScreenAccessor screen) {
+        if (event.getScreen() instanceof CreateWorldScreen screen) {
+            WorldCreationUiState uiState = screen.getUiState();
+
             Difficulty difficulty = DefaultOptionsConfig.getActive().defaultDifficulty.toDifficulty();
-            screen.setDifficulty(difficulty);
-            screen.getDifficultyButton().setValue(difficulty);
+            uiState.setDifficulty(difficulty);
+
             if (DefaultOptionsConfig.getActive().lockDifficulty) {
-                screen.getDifficultyButton().active = false;
+                lockDifficultyButton(screen);
             }
+
+            uiState.addListener(state -> {
+                if (DefaultOptionsConfig.getActive().lockDifficulty) {
+                    lockDifficultyButton(screen);
+                }
+            });
         }
     }
 
-    public static void onDrawScreen(ScreenDrawEvent.Pre event) {
-        if (event.getScreen() instanceof CreateWorldScreenAccessor screen) {
-            if (screen.getDifficultyButton().active && DefaultOptionsConfig.getActive().lockDifficulty) {
-                screen.getDifficultyButton().active = false;
-            }
+    private static void lockDifficultyButton(CreateWorldScreen screen) {
+        AbstractWidget difficultyButton = findDifficultyButton(screen);
+        if (difficultyButton != null) {
+            difficultyButton.active = false;
         }
+    }
+
+    private static AbstractWidget findDifficultyButton(CreateWorldScreen screen) {
+        return (AbstractWidget) screen.children().stream()
+                .filter(it -> it instanceof CycleButton<?> button && button.getValue() instanceof Difficulty)
+                .findAny().orElse(null);
     }
 }
