@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/TwelveIterationMods/DefaultOptions/issues"
 
 [[mods]]
 modId="defaultoptions"
-version="${file.jarVersion}"
+version="${mod_version}"
 displayName="Default Options"
 displayURL="https://mods.twelveiterations.com/mc/defaultoptions"
 logoFile="defaultoptions-icon.png"
