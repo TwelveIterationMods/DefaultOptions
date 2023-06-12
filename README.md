@@ -1,11 +1,8 @@
 # Default Options
 
 Minecraft Mod. A way for modpacks to ship a default (key) configuration without having to include an options.txt file.
-Also allows local options from any mod .cfg file.
 
-See [the license](LICENSE) for modpack permissions etc.
-
-This mod is available for both Forge and Fabric (starting Minecraft 1.17).
+- [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
 #### Forge
 
@@ -19,11 +16,11 @@ This mod is available for both Forge and Fabric (starting Minecraft 1.17).
 
 ## Contributing
 
-If you're interested in contributing to the mod, you can check
-out [issues labelled as "help wanted"](https://github.com/TwelveIterationMods/DefaultOptions/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
-. These should be ready to be implemented as they are.
+If you're interested in contributing to the mod, you can check out [issues labelled as "help wanted"](https://github.com/TwelveIterationMods/DefaultOptions/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22).
 
-If you need help, feel free to join us on [Discord](https://discord.gg/VAfZ2Nau6j).
+When it comes to new features, it's best to confer with me first to ensure we share the same vision. You can join us on [Discord](https://discord.gg/VAfZ2Nau6j) if you'd like to talk.
+
+Contributions must be done through pull requests. I will not be able to accept translations, code or other assets through any other channels.
 
 ## Supported Mods
 
@@ -62,7 +59,7 @@ For example, to create default options for JourneyMap, you would:
 
 Starting in Minecraft 1.18, Default Options provides an API for other mods to register their own default option files.
 
-To use this API, you must specify Default Options as a build dependency in your Gradle file. You should only use classes
+To use this API, you must specify Default Options as a build dependency in your Gradle file (see next section). You should only use classes
 from within the `net.blay09.mods.defaultoptions.api` package, as other classes may have unexpected breaking changes.
 
 To plug into Default Options, create a class implementing `DefaultOptionsPlugin`. This class will be loaded by a Service
@@ -94,4 +91,56 @@ public class ExamplePlugin implements DefaultOptionsPlugin {
 
 ```
 com.example.ExamplePlugin
+```
+
+## Adding Default Options to a development environment
+
+Note that you will also need to add Balm if you want to test your integration in your environment.
+
+### Using CurseMaven
+
+Add the following to your `build.gradle`:
+
+```groovy
+repositories {
+    maven { url "https://www.cursemaven.com" }
+}
+
+dependencies {
+    // Replace ${default_options_file_id} and ${balm_file_id} with the id of the file you want to depend on.
+    // You can find it in the URL of the file on CurseForge (e.g. 3914527).
+    // Forge: implementation fg.deobf("curse.maven:balm-531761:${balm_file_id}")
+    // Fabric: modImplementation "curse.maven:balm-fabric-500525:${balm_file_id}"
+    
+    // Forge: implementation fg.deobf("curse.maven:default-options-232131:${default_options_file_id}")
+    // Fabric: modImplementation "curse.maven:default-options-fabric-547694:${default_options_file_id}"
+}
+```
+
+### Using Twelve Iterations Maven (includes snapshot and mojmap versions)
+
+Add the following to your `build.gradle`:
+
+```groovy
+repositories {
+    maven { 
+        url "https://maven.twelveiterations.com/repository/maven-public/" 
+        
+        content {
+            includeGroup "net.blay09.mods"
+        }
+    }
+}
+
+dependencies {
+    // Replace ${default_options_version} and ${balm_version} with the version you want to depend on. 
+    // You can find the latest version for a given Minecraft version at https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/balm-common/ and https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/defaultoptions-common/
+    // Common (mojmap): implementation "net.blay09.mods:balm-common:${balm_version}"
+    // Forge: implementation fg.deobf("net.blay09.mods:balm-forge:${balm_version}")
+    // Fabric: modImplementation "net.blay09.mods:balm-fabric:${balm_version}"
+    
+    // Common (mojmap): implementation "net.blay09.mods:defaultoptions-common:${default_options_version}"
+    // Forge: implementation fg.deobf("net.blay09.mods:defaultoptions-forge:${default_options_version}")
+    // Fabric: modImplementation "net.blay09.mods:balm-defaultoptions:${default_options_version}"
+}
 ```
