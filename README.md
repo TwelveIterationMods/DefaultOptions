@@ -141,6 +141,6 @@ dependencies {
     
     // Common (mojmap): implementation "net.blay09.mods:defaultoptions-common:${default_options_version}"
     // Forge: implementation fg.deobf("net.blay09.mods:defaultoptions-forge:${default_options_version}")
-    // Fabric: modImplementation "net.blay09.mods:balm-defaultoptions:${default_options_version}"
+    // Fabric: modImplementation "net.blay09.mods:defaultoptions-fabric:${default_options_version}"
 }
 ```
