@@ -107,13 +107,13 @@ repositories {
 }
 
 dependencies {
-    // Replace ${default_options_file_id} and ${balm_file_id} with the id of the file you want to depend on.
+    // Replace ${defaultoptions_file_id} and ${balm_file_id} with the id of the file you want to depend on.
     // You can find it in the URL of the file on CurseForge (e.g. 3914527).
     // Forge: implementation fg.deobf("curse.maven:balm-531761:${balm_file_id}")
     // Fabric: modImplementation "curse.maven:balm-fabric-500525:${balm_file_id}"
     
-    // Forge: implementation fg.deobf("curse.maven:default-options-232131:${default_options_file_id}")
-    // Fabric: modImplementation "curse.maven:default-options-fabric-547694:${default_options_file_id}"
+    // Forge: implementation fg.deobf("curse.maven:default-options-232131:${defaultoptions_file_id}")
+    // Fabric: modImplementation "curse.maven:default-options-fabric-547694:${defaultoptions_file_id}"
 }
 ```
 
@@ -133,14 +133,14 @@ repositories {
 }
 
 dependencies {
-    // Replace ${default_options_version} and ${balm_version} with the version you want to depend on. 
+    // Replace ${defaultoptions_version} and ${balm_version} with the version you want to depend on. 
     // You can find the latest version for a given Minecraft version at https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/balm-common/ and https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/defaultoptions-common/
     // Common (mojmap): implementation "net.blay09.mods:balm-common:${balm_version}"
     // Forge: implementation fg.deobf("net.blay09.mods:balm-forge:${balm_version}")
     // Fabric: modImplementation "net.blay09.mods:balm-fabric:${balm_version}"
     
-    // Common (mojmap): implementation "net.blay09.mods:defaultoptions-common:${default_options_version}"
-    // Forge: implementation fg.deobf("net.blay09.mods:defaultoptions-forge:${default_options_version}")
-    // Fabric: modImplementation "net.blay09.mods:defaultoptions-fabric:${default_options_version}"
+    // Common (mojmap): implementation "net.blay09.mods:defaultoptions-common:${defaultoptions_version}"
+    // Forge: implementation fg.deobf("net.blay09.mods:defaultoptions-forge:${defaultoptions_version}")
+    // Fabric: modImplementation "net.blay09.mods:defaultoptions-fabric:${defaultoptions_version}"
 }
 ```
