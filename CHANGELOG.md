@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.19.4
+- Fixed modded keybinds resetting on every launch on Forge
