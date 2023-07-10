@@ -1,1 +1,1 @@
-- Fixed extra default options always getting overwritten on startup
+- Fixed modded keybinds resetting on every launch on Forge
