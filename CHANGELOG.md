@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.20
+- Fixed modded keybinds resetting on every launch on Forge
