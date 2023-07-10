@@ -19,17 +19,6 @@ public class DefaultOptionsInitializer {
     }
 
     public static void postLoad(ClientStartedEvent event) {
-        // Once Minecraft has finished loading and there are no default settings yet, populate the default options with the current settings
-        for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
-            if (!handler.hasDefaults()) {
-                try {
-                    handler.saveCurrentOptionsAsDefault();
-                } catch (DefaultOptionsHandlerException e) {
-                    DefaultOptions.logger.warn("Failed to create initial default options from current options for {}", e.getHandlerId(), e);
-                }
-            }
-        }
-
         loadDefaults(DefaultOptionsLoadStage.POST_LOAD);
     }
 
