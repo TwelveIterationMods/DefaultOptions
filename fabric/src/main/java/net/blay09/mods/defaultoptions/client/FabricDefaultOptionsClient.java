@@ -15,19 +15,23 @@ public class FabricDefaultOptionsClient implements ClientModInitializer {
         PlatformBindings.INSTANCE = new PlatformBindings() {
             @Override
             public void setDefaultKeyModifier(KeyMapping keyMapping, KeyModifier keyModifier) {
+                // TODO amecs only allows default modifiers on Keybindings that are of type AmecsKeybindings
+                //      not a big deal though since we have the knownKeys list and only set modifier if it's a previously unseen key
             }
 
             @Override
             public void setKeyModifier(KeyMapping keyMapping, KeyModifier keyModifier) {
+                // TODO this we can do with amecs getBoundModifiers() which is a mutable object
             }
 
             @Override
             public KeyModifier getKeyModifier(KeyMapping keyMapping) {
-                return KeyModifier.NONE;
+                return KeyModifier.NONE; // TODO support amecs here by translating getBoundModifiers() into our type
             }
 
             @Override
             public KeyModifier getDefaultKeyModifier(KeyMapping keyMapping) {
+                // TODO amecs only allows default modifiers on Keybindings that are of type AmecsKeybindings
                 return KeyModifier.NONE;
             }
         };

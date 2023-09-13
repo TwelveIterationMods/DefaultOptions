@@ -5,7 +5,7 @@ import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 
 public class DefaultKeyMapping {
     public final InputConstants.Key input;
-    public final KeyModifier modifier;
+    public final KeyModifier modifier; // TODO needs to support multiple for amecs
 
     public DefaultKeyMapping(InputConstants.Key input, KeyModifier modifier) {
         this.input = input;
