@@ -10,7 +10,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.NetworkConstants;
 
 @Mod(DefaultOptions.MOD_ID)
 public class ForgeDefaultOptions {
@@ -67,7 +66,7 @@ public class ForgeDefaultOptions {
             BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initialize);
         });
 
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
     }
 
 }
