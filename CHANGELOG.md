@@ -1,1 +1,1 @@
-- Fixed modded keybinds resetting on every launch on Forge
+- Updated to Minecraft 1.20.2
