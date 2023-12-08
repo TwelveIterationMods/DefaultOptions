@@ -1,40 +1,42 @@
 {
   "schemaVersion": 1,
-  "id": "defaultoptions",
+  "id": "${mod_id}",
   "version": "${version}",
 
-  "name": "Default Options",
-  "description": "A way for modpacks to ship a default (key) configuration without having to include an options.txt file. Also allows local options from any mod .cfg file.",
+  "name": "${mod_name}",
+  "description": "${description}",
   "authors": [
     "BlayTheNinth"
   ],
   "contact": {
-    "homepage": "https://mods.twelveiterations.com/mc/defaultoptions",
-    "sources": "https://github.com/TwelveIterationMods/DefaultOptions",
-    "issues": "https://github.com/TwelveIterationMods/DefaultOptions/issues"
+    "homepage": "${homepage}",
+    "sources": "${sources}",
+    "issues": "${issues}"
   },
 
-  "license": "All Rights Reserved",
-  "icon": "defaultoptions-icon.png",
+  "license": "${license}",
+  "icon": "${mod_id}.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
     ],
     "client": [
-      "net.blay09.mods.defaultoptions.client.FabricDefaultOptionsClient"
+      "net.blay09.mods.${mod_id}.fabric.client.Fabric${mod_main}Client"
     ],
     "modmenu": [
-      "net.blay09.mods.defaultoptions.compat.ModMenuIntegration"
+      "net.blay09.mods.${mod_id}.fabric.compat.ModMenuIntegration"
     ]
   },
   "mixins": [
-    "defaultoptions.mixins.json"
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
   ],
+
   "depends": {
-    "balm-fabric": ">=8.0.0",
-    "fabricloader": ">=0.14.22",
-    "fabric": "*",
+    "fabricloader": ">=0.14",
+    "fabric-api": "*",
+    "balm-fabric": "*",
     "minecraft": ">=1.20.2",
     "java": ">=17"
   },

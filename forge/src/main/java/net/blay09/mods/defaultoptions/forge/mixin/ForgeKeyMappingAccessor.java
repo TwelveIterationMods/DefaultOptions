@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultoptions.mixin;
+package net.blay09.mods.defaultoptions.forge.mixin;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.settings.KeyModifier;

@@ -1,9 +1,11 @@
-package net.blay09.mods.defaultoptions;
+package net.blay09.mods.defaultoptions.forge;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
-import net.blay09.mods.defaultoptions.mixin.ForgeKeyMappingAccessor;
+import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.PlatformBindings;
+import net.blay09.mods.defaultoptions.forge.mixin.ForgeKeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultoptions.client;
+package net.blay09.mods.defaultoptions.fabric.client;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
