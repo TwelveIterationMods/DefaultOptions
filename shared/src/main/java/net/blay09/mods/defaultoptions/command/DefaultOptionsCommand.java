@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.DefaultOptionsHandlerException;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
-import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -22,7 +21,7 @@ public class DefaultOptionsCommand {
         );
     }
 
-    private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) throws CommandRuntimeException {
+    private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) {
         CommandSourceStack source = context.getSource();
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
             try {
