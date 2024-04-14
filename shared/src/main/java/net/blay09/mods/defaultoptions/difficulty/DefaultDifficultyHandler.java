@@ -9,7 +9,12 @@ import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.Difficulty;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class DefaultDifficultyHandler {
+
+    private static final Set<Integer> touchedScreens = new HashSet<>();
 
     public static void initialize() {
         Balm.getEvents().onEvent(ScreenInitEvent.Post.class, DefaultDifficultyHandler::onInitGui);
@@ -19,8 +24,11 @@ public class DefaultDifficultyHandler {
         if (event.getScreen() instanceof CreateWorldScreen screen) {
             WorldCreationUiState uiState = screen.getUiState();
 
-            Difficulty difficulty = DefaultOptionsConfig.getActive().defaultDifficulty.toDifficulty();
-            uiState.setDifficulty(difficulty);
+            if (!touchedScreens.contains(screen.hashCode())) {
+                Difficulty difficulty = DefaultOptionsConfig.getActive().defaultDifficulty.toDifficulty();
+                uiState.setDifficulty(difficulty);
+                touchedScreens.add(screen.hashCode());
+            }
 
             if (DefaultOptionsConfig.getActive().lockDifficulty) {
                 lockDifficultyButton(screen);
