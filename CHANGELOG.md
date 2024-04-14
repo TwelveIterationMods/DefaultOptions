@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.20.4
+- Increased mixin priority to possibly support some additional mods in extra default configs
