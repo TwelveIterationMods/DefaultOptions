@@ -1,6 +1,7 @@
 package net.blay09.mods.defaultoptions.fabric.client;
 
 import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.api.EmptyLoadContext;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.defaultoptions.DefaultOptions;
@@ -36,7 +37,7 @@ public class FabricDefaultOptionsClient implements ClientModInitializer {
             }
         };
 
-        Balm.initialize(DefaultOptions.MOD_ID, () -> {});
-        BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initialize);
+        Balm.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, () -> {});
+        BalmClient.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, DefaultOptions::initialize);
     }
 }

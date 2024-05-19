@@ -3,20 +3,19 @@ package net.blay09.mods.defaultoptions.neoforge;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
+import net.blay09.mods.balm.neoforge.NeoForgeLoadContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.neoforge.mixin.NeoForgeKeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.DistExecutor;
-import net.neoforged.fml.IExtensionPoint;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
-@Mod(DefaultOptions.MOD_ID)
+@Mod(value = DefaultOptions.MOD_ID, dist = Dist.CLIENT)
 public class NeoForgeDefaultOptions {
 
-    public NeoForgeDefaultOptions() {
+    public NeoForgeDefaultOptions(IEventBus modEventBus) {
         PlatformBindings.INSTANCE = new PlatformBindings() {
             @Override
             public void setDefaultKeyModifier(KeyMapping keyMapping, KeyModifier keyModifier) {
@@ -63,12 +62,10 @@ public class NeoForgeDefaultOptions {
             }
         };
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            Balm.initialize(DefaultOptions.MOD_ID, () -> {});
-            BalmClient.initialize(DefaultOptions.MOD_ID, DefaultOptions::initialize);
+        final var context = new NeoForgeLoadContext(modEventBus);
+        Balm.initialize(DefaultOptions.MOD_ID, context, () -> {
         });
-
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
+        BalmClient.initialize(DefaultOptions.MOD_ID, context, DefaultOptions::initialize);
     }
 
 }
