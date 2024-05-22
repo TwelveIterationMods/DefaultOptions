@@ -1,0 +1,7 @@
+{
+  "config.defaultoptions.title": "Opciones Predeterminadas",
+  "config.defaultoptions.defaultDifficulty": "Dificultad Predeterminada",
+  "config.defaultoptions.defaultDifficulty.tooltip": "La dificultad predeterminada seleccionada para los mundos recién creados.",
+  "config.defaultoptions.lockDifficulty": "Bloquear Dificultad",
+  "config.defaultoptions.lockDifficulty.tooltip": "Establecer en true si la dificultad de los nuevos mundos debe estar bloqueada en la dificultad predeterminada específica. ¡Esto no se puede desbloquear por los jugadores sin herramientas externas! Probablemente no sea una buena idea. No lo recomiendo. ¿Por qué estoy agregando esta opción?"
+}
