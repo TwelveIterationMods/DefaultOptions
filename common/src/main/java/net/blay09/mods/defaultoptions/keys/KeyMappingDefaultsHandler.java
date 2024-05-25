@@ -12,12 +12,10 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
 
@@ -53,8 +51,10 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
     public void saveCurrentOptionsAsDefault() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt")))) {
             for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
-                KeyModifier keyModifier = PlatformBindings.INSTANCE.getKeyModifier(keyMapping);
-                writer.println("key_" + keyMapping.getName() + ":" + keyMapping.saveString() + ":" + keyModifier.name());
+                final var keyModifiers = PlatformBindings.INSTANCE.getKeyModifiers(keyMapping);
+                writer.println("key_" + keyMapping.getName() + ":" + keyMapping.saveString() + ":" + keyModifiers.stream()
+                        .map(KeyModifier::name)
+                        .collect(Collectors.joining(",")));
             }
         } catch (IOException e) {
             DefaultOptions.logger.error("Failed to save default key mappings", e);
@@ -95,8 +95,9 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
                     }
 
                     try {
-                        KeyModifier modifier = matcher.group(3) != null ? KeyModifier.valueOf(matcher.group(3)) : KeyModifier.NONE;
-                        defaultKeys.put(matcher.group(1), new DefaultKeyMapping(InputConstants.getKey(matcher.group(2)), modifier));
+                        final var keyModifierNames = matcher.group(3) != null ? matcher.group(3).split(",") : new String[0];
+                        final var modifiers = Arrays.stream(keyModifierNames).map(KeyModifier::valueOf).collect(Collectors.toSet());
+                        defaultKeys.put(matcher.group(1), new DefaultKeyMapping(InputConstants.getKey(matcher.group(2)), modifiers));
                     } catch (Exception e) {
                         DefaultOptions.logger.error("Error loading default key binding for {}", line, e);
                     }
@@ -125,11 +126,11 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
         for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
             if (defaultKeys.containsKey(keyMapping.getName())) {
                 DefaultKeyMapping defaultKeyMapping = defaultKeys.get(keyMapping.getName());
-                ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultKeyMapping.input);
-                PlatformBindings.INSTANCE.setDefaultKeyModifier(keyMapping, defaultKeyMapping.modifier);
+                ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultKeyMapping.input());
+                PlatformBindings.INSTANCE.setDefaultKeyModifiers(keyMapping, defaultKeyMapping.modifiers());
                 if (!knownKeys.contains(keyMapping.getName())) {
-                    KeyModifier defaultKeyModifier = PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping);
-                    PlatformBindings.INSTANCE.setKeyModifier(keyMapping, defaultKeyModifier);
+                    Set<KeyModifier> defaultKeyModifiers = PlatformBindings.INSTANCE.getDefaultKeyModifiers(keyMapping);
+                    PlatformBindings.INSTANCE.setKeyModifiers(keyMapping, defaultKeyModifiers);
                     keyMapping.setKey(keyMapping.getDefaultKey());
                     knownKeys.add(keyMapping.getName());
                 }

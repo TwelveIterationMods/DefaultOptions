@@ -14,13 +14,17 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Collections;
+import java.util.Set;
+
 @Mod(DefaultOptions.MOD_ID)
 public class ForgeDefaultOptions {
 
     public ForgeDefaultOptions() {
         PlatformBindings.INSTANCE = new PlatformBindings() {
             @Override
-            public void setDefaultKeyModifier(KeyMapping keyMapping, KeyModifier keyModifier) {
+            public void setDefaultKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers) {
+                final var keyModifier = keyModifiers.stream().findFirst().orElse(KeyModifier.NONE);
                 net.minecraftforge.client.settings.KeyModifier forgeKeyModifier = switch (keyModifier) {
                     case ALT -> net.minecraftforge.client.settings.KeyModifier.ALT;
                     case SHIFT -> net.minecraftforge.client.settings.KeyModifier.SHIFT;
@@ -31,18 +35,21 @@ public class ForgeDefaultOptions {
             }
 
             @Override
-            public void setKeyModifier(KeyMapping keyMapping, KeyModifier keyModifier) {
+            public void setKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers) {
+                final var keyModifier = keyModifiers.stream().findFirst().orElse(KeyModifier.NONE);
                 keyMapping.setKeyModifierAndCode(toForge(keyModifier), keyMapping.getKey());
             }
 
             @Override
-            public KeyModifier getKeyModifier(KeyMapping keyMapping) {
-                return fromForge(keyMapping.getKeyModifier());
+            public Set<KeyModifier> getKeyModifiers(KeyMapping keyMapping) {
+                final var keyModifier = fromForge(keyMapping.getKeyModifier());
+                return keyModifier != KeyModifier.NONE ? Set.of(keyModifier) : Collections.emptySet();
             }
 
             @Override
-            public KeyModifier getDefaultKeyModifier(KeyMapping keyMapping) {
-                return fromForge(keyMapping.getDefaultKeyModifier());
+            public Set<KeyModifier> getDefaultKeyModifiers(KeyMapping keyMapping) {
+                final var keyModifier = fromForge(keyMapping.getDefaultKeyModifier());
+                return keyModifier != KeyModifier.NONE ? Set.of(keyModifier) : Collections.emptySet();
             }
 
             private static KeyModifier fromForge(net.minecraftforge.client.settings.KeyModifier keyModifier) {
@@ -65,11 +72,14 @@ public class ForgeDefaultOptions {
         };
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            Balm.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, () -> {});
+            Balm.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, () -> {
+            });
             BalmClient.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, DefaultOptions::initialize);
         });
 
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get()
+                .registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+                        () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
     }
 
 }

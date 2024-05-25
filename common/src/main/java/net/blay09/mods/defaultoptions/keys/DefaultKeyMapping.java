@@ -3,12 +3,7 @@ package net.blay09.mods.defaultoptions.keys;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 
-public class DefaultKeyMapping {
-    public final InputConstants.Key input;
-    public final KeyModifier modifier; // TODO needs to support multiple for amecs
+import java.util.Set;
 
-    public DefaultKeyMapping(InputConstants.Key input, KeyModifier modifier) {
-        this.input = input;
-        this.modifier = modifier;
-    }
+public record DefaultKeyMapping(InputConstants.Key input, Set<KeyModifier> modifiers) {
 }
