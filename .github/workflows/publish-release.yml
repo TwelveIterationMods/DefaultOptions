@@ -49,7 +49,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        loader: [ common, fabric, forge, neoforge ]
+        loader: [ common, fabric, forge ]
         site: [ curseforge, modrinth, publish ]
         exclude:
           - loader: common

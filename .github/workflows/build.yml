@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        loader: [fabric, forge, neoforge]
+        loader: [fabric, forge]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
