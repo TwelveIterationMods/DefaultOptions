@@ -1,1 +1,1 @@
-- Fixed modded keybinds resetting on every launch on Forge
+- Possibly fixed a bug where default key mappings would not be applied if the game crashed before being able to save options
