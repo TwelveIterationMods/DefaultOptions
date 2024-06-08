@@ -1,3 +1,5 @@
+Updated to Minecraft 1.21
+
 - Updated to Minecraft 1.20.6
 - Added support for Amecs modifier defaults
 - Possibly fixed a bug where default key mappings would not be applied if the game crashed before being able to save options

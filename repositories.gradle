@@ -33,6 +33,7 @@ repositories {
         url = "https://maven.terraformersmc.com/releases"
         content {
             includeGroup "com.terraformersmc"
+            includeGroup "dev.emi"
         }
     }
 
@@ -56,8 +57,8 @@ repositories {
             includeGroup "us.dynmap"
         }
     }
-
-    maven {
+	
+	maven {
         url "https://maven.siphalor.de/"
         content {
             includeGroup "de.siphalor"
