@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
 
-    private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+))?");
+    private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+)?)?");
     private static final Map<String, DefaultKeyMapping> defaultKeys = new HashMap<>();
     private static final List<String> knownKeys = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
                         .map(KeyModifier::name)
                         .collect(Collectors.joining(",")));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             DefaultOptions.logger.error("Failed to save default key mappings", e);
         }
 
@@ -117,10 +117,12 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
                         knownKeys.add(line);
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 DefaultOptions.logger.error("Error loading known key bindings", e);
             }
         }
+
+        DefaultOptions.logger.info("Found {} default keys and {} known keys", defaultKeys.size(), knownKeys.size());
 
         // Override the default mappings and set the initial key codes, if the key is not known yet
         for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
