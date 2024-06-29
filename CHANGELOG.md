@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.21
+- Fixed default keys not loading correctly
