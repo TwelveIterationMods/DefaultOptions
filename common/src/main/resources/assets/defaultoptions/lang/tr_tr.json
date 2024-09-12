@@ -1,0 +1,7 @@
+{
+  "config.defaultoptions.title": "Varsayılan Seçenekler",
+  "config.defaultoptions.defaultDifficulty": "Varsayılan Zorluk",
+  "config.defaultoptions.defaultDifficulty.tooltip": "Yeni oluşturulan dünyalar için seçilen varsayılan zorluk derecesi.",
+  "config.defaultoptions.lockDifficulty": "Zorluğu Kilitle",
+  "config.defaultoptions.lockDifficulty.tooltip": "Yeni dünyaların zorluğu belirli bir varsayılana kilitlenecekse true(doğru) olarak ayarlayın. Harici araçlar olmadan oyuncular tarafından bu kilit açılamaz! Muhtemelen kötü bir fikir. Tavsiye etmiyorum. Neden bu seçeneği ekliyorum ki ?"
+}
