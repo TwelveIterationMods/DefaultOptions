@@ -1,1 +1,1 @@
-- Fixed keybinds resetting to their mod defaults
+- Updated to Minecraft 1.21.5
