@@ -23,9 +23,6 @@
     ],
     "client": [
       "net.blay09.mods.defaultoptions.fabric.client.FabricDefaultOptionsClient"
-    ],
-    "modmenu": [
-      "net.blay09.mods.defaultoptions.fabric.compat.ModMenuIntegration"
     ]
   },
   "mixins": [
