@@ -2,10 +2,10 @@ package net.blay09.mods.defaultoptions.neoforge;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.balm.neoforge.NeoForgeLoadContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.PlatformBindings;
+import net.blay09.mods.defaultoptions.keys.KeyModifier;
 import net.blay09.mods.defaultoptions.neoforge.mixin.NeoForgeKeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;

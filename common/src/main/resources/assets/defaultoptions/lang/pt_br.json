@@ -1,5 +1,5 @@
 {
-    "config.defaultoptions.title": "Opções padrão",
-    "config.defaultoptions.defaultDifficulty": "Dificuldade padrão",
-    "config.defaultoptions.lockDifficulty": "Travar Dificuldade"
+    "defaultoptions.configuration.title": "Opções padrão",
+    "defaultoptions.configuration.defaultDifficulty": "Dificuldade padrão",
+    "defaultoptions.configuration.lockDifficulty": "Travar Dificuldade"
   }

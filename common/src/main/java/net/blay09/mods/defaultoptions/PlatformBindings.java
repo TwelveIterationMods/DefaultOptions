@@ -1,6 +1,6 @@
 package net.blay09.mods.defaultoptions;
 
-import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
+import net.blay09.mods.defaultoptions.keys.KeyModifier;
 import net.minecraft.client.KeyMapping;
 
 import java.util.Set;
