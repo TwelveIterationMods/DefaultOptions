@@ -3,8 +3,8 @@ package net.blay09.mods.defaultoptions.fabric.compat;
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyBindingUtils;
 import de.siphalor.amecs.api.KeyModifiers;
-import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.defaultoptions.PlatformBindings;
+import net.blay09.mods.defaultoptions.keys.KeyModifier;
 import net.minecraft.client.KeyMapping;
 
 import java.util.HashSet;

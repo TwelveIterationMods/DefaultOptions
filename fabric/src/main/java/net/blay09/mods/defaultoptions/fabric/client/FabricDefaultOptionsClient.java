@@ -3,9 +3,9 @@ package net.blay09.mods.defaultoptions.fabric.client;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.EmptyLoadContext;
 import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.PlatformBindings;
+import net.blay09.mods.defaultoptions.keys.KeyModifier;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.KeyMapping;
 
