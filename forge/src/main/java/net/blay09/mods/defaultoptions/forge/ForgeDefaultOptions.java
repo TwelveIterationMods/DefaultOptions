@@ -2,11 +2,11 @@ package net.blay09.mods.defaultoptions.forge;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.blay09.mods.balm.forge.ForgeLoadContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.forge.mixin.ForgeKeyMappingAccessor;
+import net.blay09.mods.defaultoptions.keys.KeyModifier;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.common.Mod;
@@ -72,9 +72,8 @@ public class ForgeDefaultOptions {
         };
 
         if (FMLEnvironment.dist.isClient()) {
-            Balm.initialize(DefaultOptions.MOD_ID, loadContext, () -> {
-            });
-            BalmClient.initialize(DefaultOptions.MOD_ID, loadContext, DefaultOptions::initialize);
+            Balm.initializeMod(DefaultOptions.MOD_ID, loadContext);
+            BalmClient.initializeMod(DefaultOptions.MOD_ID, loadContext, DefaultOptions::initialize);
         }
 
         context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
