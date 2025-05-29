@@ -38,7 +38,7 @@ public class FabricDefaultOptionsClient implements ClientModInitializer {
 
         Balm.initializeIfLoaded("amecsapi", "net.blay09.mods.defaultoptions.fabric.compat.AmecsIntegration");
 
-        Balm.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, () -> {});
-        BalmClient.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, DefaultOptions::initialize);
+        Balm.initializeMod(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, () -> {});
+        BalmClient.initializeMod(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, DefaultOptions::initialize);
     }
 }
