@@ -70,7 +70,7 @@ public class NeoForgeDefaultOptions {
         };
 
         final var context = new NeoForgeLoadContext(modEventBus);
-        Balm.initialize(DefaultOptions.MOD_ID, context, () -> {
+        Balm.initializeMod(DefaultOptions.MOD_ID, context, () -> {
         });
         BalmClient.initialize(DefaultOptions.MOD_ID, context, DefaultOptions::initialize);
     }
