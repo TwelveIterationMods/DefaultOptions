@@ -20,7 +20,7 @@ import java.util.Set;
 public class ForgeDefaultOptions {
 
     public ForgeDefaultOptions(FMLJavaModLoadingContext context) {
-        final var loadContext = new ForgeLoadContext(context.getModEventBus());
+        final var loadContext = new ForgeLoadContext(context.getModBusGroup());
         PlatformBindings.INSTANCE = new PlatformBindings() {
             @Override
             public void setDefaultKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers) {
