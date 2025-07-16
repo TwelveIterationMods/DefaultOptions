@@ -78,6 +78,12 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
         defaultKeys.clear();
         knownKeys.clear();
 
+        for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
+            if (!keyMapping.isDefault()) {
+                knownKeys.add(keyMapping.getName());
+            }
+        }
+
         // Load the default keys from the config
         File defaultKeysFile = new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt");
         if (defaultKeysFile.exists()) {
