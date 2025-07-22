@@ -8,6 +8,7 @@
     ],
     "client": [
         "KeyMappingAccessor",
+        "KeyMappingMixin",
         "OptionsMixin"
     ],
     "server": [
