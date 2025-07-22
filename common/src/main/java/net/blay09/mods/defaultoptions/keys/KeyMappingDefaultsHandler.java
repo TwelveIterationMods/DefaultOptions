@@ -127,7 +127,7 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
                 // If the key is still on the original default and has not yet been modified on this run (i.e. through options load),
                 // we update it to the new default. Essentially options.txt now acts as what was previously knownkeys.txt.
                 // That way we don't override changes the player themselves may have made already.
-                if (((DefaultOptionsKeyMapping) keyMapping).defaultoptions$wasUserModified()
+                if (!((DefaultOptionsKeyMapping) keyMapping).defaultoptions$wasUserModified()
                         && originalDefaultMapping.matches(keyMapping)
                         && !defaultKeyMapping.matches(keyMapping)) {
                     final var defaultKeyModifiers = PlatformBindings.INSTANCE.getDefaultKeyModifiers(keyMapping);
