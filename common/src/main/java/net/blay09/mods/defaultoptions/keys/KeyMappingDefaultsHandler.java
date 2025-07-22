@@ -13,6 +13,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -117,7 +118,7 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
         int defaultsApplied = 0;
         int bindingsOverridden = 0;
         for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
-            final var originalDefaultMapping = new DefaultKeyMapping(keyMapping.getDefaultKey(), PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping));
+            final var originalDefaultMapping = new DefaultKeyMapping(keyMapping.getDefaultKey(), PlatformBindings.INSTANCE.getDefaultKeyModifiers(keyMapping));
             if (defaultKeys.containsKey(keyMapping.getName())) {
                 DefaultKeyMapping defaultKeyMapping = defaultKeys.get(keyMapping.getName());
                 ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultKeyMapping.input());
