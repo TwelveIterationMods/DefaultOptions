@@ -27,12 +27,18 @@ public class DefaultOptionsInitializer {
 
     private static void loadDefaults(DefaultOptionsLoadStage stage) {
         for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
-            if (handler.shouldLoadDefaults() && handler.getLoadStage() == stage) {
-                try {
-                    handler.loadDefaults();
-                    DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
-                } catch (DefaultOptionsHandlerException e) {
-                    DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);
+            if (handler.getLoadStage() == stage) {
+                if (handler.shouldLoadDefaults()) {
+                    try {
+                        handler.loadDefaults();
+                        DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
+                    } catch (DefaultOptionsHandlerException e) {
+                        DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);
+                    }
+                } else if (handler.hasDefaults()) {
+                    DefaultOptions.logger.debug("Skipping default options for {}; defaults are present but should not be loaded", handler.getId());
+                } else {
+                    DefaultOptions.logger.debug("Skipping default options for {}; no defaults available", handler.getId());
                 }
             }
         }
