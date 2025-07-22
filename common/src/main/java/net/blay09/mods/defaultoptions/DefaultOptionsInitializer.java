@@ -26,8 +26,8 @@ public class DefaultOptionsInitializer {
         for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
             if (handler.shouldLoadDefaults() && handler.getLoadStage() == stage) {
                 try {
-                    DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
                     handler.loadDefaults();
+                    DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
                 } catch (DefaultOptionsHandlerException e) {
                     DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);
                 }

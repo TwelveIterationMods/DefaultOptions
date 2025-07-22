@@ -87,12 +87,15 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
 
                     Matcher matcher = KEY_PATTERN.matcher(line);
                     if (!matcher.matches()) {
+                        DefaultOptions.logger.debug("Skipping line {} as the format is invalid", line);
                         continue;
                     }
 
                     try {
                         KeyModifier modifier = matcher.group(3) != null ? KeyModifier.valueOf(matcher.group(3)) : KeyModifier.NONE;
-                        defaultKeys.put(matcher.group(1), new DefaultKeyMapping(InputConstants.getKey(matcher.group(2)), modifier));
+                        final var keyMappingName = matcher.group(1);
+                        defaultKeys.put(keyMappingName, new DefaultKeyMapping(InputConstants.getKey(matcher.group(2)), modifier));
+                        DefaultOptions.logger.debug("Registered a default key binding for {} ({}:{})", keyMappingName, matcher.group(2), matcher.group(3));
                     } catch (Exception e) {
                         DefaultOptions.logger.error("Error loading default key binding for {}", line, e);
                     }
@@ -100,24 +103,37 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
             } catch (Exception e) {
                 DefaultOptions.logger.error("Error loading default key bindings", e);
             }
+            DefaultOptions.logger.info("Loaded {} default key bindings.", defaultKeys.size());
+        } else {
+            DefaultOptions.logger.info("No default key bindings file found.");
         }
 
         // Override the default mappings and set the initial key codes, if the key is not known yet
+        int defaultsApplied = 0;
+        int bindingsOverridden = 0;
         for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
             final var originalDefaultMapping = new DefaultKeyMapping(keyMapping.getDefaultKey(), PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping));
             if (defaultKeys.containsKey(keyMapping.getName())) {
                 DefaultKeyMapping defaultKeyMapping = defaultKeys.get(keyMapping.getName());
                 ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultKeyMapping.input);
                 PlatformBindings.INSTANCE.setDefaultKeyModifier(keyMapping, defaultKeyMapping.modifier);
+                defaultsApplied++;
                 // If the key is still on the original default, we update it to the new default.
                 // That way we don't override changes the player themselves may have made already.
                 if (originalDefaultMapping.matches(keyMapping)) {
                     KeyModifier defaultKeyModifier = PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping);
                     PlatformBindings.INSTANCE.setKeyModifier(keyMapping, defaultKeyModifier);
                     keyMapping.setKey(keyMapping.getDefaultKey());
+                    bindingsOverridden++;
+                    DefaultOptions.logger.debug("Key mapping {} was previously on the original default. Configuring to new default.", keyMapping.getName());
+                } else {
+                    DefaultOptions.logger.debug("Key mapping {} has been previously set, skipping.", keyMapping.getName());
                 }
+            } else {
+                DefaultOptions.logger.debug("No default key mapping configured for {}, skipping.", keyMapping.getName());
             }
         }
+        DefaultOptions.logger.info("Applied {} defaults to key mappings ({} keys were reconfigured).", defaultsApplied, bindingsOverridden);
         KeyMapping.resetMapping();
         saveCurrentOptions();
     }
