@@ -2,6 +2,7 @@ package net.blay09.mods.defaultoptions.keys;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.DefaultOptionsInitializer;
 import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
@@ -76,6 +77,8 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
 
     @Override
     public void loadDefaults() {
+        DefaultOptionsInitializer.markUserModifiedKeys(Minecraft.getInstance().options);
+
         // Clear old values
         defaultKeys.clear();
 
