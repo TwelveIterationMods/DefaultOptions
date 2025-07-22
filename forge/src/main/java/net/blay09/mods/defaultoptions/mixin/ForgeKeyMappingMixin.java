@@ -16,7 +16,7 @@ public class ForgeKeyMappingMixin {
     void setKeyModifierAndCode(KeyModifier keyModifier, InputConstants.Key keyCode, CallbackInfo ci) {
         // setKey is only called when the key didn't match the default on options load, so it's not reliable.
         // We just track it additionally to cover all bases.
-        ((DefaultOptionsKeyMapping) this).defaultoptions$setUserModified(true);
+        ((DefaultOptionsKeyMapping) this).defaultoptions$setSeen(true);
     }
 
 }

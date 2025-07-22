@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class DefaultOptionsInitializer {
 
-    private static final Set<String> userModifiedKeys = new HashSet<>();
+    private static final Set<String> userSeenKeys = new HashSet<>();
 
     static {
         DefaultOptionsAPI.__internalMethods = new InternalMethodsImpl();
@@ -48,7 +48,7 @@ public class DefaultOptionsInitializer {
         }
     }
 
-    public static void collectUserModifiedKeys(Options options) {
+    public static void collectSeenKeys(Options options) {
         try (final var reader = Files.newReader(options.getFile(), Charsets.UTF_8)) {
             reader.lines().forEach((line) -> {
                 try {
@@ -57,7 +57,7 @@ public class DefaultOptionsInitializer {
                         if (colonIndex != -1) {
                             final var key = line.substring(0, colonIndex);
                             final var name = key.substring("key_".length());
-                            userModifiedKeys.add(name);
+                            userSeenKeys.add(name);
                         }
                     }
                 } catch (Exception ignored) {
@@ -67,10 +67,10 @@ public class DefaultOptionsInitializer {
         }
     }
 
-    public static void markUserModifiedKeys(Options options) {
+    public static void markUserSeenKeys(Options options) {
         for (final var keyMapping : options.keyMappings) {
-            if (userModifiedKeys.contains(keyMapping.getName())) {
-                ((DefaultOptionsKeyMapping) keyMapping).defaultoptions$setUserModified(true);
+            if (userSeenKeys.contains(keyMapping.getName())) {
+                ((DefaultOptionsKeyMapping) keyMapping).defaultoptions$setSeen(true);
             }
         }
     }
