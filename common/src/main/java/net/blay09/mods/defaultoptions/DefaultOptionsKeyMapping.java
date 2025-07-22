@@ -1,6 +1,6 @@
 package net.blay09.mods.defaultoptions;
 
 public interface DefaultOptionsKeyMapping {
-    boolean defaultoptions$wasUserModified();
-    void defaultoptions$setUserModified(boolean modified);
+    boolean defaultoptions$wasSeen();
+    void defaultoptions$setSeen(boolean seen);
 }
