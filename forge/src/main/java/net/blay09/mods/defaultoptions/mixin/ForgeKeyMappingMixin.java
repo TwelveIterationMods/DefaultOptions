@@ -3,30 +3,20 @@ package net.blay09.mods.defaultoptions.mixin;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.defaultoptions.DefaultOptionsKeyMapping;
 import net.minecraft.client.KeyMapping;
+import net.minecraftforge.client.settings.KeyModifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(KeyMapping.class)
-public class KeyMappingMixin implements DefaultOptionsKeyMapping {
+public class ForgeKeyMappingMixin {
 
-    private boolean defaultoptions$userModified = false;
-
-    @Inject(method = "setKey", at = @At("HEAD"))
-    void setKey(InputConstants.Key key, CallbackInfo ci) {
+    @Inject(method = "setKeyModifierAndCode", at = @At("HEAD"), remap = false)
+    void setKeyModifierAndCode(KeyModifier keyModifier, InputConstants.Key keyCode) {
         // setKey is only called when the key didn't match the default on options load, so it's not reliable.
         // We just track it additionally to cover all bases.
-        defaultoptions$userModified = true;
+        ((DefaultOptionsKeyMapping) this).defaultoptions$setUserModified(true);
     }
 
-    @Override
-    public boolean defaultoptions$wasUserModified() {
-        return defaultoptions$userModified;
-    }
-
-    @Override
-    public void defaultoptions$setUserModified(boolean modified) {
-        defaultoptions$userModified = modified;
-    }
 }
