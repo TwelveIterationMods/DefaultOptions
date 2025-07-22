@@ -1,14 +1,18 @@
 package net.blay09.mods.defaultoptions;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.api.*;
 import net.minecraft.client.Options;
-import net.minecraft.nbt.CompoundTag;
 
 import java.util.HashSet;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 public class DefaultOptionsInitializer {
+
+    private static final Set<String> userModifiedKeys = new HashSet<>();
 
     static {
         DefaultOptionsAPI.__internalMethods = new InternalMethodsImpl();
@@ -50,16 +54,28 @@ public class DefaultOptionsInitializer {
         }
     }
 
-    public static void detectAndMarkModifiedKeys(Options options, CompoundTag fields) {
-        final var knownKeys = new HashSet<String>();
-        for (final var option : fields.getAllKeys()) {
-            if (option.startsWith("key_")) {
-                final var name = option.substring("key_".length());
-                knownKeys.add(name);
-            }
+    public static void collectUserModifiedKeys(Options options) {
+        try (final var reader = Files.newReader(options.getFile(), Charsets.UTF_8)) {
+            reader.lines().forEach((line) -> {
+                try {
+                    if (line.startsWith("key_")) {
+                        int colonIndex = line.indexOf(':');
+                        if (colonIndex != -1) {
+                            final var key = line.substring(0, colonIndex);
+                            final var name = key.substring("key_".length());
+                            userModifiedKeys.add(name);
+                        }
+                    }
+                } catch (Exception ignored) {
+                }
+            });
+        } catch (Exception ignored) {
         }
+    }
+
+    public static void markUserModifiedKeys(Options options) {
         for (final var keyMapping : options.keyMappings) {
-            if (knownKeys.contains(keyMapping.getName())) {
+            if (userModifiedKeys.contains(keyMapping.getName())) {
                 ((DefaultOptionsKeyMapping) keyMapping).defaultoptions$setUserModified(true);
             }
         }
