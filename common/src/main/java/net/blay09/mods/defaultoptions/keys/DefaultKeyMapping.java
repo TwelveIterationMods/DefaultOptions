@@ -9,7 +9,7 @@ import java.util.Set;
 public record DefaultKeyMapping(InputConstants.Key input, Set<KeyModifier> modifiers) {
     public boolean matches(KeyMapping keyMapping) {
         final var keyModifiers = PlatformBindings.INSTANCE.getKeyModifiers(keyMapping);
-        if (modifiers.equals(keyModifiers)) {
+        if (!modifiers.equals(keyModifiers)) {
             return false;
         }
 
