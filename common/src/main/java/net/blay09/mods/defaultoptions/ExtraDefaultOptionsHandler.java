@@ -60,8 +60,8 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
     @Override
     public void loadDefaults() throws DefaultOptionsHandlerException {
         Path defaultOptionsPath = getCustomDefaultOptionsFolder().toPath();
-        try {
-            List<Path> paths = Files.walk(defaultOptionsPath).toList();
+        try (final var files = Files.walk(defaultOptionsPath)) {
+            List<Path> paths = files.toList();
             for (Path path : paths) {
                 File defaultOptionsFile = path.toFile();
                 if (defaultOptionsFile.isFile()) {
@@ -69,7 +69,12 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
                     File optionsFile = new File(DefaultOptions.getMinecraftDataDir(), relativeDefaultOptionsPath.toString());
                     if (!optionsFile.exists()) {
                         FileUtils.copyFile(defaultOptionsFile, optionsFile);
+                        DefaultOptions.logger.info("Populated {} with default options from {}", optionsFile, defaultOptionsFile);
+                    } else {
+                        DefaultOptions.logger.debug("Extra defaults skipping {} because it already exists, last modified {}", optionsFile, optionsFile.lastModified());
                     }
+                } else {
+                    DefaultOptions.logger.debug("Extra defaults skipping {} because it is not a file", defaultOptionsFile);
                 }
             }
         } catch (IOException e) {

@@ -2,6 +2,7 @@ package net.blay09.mods.defaultoptions.difficulty;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.event.client.screen.ScreenInitEvent;
+import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.config.DefaultOptionsConfig;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
@@ -28,6 +29,7 @@ public class DefaultDifficultyHandler {
                 Difficulty difficulty = DefaultOptionsConfig.getActive().defaultDifficulty.toDifficulty();
                 uiState.setDifficulty(difficulty);
                 touchedScreens.add(screen.hashCode());
+                DefaultOptions.logger.info("Default difficulty has been set to {}.", difficulty);
             }
 
             if (DefaultOptionsConfig.getActive().lockDifficulty) {
@@ -46,6 +48,9 @@ public class DefaultDifficultyHandler {
         AbstractWidget difficultyButton = findDifficultyButton(screen);
         if (difficultyButton != null) {
             difficultyButton.active = false;
+            DefaultOptions.logger.info("Difficulty has been locked.");
+        } else {
+            DefaultOptions.logger.error("Could not find difficulty button. Unable to lock difficulty.");
         }
     }
 
