@@ -12,9 +12,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +21,6 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
 
     private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+))?");
     private static final Map<String, DefaultKeyMapping> defaultKeys = new HashMap<>();
-    private static final List<String> knownKeys = new ArrayList<>();
 
     private File getDefaultOptionsFile() {
         return new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt");
@@ -77,7 +74,6 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
     public void loadDefaults() {
         // Clear old values
         defaultKeys.clear();
-        knownKeys.clear();
 
         // Load the default keys from the config
         File defaultKeysFile = new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt");
@@ -106,45 +102,23 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
             }
         }
 
-        // Load the known keys from the Minecraft directory
-        File knownKeysFile = new File(DefaultOptions.getMinecraftDataDir(), "knownkeys.txt");
-        if (knownKeysFile.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(knownKeysFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (!line.isEmpty()) {
-                        knownKeys.add(line);
-                    }
-                }
-            } catch (IOException e) {
-                DefaultOptions.logger.error("Error loading known key bindings", e);
-            }
-        }
-
         // Override the default mappings and set the initial key codes, if the key is not known yet
         for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
+            final var originalDefaultMapping = new DefaultKeyMapping(keyMapping.getDefaultKey(), PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping));
             if (defaultKeys.containsKey(keyMapping.getName())) {
                 DefaultKeyMapping defaultKeyMapping = defaultKeys.get(keyMapping.getName());
                 ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultKeyMapping.input);
                 PlatformBindings.INSTANCE.setDefaultKeyModifier(keyMapping, defaultKeyMapping.modifier);
-                if (!knownKeys.contains(keyMapping.getName())) {
+                // If the key is still on the original default, we update it to the new default.
+                // That way we don't override changes the player themselves may have made already.
+                if (originalDefaultMapping.matches(keyMapping)) {
                     KeyModifier defaultKeyModifier = PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping);
                     PlatformBindings.INSTANCE.setKeyModifier(keyMapping, defaultKeyModifier);
                     keyMapping.setKey(keyMapping.getDefaultKey());
-                    knownKeys.add(keyMapping.getName());
                 }
             }
         }
         KeyMapping.resetMapping();
         saveCurrentOptions();
-
-        // Save the updated known keys to the knownkeys.txt file in the Minecraft directory
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(DefaultOptions.getMinecraftDataDir(), "knownkeys.txt")))) {
-            for (String key : knownKeys) {
-                writer.println(key);
-            }
-        } catch (IOException e) {
-            DefaultOptions.logger.error("Error saving known key bindings", e);
-        }
     }
 }
