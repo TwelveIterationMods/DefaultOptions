@@ -9,7 +9,8 @@
   "client": [
     "OptionsMixin",
     "KeyMappingAccessor",
-    "ForgeKeyMappingAccessor"
+    "ForgeKeyMappingAccessor",
+    "KeyMappingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

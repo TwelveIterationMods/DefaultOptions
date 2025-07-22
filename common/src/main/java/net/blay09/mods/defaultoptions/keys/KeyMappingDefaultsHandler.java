@@ -7,6 +7,7 @@ import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
+import net.blay09.mods.defaultoptions.DefaultOptionsKeyMapping;
 import net.blay09.mods.defaultoptions.mixin.KeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -118,9 +119,12 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
                 ((KeyMappingAccessor) keyMapping).setDefaultKey(defaultKeyMapping.input);
                 PlatformBindings.INSTANCE.setDefaultKeyModifier(keyMapping, defaultKeyMapping.modifier);
                 defaultsApplied++;
-                // If the key is still on the original default, we update it to the new default.
+                // If the key is still on the original default and has not yet been modified on this run (i.e. through options load),
+                // we update it to the new default. Essentially options.txt now acts as what was previously knownkeys.txt.
                 // That way we don't override changes the player themselves may have made already.
-                if (originalDefaultMapping.matches(keyMapping)) {
+                if (((DefaultOptionsKeyMapping) keyMapping).defaultoptions$wasUserModified()
+                        && originalDefaultMapping.matches(keyMapping)
+                        && !defaultKeyMapping.matches(keyMapping)) {
                     KeyModifier defaultKeyModifier = PlatformBindings.INSTANCE.getDefaultKeyModifier(keyMapping);
                     PlatformBindings.INSTANCE.setKeyModifier(keyMapping, defaultKeyModifier);
                     keyMapping.setKey(keyMapping.getDefaultKey());
