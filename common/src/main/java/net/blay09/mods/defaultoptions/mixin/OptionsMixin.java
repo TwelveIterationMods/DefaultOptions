@@ -18,4 +18,5 @@ public class OptionsMixin {
     private void save(CallbackInfo ci) {
         DefaultOptionsInitializer.postSave();
     }
+
 }

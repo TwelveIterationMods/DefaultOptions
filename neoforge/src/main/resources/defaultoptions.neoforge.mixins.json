@@ -6,7 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "NeoForgeKeyMappingAccessor"
+    "NeoForgeOptionsMixin",
+    "NeoForgeKeyMappingAccessor",
+    "NeoForgeKeyMappingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
