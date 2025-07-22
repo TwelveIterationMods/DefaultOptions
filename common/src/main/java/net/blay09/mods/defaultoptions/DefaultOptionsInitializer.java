@@ -2,7 +2,10 @@ package net.blay09.mods.defaultoptions;
 
 import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.api.*;
+import net.minecraft.client.Options;
+import net.minecraft.nbt.CompoundTag;
 
+import java.util.HashSet;
 import java.util.ServiceLoader;
 
 public class DefaultOptionsInitializer {
@@ -24,12 +27,18 @@ public class DefaultOptionsInitializer {
 
     private static void loadDefaults(DefaultOptionsLoadStage stage) {
         for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
-            if (handler.shouldLoadDefaults() && handler.getLoadStage() == stage) {
-                try {
-                    handler.loadDefaults();
-                    DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
-                } catch (DefaultOptionsHandlerException e) {
-                    DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);
+            if (handler.getLoadStage() == stage) {
+                if (handler.shouldLoadDefaults()) {
+                    try {
+                        handler.loadDefaults();
+                        DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
+                    } catch (DefaultOptionsHandlerException e) {
+                        DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);
+                    }
+                } else if (handler.hasDefaults()) {
+                    DefaultOptions.logger.debug("Skipping default options for {}; defaults are present but should not be loaded", handler.getId());
+                } else {
+                    DefaultOptions.logger.debug("Skipping default options for {}; no defaults available", handler.getId());
                 }
             }
         }
@@ -38,6 +47,21 @@ public class DefaultOptionsInitializer {
     public static void postSave() {
         for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
             handler.saveAdditional();
+        }
+    }
+
+    public static void detectAndMarkModifiedKeys(Options options, CompoundTag fields) {
+        final var knownKeys = new HashSet<String>();
+        for (final var option : fields.getAllKeys()) {
+            if (option.startsWith("key_")) {
+                final var name = option.substring("key_".length());
+                knownKeys.add(name);
+            }
+        }
+        for (final var keyMapping : options.keyMappings) {
+            if (knownKeys.contains(keyMapping.getName())) {
+                ((DefaultOptionsKeyMapping) keyMapping).defaultoptions$setUserModified(true);
+            }
         }
     }
 }

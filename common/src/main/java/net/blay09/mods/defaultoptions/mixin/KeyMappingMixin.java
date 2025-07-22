@@ -15,11 +15,18 @@ public class KeyMappingMixin implements DefaultOptionsKeyMapping {
 
     @Inject(method = "setKey", at = @At("HEAD"))
     void setKey(InputConstants.Key key, CallbackInfo ci) {
+        // setKey is only called when the key didn't match the default on options load, so it's not reliable.
+        // We just track it additionally to cover all bases.
         defaultoptions$userModified = true;
     }
 
     @Override
     public boolean defaultoptions$wasUserModified() {
         return defaultoptions$userModified;
+    }
+
+    @Override
+    public void defaultoptions$setUserModified(boolean modified) {
+        defaultoptions$userModified = modified;
     }
 }

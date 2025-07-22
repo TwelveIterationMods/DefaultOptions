@@ -7,7 +7,9 @@
   "mixins": [
   ],
   "client": [
-    "ForgeKeyMappingAccessor"
+    "ForgeOptionsMixin",
+    "ForgeKeyMappingAccessor",
+    "ForgeKeyMappingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
