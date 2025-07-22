@@ -4,15 +4,10 @@ Minecraft Mod. A way for modpacks to ship a default (key) configuration without 
 
 - [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
-#### Forge
+#### Downloads
 
 [![Versions](http://cf.way2muchnoise.eu/versions/232131_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/default-options)
 [![Downloads](http://cf.way2muchnoise.eu/full_232131_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/default-options)
-
-#### Fabric
-
-[![Versions](http://cf.way2muchnoise.eu/versions/547694_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/default-options-fabric)
-[![Downloads](http://cf.way2muchnoise.eu/full_547694_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/default-options-fabric)
 
 ## Contributing
 

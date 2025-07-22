@@ -51,7 +51,7 @@ subprojects {
         maven { url "https://maven.shedaniel.me/" }
 
         // For JEI
-        maven { url "https://dvs1.progwml6.com/files/maven/" }
+        maven { url "https://maven.blamejared.com/" }
 
         // For WTHIT
         maven { url "https://maven.bai.lol" }
@@ -70,7 +70,7 @@ subprojects {
 
     if (balm_version.endsWith("SNAPSHOT")) {
         configurations.configureEach {
-            resolutionStrategy.cacheChangingModulesFor 10, 'minutes'
+            resolutionStrategy.cacheChangingModulesFor 1, 'minutes'
         }
     }
 }
