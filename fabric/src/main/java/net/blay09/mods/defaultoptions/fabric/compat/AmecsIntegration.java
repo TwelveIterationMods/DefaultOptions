@@ -1,10 +1,12 @@
 package net.blay09.mods.defaultoptions.fabric.compat;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyBindingUtils;
 import de.siphalor.amecs.api.KeyModifiers;
 import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.keys.KeyModifier;
+import net.blay09.mods.defaultoptions.fabric.mixin.FabricKeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 
 import java.util.HashSet;
@@ -25,6 +27,11 @@ public class AmecsIntegration {
             public void setKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers) {
                 final var amecsModifiers = KeyBindingUtils.getBoundModifiers(keyMapping);
                 applyModifiers(amecsModifiers, keyModifiers);
+            }
+
+            @Override
+            public InputConstants.Key getKey(KeyMapping keyMapping) {
+                return ((FabricKeyMappingAccessor) keyMapping).getKey();
             }
 
             @Override
