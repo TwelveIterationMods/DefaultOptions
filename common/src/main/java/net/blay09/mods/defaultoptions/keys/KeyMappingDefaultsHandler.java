@@ -141,7 +141,9 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
             }
         }
         DefaultOptions.logger.info("Applied {} defaults to key mappings ({} keys were reconfigured).", defaultsApplied, bindingsOverridden);
-        KeyMapping.resetMapping();
-        saveCurrentOptions();
+        if (bindingsOverridden > 0) {
+            KeyMapping.resetMapping();
+            saveCurrentOptions();
+        }
     }
 }
