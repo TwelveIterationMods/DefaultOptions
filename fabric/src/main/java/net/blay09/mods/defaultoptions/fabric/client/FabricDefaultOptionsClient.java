@@ -5,7 +5,9 @@ import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.EmptyLoadContext;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
+import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.DefaultOptionsInitializer;
 import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.fabric.mixin.FabricKeyMappingAccessor;
 import net.fabricmc.api.ClientModInitializer;
@@ -47,5 +49,7 @@ public class FabricDefaultOptionsClient implements ClientModInitializer {
 
         Balm.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, () -> {});
         BalmClient.initialize(DefaultOptions.MOD_ID, EmptyLoadContext.INSTANCE, DefaultOptions::initialize);
+
+        Balm.getEvents().onEvent(ClientStartedEvent.class, (event) -> DefaultOptionsInitializer.postLoad());
     }
 }
