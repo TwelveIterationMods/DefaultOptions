@@ -54,8 +54,9 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
     public void saveCurrentOptionsAsDefault() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt")))) {
             for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
+                final var key = PlatformBindings.INSTANCE.getKey(keyMapping);
                 final var keyModifiers = PlatformBindings.INSTANCE.getKeyModifiers(keyMapping);
-                writer.println("key_" + keyMapping.getName() + ":" + keyMapping.saveString() + ":" + keyModifiers.stream()
+                writer.println("key_" + keyMapping.getName() + ":" + key.getName() + ":" + keyModifiers.stream()
                         .map(KeyModifier::name)
                         .collect(Collectors.joining(",")));
             }

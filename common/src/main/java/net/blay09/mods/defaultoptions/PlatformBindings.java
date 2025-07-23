@@ -1,5 +1,6 @@
 package net.blay09.mods.defaultoptions;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
 import net.minecraft.client.KeyMapping;
 
@@ -12,6 +13,8 @@ public abstract class PlatformBindings {
     public abstract void setDefaultKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers);
 
     public abstract void setKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers);
+
+    public abstract InputConstants.Key getKey(KeyMapping keyMapping);
 
     public abstract Set<KeyModifier> getKeyModifiers(KeyMapping keyMapping);
 
