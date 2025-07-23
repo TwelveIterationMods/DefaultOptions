@@ -25,7 +25,7 @@ public class DefaultOptionsInitializer {
         loadDefaults(DefaultOptionsLoadStage.PRE_LOAD);
     }
 
-    public static void postLoad(ClientStartedEvent event) {
+    public static void postLoad() {
         loadDefaults(DefaultOptionsLoadStage.POST_LOAD);
     }
 
