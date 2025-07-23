@@ -11,7 +11,8 @@
     "KeyMappingAccessor",
     "ForgeKeyMappingAccessor",
     "KeyMappingMixin",
-    "ForgeKeyMappingMixin"
+    "ForgeKeyMappingMixin",
+    "ForgeOptionsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

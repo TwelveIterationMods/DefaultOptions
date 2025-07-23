@@ -29,7 +29,6 @@ public class DefaultOptions {
     public static void initialize() {
         DefaultOptionsConfig.initialize();
         Balm.getCommands().register(DefaultOptionsCommand::register);
-        Balm.getEvents().onEvent(ClientStartedEvent.class, DefaultOptionsInitializer::postLoad);
         DefaultDifficultyHandler.initialize();
     }
 
