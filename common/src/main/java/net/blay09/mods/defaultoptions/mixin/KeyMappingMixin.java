@@ -1,6 +1,7 @@
 package net.blay09.mods.defaultoptions.mixin;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.DefaultOptionsKeyMapping;
 import net.minecraft.client.KeyMapping;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +18,7 @@ public class KeyMappingMixin implements DefaultOptionsKeyMapping {
     void setKey(InputConstants.Key key, CallbackInfo ci) {
         // setKey is only called when the key didn't match the default on options load, so it's not reliable.
         // We just track it additionally to cover all bases.
+        DefaultOptions.logger.debug("Key mapping {} set to {}", ((KeyMapping) (Object) this).getName(), key);
         defaultoptions$seen = true;
     }
 
