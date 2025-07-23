@@ -1,4 +1,4 @@
-package net.blay09.mods.defaultoptions.fabric.mixin;
+package net.blay09.mods.defaultoptions.mixin;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

@@ -8,7 +8,7 @@ import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.DefaultOptionsInitializer;
 import net.blay09.mods.defaultoptions.PlatformBindings;
-import net.blay09.mods.defaultoptions.fabric.mixin.FabricKeyMappingAccessor;
+import net.blay09.mods.defaultoptions.mixin.FabricKeyMappingAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.KeyMapping;
 
