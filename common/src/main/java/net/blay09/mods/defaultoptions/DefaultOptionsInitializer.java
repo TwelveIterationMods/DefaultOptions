@@ -21,7 +21,11 @@ public class DefaultOptionsInitializer {
         loader.forEach(DefaultOptionsPlugin::initialize);
     }
 
-    public static void preLoad() {
+    public static void preLoad(Options options) {
+        if (options.getFile().exists()) {
+            DefaultOptions.logger.info("options.txt already exists - last modified {}", options.getFile().lastModified());
+        }
+        DefaultOptionsInitializer.collectSeenKeys(options);
         loadDefaults(DefaultOptionsLoadStage.PRE_LOAD);
     }
 
@@ -58,6 +62,7 @@ public class DefaultOptionsInitializer {
                             final var key = line.substring(0, colonIndex);
                             final var name = key.substring("key_".length());
                             userSeenKeys.add(name);
+                            DefaultOptions.logger.debug("Key {} is already configured in options.txt", name);
                         }
                     }
                 } catch (Exception ignored) {
