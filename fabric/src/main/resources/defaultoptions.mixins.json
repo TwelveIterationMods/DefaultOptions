@@ -8,7 +8,8 @@
   "client": [
     "OptionsMixin",
     "KeyMappingAccessor",
-    "KeyMappingMixin"
+    "KeyMappingMixin",
+    "FabricKeyMappingAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

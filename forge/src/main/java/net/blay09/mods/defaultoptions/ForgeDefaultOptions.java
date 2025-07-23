@@ -1,5 +1,6 @@
 package net.blay09.mods.defaultoptions;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
@@ -31,6 +32,11 @@ public class ForgeDefaultOptions {
             @Override
             public void setKeyModifier(KeyMapping keyMapping, KeyModifier keyModifier) {
                 keyMapping.setKeyModifierAndCode(toForge(keyModifier), keyMapping.getKey());
+            }
+
+            @Override
+            public InputConstants.Key getKey(KeyMapping keyMapping) {
+                return keyMapping.getKey();
             }
 
             @Override
