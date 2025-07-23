@@ -1,5 +1,6 @@
 package net.blay09.mods.defaultoptions.neoforge;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.neoforge.NeoForgeLoadContext;
@@ -36,6 +37,11 @@ public class NeoForgeDefaultOptions {
             public void setKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers) {
                 final var keyModifier = keyModifiers.stream().findFirst().orElse(KeyModifier.NONE);
                 keyMapping.setKeyModifierAndCode(toForge(keyModifier), keyMapping.getKey());
+            }
+
+            @Override
+            public InputConstants.Key getKey(KeyMapping keyMapping) {
+                return keyMapping.getKey();
             }
 
             @Override
