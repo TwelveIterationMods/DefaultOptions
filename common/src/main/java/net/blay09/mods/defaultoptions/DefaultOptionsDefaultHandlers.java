@@ -16,8 +16,7 @@ public class DefaultOptionsDefaultHandlers implements DefaultOptionsPlugin {
                 .withLinePredicate(line -> !line.startsWith("key_"))
                 .withSaveHandler(() -> Minecraft.getInstance().options.save());
 
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "servers.dat"))
-                .withCategory(DefaultOptionsCategory.SERVERS);
+        DefaultOptionsAPI.registerOptionsHandler(new DefaultServersHandler(new File(DefaultOptions.getMinecraftDataDir(), "servers.dat")));
 
         DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "optionsof.txt"))
                 .withSaveHandler(() -> Minecraft.getInstance().options.save());

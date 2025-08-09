@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHandler {
 
-    private final File file;
+    protected final File file;
     private DefaultOptionsCategory category = DefaultOptionsCategory.OPTIONS;
     private DefaultOptionsLoadStage loadStage = DefaultOptionsLoadStage.PRE_LOAD;
     private Runnable saveHandler;
