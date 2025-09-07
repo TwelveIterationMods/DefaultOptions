@@ -21,6 +21,10 @@ public class DefaultKeyMapping {
             return false;
         }
 
+        if (input.getValue() == InputConstants.UNKNOWN.getValue() && keyMapping.isUnbound()) {
+            return true;
+        }
+
         switch (input.getType()) {
             case KEYSYM -> {
                 return keyMapping.matches(input.getValue(), InputConstants.UNKNOWN.getValue());
