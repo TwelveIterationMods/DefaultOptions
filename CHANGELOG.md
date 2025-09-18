@@ -1,1 +1,1 @@
-- Fixed keys that are originally unbound not getting new default assigned 
+- Updated to Minecraft 1.21.9
