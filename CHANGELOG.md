@@ -1,1 +1,1 @@
-- Fixed keys that are originally unbound not getting new default assigned 
+- Fixed `extra` default options being applied too late for some mods
