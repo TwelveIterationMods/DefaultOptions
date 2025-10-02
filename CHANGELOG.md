@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.21.9
+- Fixed `extra` default options being applied too late for some mods
