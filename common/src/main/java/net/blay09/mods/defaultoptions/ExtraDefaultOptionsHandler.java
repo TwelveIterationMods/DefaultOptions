@@ -35,7 +35,7 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
 
     @Override
     public DefaultOptionsLoadStage getLoadStage() {
-        return DefaultOptionsLoadStage.PRE_LOAD;
+        return DefaultOptionsLoadStage.EARLY_INIT;
     }
 
     @Override

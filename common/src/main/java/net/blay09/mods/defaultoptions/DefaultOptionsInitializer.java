@@ -21,6 +21,10 @@ public class DefaultOptionsInitializer {
         loader.forEach(DefaultOptionsPlugin::initialize);
     }
 
+    public static void earlyInit() {
+        loadDefaults(DefaultOptionsLoadStage.EARLY_INIT);
+    }
+
     public static void preLoad(Options options) {
         if (options.getFile().exists()) {
             DefaultOptions.logger.info("options.txt already exists - last modified {}", options.getFile().lastModified());
@@ -85,4 +89,5 @@ public class DefaultOptionsInitializer {
             }
         }
     }
+
 }
