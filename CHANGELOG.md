@@ -1,1 +1,1 @@
-- Fixed `extra` default options being applied too late for some mods
+- Updated to Minecraft 1.21.10
