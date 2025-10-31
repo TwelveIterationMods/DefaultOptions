@@ -9,8 +9,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Options.class)
 public class ForgeOptionsMixin {
+    @Inject(method = "load()V", at = @At("HEAD"))
+    public void load(CallbackInfo ci) {
+        DefaultOptionsInitializer.earlyInit();
+    }
+
     @Inject(method = "load(Z)V", at = @At("RETURN"), remap = false)
-    public void load(boolean limited, CallbackInfo ci) {
+    public void loadForge(boolean limited, CallbackInfo ci) {
         if (limited) {
             DefaultOptionsInitializer.postLoad();
         }

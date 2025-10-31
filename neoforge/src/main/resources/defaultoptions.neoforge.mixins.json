@@ -7,7 +7,8 @@
   ],
   "client": [
     "NeoForgeKeyMappingAccessor",
-    "NeoForgeKeyMappingMixin"
+    "NeoForgeKeyMappingMixin",
+    "MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1

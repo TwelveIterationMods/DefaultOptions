@@ -9,8 +9,7 @@
     "client": [
         "KeyMappingAccessor",
         "KeyMappingMixin",
-        "OptionsMixin",
-        "MinecraftMixin"
+        "OptionsMixin"
     ],
     "server": [
     ],
