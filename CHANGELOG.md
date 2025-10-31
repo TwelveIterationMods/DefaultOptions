@@ -1,1 +1,2 @@
-- Updated to Minecraft 1.21.10
+- Fixed an issue that made the mod not launch on Forge since 1.21.8
+  - Please consider switching to NeoForge which is much better supported.
