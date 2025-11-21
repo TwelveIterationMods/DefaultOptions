@@ -2,7 +2,6 @@ package net.blay09.mods.defaultoptions;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.api.*;
 import net.minecraft.client.Options;
 

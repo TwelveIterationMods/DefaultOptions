@@ -1,8 +1,8 @@
 package net.blay09.mods.defaultoptions.config;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.config.reflection.Comment;
-import net.blay09.mods.balm.api.config.reflection.Config;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.platform.config.reflection.Comment;
+import net.blay09.mods.balm.platform.config.reflection.Config;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.difficulty.UnobfuscatedDifficulty;
 
@@ -16,10 +16,10 @@ public class DefaultOptionsConfig {
     public boolean lockDifficulty = false;
 
     public static DefaultOptionsConfig getActive() {
-        return Balm.getConfig().getActiveConfig(DefaultOptionsConfig.class);
+        return Balm.config().getActiveConfig(DefaultOptionsConfig.class);
     }
 
     public static void initialize() {
-        Balm.getConfig().registerConfig(DefaultOptionsConfig.class);
+        Balm.config().registerConfig(DefaultOptionsConfig.class);
     }
 }

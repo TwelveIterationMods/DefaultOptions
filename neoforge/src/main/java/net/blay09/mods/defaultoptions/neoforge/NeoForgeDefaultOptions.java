@@ -1,10 +1,10 @@
 package net.blay09.mods.defaultoptions.neoforge;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
-import net.blay09.mods.balm.neoforge.NeoForgeLoadContext;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.client.BalmClient;
+import net.blay09.mods.balm.client.platform.event.callback.ClientLifecycleCallback;
+import net.blay09.mods.balm.neoforge.platform.runtime.NeoForgeLoadContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.DefaultOptionsInitializer;
 import net.blay09.mods.defaultoptions.PlatformBindings;
@@ -78,11 +78,11 @@ public class NeoForgeDefaultOptions {
         };
 
         final var context = new NeoForgeLoadContext(modEventBus);
-        Balm.initializeMod(DefaultOptions.MOD_ID, context, () -> {
+        Balm.initializeMod(DefaultOptions.MOD_ID, context, (registrars) -> {
         });
         BalmClient.initializeMod(DefaultOptions.MOD_ID, context, DefaultOptions::initialize);
 
-        Balm.getEvents().onEvent(ClientStartedEvent.class, (event) -> DefaultOptionsInitializer.postLoad());
+        ClientLifecycleCallback.Started.EVENT.register((client) -> DefaultOptionsInitializer.postLoad());
     }
 
 }

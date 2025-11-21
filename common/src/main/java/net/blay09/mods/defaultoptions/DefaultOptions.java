@@ -1,7 +1,7 @@
 package net.blay09.mods.defaultoptions;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.client.BalmClientRegistrars;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.command.DefaultOptionsCommand;
@@ -22,9 +22,9 @@ public class DefaultOptions {
 
     private static final List<DefaultOptionsHandler> defaultOptionsHandlers = new ArrayList<>();
 
-    public static void initialize() {
+    public static void initialize(BalmClientRegistrars registrars) {
         DefaultOptionsConfig.initialize();
-        Balm.getCommands().register(DefaultOptionsCommand::register);
+        Balm.commands().register(DefaultOptionsCommand::register);
         DefaultDifficultyHandler.initialize();
     }
 
