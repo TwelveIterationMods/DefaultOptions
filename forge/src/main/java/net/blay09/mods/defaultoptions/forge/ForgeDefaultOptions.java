@@ -2,8 +2,8 @@ package net.blay09.mods.defaultoptions.forge;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.forge.ForgeLoadContext;
+import net.blay09.mods.balm.client.BalmClient;
+import net.blay09.mods.balm.forge.platform.runtime.ForgeLoadContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.PlatformBindings;
 import net.blay09.mods.defaultoptions.forge.mixin.ForgeKeyMappingAccessor;
