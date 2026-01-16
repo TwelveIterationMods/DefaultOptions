@@ -2,5 +2,5 @@ dependencies {
     modImplementation(libs.balmFabric) {
         changing = libs.versions.balm.get().endsWith("SNAPSHOT")
     }
-    modCompileOnly("de.siphalor:amecsapi-1.20:1.5.2+mc1.20-pre1")
+    modImplementation("de.siphalor.amecs-api:amecs-api-mc1.21.9:1.7.1")
 }
