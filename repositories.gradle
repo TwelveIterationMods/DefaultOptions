@@ -82,7 +82,7 @@ repositories {
         name = 'Siphalor'
         url = 'https://maven.siphalor.de/'
         content {
-            includeGroup "de.siphalor.amecs-api"
+            includeGroup "de.siphalor"
         }
     }
 
