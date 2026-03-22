@@ -1,6 +1,6 @@
 dependencies {
-    modImplementation(libs.balmFabric) {
+    implementation(libs.balmFabric) {
         changing = libs.versions.balm.get().endsWith("SNAPSHOT")
     }
-    modImplementation("de.siphalor.amecs-api:amecs-api-mc1.21.9:1.7.1")
+    implementation("de.siphalor.amecs-api:amecs-api-mc1.21.9:1.7.1")
 }
