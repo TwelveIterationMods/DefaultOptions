@@ -4,5 +4,6 @@ public enum KeyModifier {
     NONE,
     SHIFT,
     CONTROL,
+    CONTROL_OR_COMMAND,
     ALT
 }

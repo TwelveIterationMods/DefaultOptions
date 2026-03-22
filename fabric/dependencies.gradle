@@ -2,5 +2,4 @@ dependencies {
     implementation(libs.balmFabric) {
         changing = libs.versions.balm.get().endsWith("SNAPSHOT")
     }
-    implementation("de.siphalor.amecs-api:amecs-api-mc1.21.9:1.7.1")
 }

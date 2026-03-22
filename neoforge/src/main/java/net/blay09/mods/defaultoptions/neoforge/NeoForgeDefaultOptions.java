@@ -13,6 +13,7 @@ import net.blay09.mods.defaultoptions.neoforge.mixin.NeoForgeKeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 
 import java.util.Collections;
@@ -21,7 +22,7 @@ import java.util.Set;
 @Mod(value = DefaultOptions.MOD_ID, dist = Dist.CLIENT)
 public class NeoForgeDefaultOptions {
 
-    public NeoForgeDefaultOptions(IEventBus modEventBus) {
+    public NeoForgeDefaultOptions(ModContainer modContainer, IEventBus modEventBus) {
         PlatformBindings.INSTANCE = new PlatformBindings() {
             @Override
             public void setDefaultKeyModifiers(KeyMapping keyMapping, Set<KeyModifier> keyModifiers) {
@@ -63,6 +64,7 @@ public class NeoForgeDefaultOptions {
                     case NONE -> KeyModifier.NONE;
                     case SHIFT -> KeyModifier.SHIFT;
                     case CONTROL -> KeyModifier.CONTROL;
+                    case CONTROL_OR_COMMAND -> KeyModifier.CONTROL_OR_COMMAND;
                     case ALT -> KeyModifier.ALT;
                 };
             }
@@ -72,12 +74,13 @@ public class NeoForgeDefaultOptions {
                     case NONE -> net.neoforged.neoforge.client.settings.KeyModifier.NONE;
                     case SHIFT -> net.neoforged.neoforge.client.settings.KeyModifier.SHIFT;
                     case CONTROL -> net.neoforged.neoforge.client.settings.KeyModifier.CONTROL;
+                    case CONTROL_OR_COMMAND -> net.neoforged.neoforge.client.settings.KeyModifier.CONTROL_OR_COMMAND;
                     case ALT -> net.neoforged.neoforge.client.settings.KeyModifier.ALT;
                 };
             }
         };
 
-        final var context = new NeoForgeLoadContext(modEventBus);
+        final var context = new NeoForgeLoadContext(modContainer, modEventBus);
         Balm.initializeMod(DefaultOptions.MOD_ID, context, (registrars) -> {
         });
         BalmClient.initializeMod(DefaultOptions.MOD_ID, context, DefaultOptions::initialize);
