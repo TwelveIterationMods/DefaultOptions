@@ -5,6 +5,7 @@ import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.DefaultOptionsKeyMapping;
 import net.minecraft.client.KeyMapping;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyMapping.class)
 public class KeyMappingMixin implements DefaultOptionsKeyMapping {
 
+    @Unique
     private boolean defaultoptions$seen = false;
 
     @Inject(method = "setKey", at = @At("HEAD"))

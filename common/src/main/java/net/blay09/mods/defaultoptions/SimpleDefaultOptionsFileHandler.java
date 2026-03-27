@@ -4,6 +4,7 @@ import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
 import net.blay09.mods.defaultoptions.api.SimpleDefaultOptionsHandler;
 import org.apache.commons.io.FileUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.io.*;
 import java.util.function.Predicate;
@@ -13,8 +14,8 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     private final File file;
     private DefaultOptionsCategory category = DefaultOptionsCategory.OPTIONS;
     private DefaultOptionsLoadStage loadStage = DefaultOptionsLoadStage.PRE_LOAD;
-    private Runnable saveHandler;
-    private Predicate<String> linePredicate;
+    private @Nullable Runnable saveHandler;
+    private @Nullable Predicate<String> linePredicate;
 
     public SimpleDefaultOptionsFileHandler(File file) {
         this.file = file;

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.world.Difficulty;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class DefaultDifficultyHandler {
         }
     }
 
-    private static AbstractWidget findDifficultyButton(CreateWorldScreen screen) {
+    private static @Nullable AbstractWidget findDifficultyButton(CreateWorldScreen screen) {
         return (AbstractWidget) screen.children().stream()
                 .filter(it -> it instanceof CycleButton<?> button && button.getValue() instanceof Difficulty)
                 .findAny().orElse(null);

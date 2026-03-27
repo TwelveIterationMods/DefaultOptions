@@ -6,6 +6,8 @@ import net.blay09.mods.balm.platform.config.reflection.Config;
 import net.blay09.mods.defaultoptions.DefaultOptions;
 import net.blay09.mods.defaultoptions.difficulty.UnobfuscatedDifficulty;
 
+import java.util.Objects;
+
 @Config(DefaultOptions.MOD_ID)
 public class DefaultOptionsConfig {
 
@@ -16,7 +18,7 @@ public class DefaultOptionsConfig {
     public boolean lockDifficulty = false;
 
     public static DefaultOptionsConfig getActive() {
-        return Balm.config().getActiveConfig(DefaultOptionsConfig.class);
+        return Objects.requireNonNull(Balm.config().getActiveConfig(DefaultOptionsConfig.class));
     }
 
     public static void initialize() {

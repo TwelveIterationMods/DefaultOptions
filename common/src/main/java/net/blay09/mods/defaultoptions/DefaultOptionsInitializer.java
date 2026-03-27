@@ -1,10 +1,10 @@
 package net.blay09.mods.defaultoptions;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import net.blay09.mods.defaultoptions.api.*;
 import net.minecraft.client.Options;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -62,7 +62,7 @@ public class DefaultOptionsInitializer {
     }
 
     public static void collectSeenKeys(Options options) {
-        try (final var reader = Files.newReader(options.getFile(), Charsets.UTF_8)) {
+        try (final var reader = Files.newReader(options.getFile(), StandardCharsets.UTF_8)) {
             reader.lines().forEach((line) -> {
                 try {
                     if (line.startsWith("key_")) {

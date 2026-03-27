@@ -48,7 +48,7 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
 
     @Override
     public boolean hasDefaults() {
-        File[] files = getCustomDefaultOptionsFolder().listFiles();
+        final var files = getCustomDefaultOptionsFolder().listFiles();
         return files != null && files.length > 0;
     }
 

@@ -9,6 +9,7 @@ import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 
 public class DefaultOptionsCommand {
 
@@ -21,7 +22,7 @@ public class DefaultOptionsCommand {
         );
     }
 
-    private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) {
+    private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, @Nullable DefaultOptionsCategory categoryFilter) {
         CommandSourceStack source = context.getSource();
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
             try {
