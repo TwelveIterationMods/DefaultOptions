@@ -4,6 +4,7 @@ import net.blay09.mods.defaultoptions.api.DefaultOptionsAPI;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsPlugin;
 import net.blay09.mods.defaultoptions.keys.KeyMappingDefaultsHandler;
+import net.blay09.mods.defaultoptions.resources.DefaultResourcePacksHandler;
 import net.minecraft.client.Minecraft;
 
 import java.io.File;
@@ -26,5 +27,6 @@ public class DefaultOptionsDefaultHandlers implements DefaultOptionsPlugin {
 
         DefaultOptionsAPI.registerOptionsHandler(new KeyMappingDefaultsHandler());
         DefaultOptionsAPI.registerOptionsHandler(new ExtraDefaultOptionsHandler());
+        DefaultOptionsAPI.registerOptionsHandler(new DefaultResourcePacksHandler());
     }
 }
