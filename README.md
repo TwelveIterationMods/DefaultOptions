@@ -29,6 +29,13 @@ defaults will be loaded from the main `config/defaultoptions` folder.
 
 Other mods may be supported through the use of extra default options (see below).
 
+## Default Resource Packs
+
+The `defaultResourcePacks` config option accepts resource pack repository IDs in selection order.
+
+When configured, these packs replace the user's selected resource packs **once** on the first run, tracked via the `defaultoptions.journal.json` file.
+Do not include the journal file in your modpack.
+
 ## Extra Default Options
 
 The default options folder includes an `config/defaultoptions/extra` folder. Upon starting Minecraft, all files within

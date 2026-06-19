@@ -3,5 +3,7 @@
   "config.defaultoptions.defaultDifficulty": "Default Difficulty",
   "config.defaultoptions.defaultDifficulty.tooltip": "The default difficulty selected for newly created worlds.",
   "config.defaultoptions.lockDifficulty": "Lock Difficulty",
-  "config.defaultoptions.lockDifficulty.tooltip": "Set to true if the difficulty for new world's should be locked to the specific default. This cannot be unlocked by players without external tools! Probably a bad idea. I don't recommend. Why am I adding this option?"
+  "config.defaultoptions.lockDifficulty.tooltip": "Set to true if the difficulty for new world's should be locked to the specific default. This cannot be unlocked by players without external tools! Probably a bad idea. I don't recommend. Why am I adding this option?",
+  "config.defaultoptions.defaultResourcePacks": "Default Resource Packs",
+  "config.defaultoptions.defaultResourcePacks.tooltip": "Resource pack IDs to have enabled by default on the first run."
 }
