@@ -18,6 +18,7 @@ public class DefaultOptionsCommand {
                 .then(Commands.literal("saveKeys").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.KEYS)))
                 .then(Commands.literal("saveOptions").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.OPTIONS)))
                 .then(Commands.literal("saveServers").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.SERVERS)))
+                .then(Commands.literal("saveResourcePacks").executes(context -> saveDefaultOptions(context, DefaultOptionsCategory.RESOURCE_PACKS)))
         );
     }
 
@@ -50,6 +51,16 @@ public class DefaultOptionsCommand {
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
                 source.sendFailure(Component.literal("Failed saving the server list. See the log for more information."));
+            }
+        }
+
+        if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.RESOURCE_PACKS) {
+            try {
+                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.RESOURCE_PACKS);
+                source.sendSuccess(() -> Component.literal("Successfully saved the resource pack selection."), true);
+            } catch(DefaultOptionsHandlerException e) {
+                DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
+                source.sendFailure(Component.literal("Failed saving the resource pack selection. See the log for more information."));
             }
         }
 
