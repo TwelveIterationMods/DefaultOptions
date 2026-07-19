@@ -6,6 +6,8 @@ public interface InternalMethods {
 
     SimpleDefaultOptionsHandler registerOptionsFile(File file);
     void registerOptionsHandler(DefaultOptionsHandler handler);
+
+    @Deprecated
     File getDefaultOptionsFolder();
 
 }

@@ -1,5 +1,6 @@
 package net.blay09.mods.defaultoptions.neoforge.mixin;
 
+import net.blay09.mods.defaultoptions.DefaultOptionsContext;
 import net.blay09.mods.defaultoptions.DefaultOptionsInitializer;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +21,6 @@ public class MinecraftMixin {
             )
     )
     private void init(CallbackInfo ci) {
-        DefaultOptionsInitializer.earlyInit();
+        DefaultOptionsInitializer.earlyLoad(new DefaultOptionsContext(((Minecraft) (Object) this).gameDirectory));
     }
 }

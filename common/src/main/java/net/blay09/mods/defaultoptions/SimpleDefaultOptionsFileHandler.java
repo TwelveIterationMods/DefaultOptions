@@ -26,12 +26,16 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
         return file.getName();
     }
 
-    public File getFile() {
+    public File getFile(DefaultOptionsContext context) {
+        if (!file.isAbsolute()) {
+            return new File(context.getMinecraftDataDir(), file.getPath());
+        }
+
         return file;
     }
 
-    public File getDefaultsFile() {
-        return new File(DefaultOptions.getDefaultOptionsFolder(), file.getName());
+    public File getDefaultsFile(DefaultOptionsContext context) {
+        return new File(context.getDefaultOptionsFolder(), file.getName());
     }
 
     @Override
@@ -45,27 +49,28 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     }
 
     @Override
-    public boolean hasDefaults() {
-        return getDefaultsFile().exists();
+    public boolean hasDefaults(DefaultOptionsContext context) {
+        return getDefaultsFile(context).exists();
     }
 
     @Override
-    public void saveCurrentOptions() {
+    public void saveCurrentOptions(DefaultOptionsContext context) {
         if (saveHandler != null) {
             saveHandler.run();
         }
     }
 
     @Override
-    public void saveCurrentOptionsAsDefault() throws DefaultOptionsHandlerException {
-        saveCurrentOptions();
+    public void saveCurrentOptionsAsDefault(DefaultOptionsContext context) throws DefaultOptionsHandlerException {
+        saveCurrentOptions(context);
 
+        File file = getFile(context);
         if (file.exists()) {
             try {
                 if (linePredicate != null) {
-                    copyFileLineByLine(file, getDefaultsFile(), linePredicate);
+                    copyFileLineByLine(file, getDefaultsFile(context), linePredicate);
                 } else {
-                    FileUtils.copyFile(file, getDefaultsFile());
+                    FileUtils.copyFile(file, getDefaultsFile(context));
                 }
             } catch (IOException e) {
                 throw new DefaultOptionsHandlerException(this, e);
@@ -74,17 +79,17 @@ public class SimpleDefaultOptionsFileHandler implements SimpleDefaultOptionsHand
     }
 
     @Override
-    public boolean shouldLoadDefaults() {
-        return !file.exists() && hasDefaults();
+    public boolean shouldLoadDefaults(DefaultOptionsContext context) {
+        return !getFile(context).exists() && hasDefaults(context);
     }
 
     @Override
-    public void loadDefaults() throws DefaultOptionsHandlerException {
+    public void loadDefaults(DefaultOptionsContext context) throws DefaultOptionsHandlerException {
         try {
             if (linePredicate != null) {
-                copyFileLineByLine(getDefaultsFile(), file, linePredicate);
+                copyFileLineByLine(getDefaultsFile(context), getFile(context), linePredicate);
             } else {
-                FileUtils.copyFile(getDefaultsFile(), file);
+                FileUtils.copyFile(getDefaultsFile(context), getFile(context));
             }
         } catch (IOException e) {
             throw new DefaultOptionsHandlerException(this, e);

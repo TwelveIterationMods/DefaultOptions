@@ -1,6 +1,5 @@
 package net.blay09.mods.defaultoptions;
 
-import net.blay09.mods.defaultoptions.api.DefaultOptionsAPI;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
@@ -14,8 +13,8 @@ import java.util.List;
 
 public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
 
-    private File getCustomDefaultOptionsFolder() {
-        File customDefaultOptionsFolder = new File(DefaultOptionsAPI.getDefaultOptionsFolder(), "extra");
+    private File getCustomDefaultOptionsFolder(DefaultOptionsContext context) {
+        File customDefaultOptionsFolder = new File(context.getDefaultOptionsFolder(), "extra");
         if (!customDefaultOptionsFolder.exists() && !customDefaultOptionsFolder.mkdirs()) {
             throw new IllegalStateException("Could not create default options extra directory.");
         }
@@ -39,34 +38,34 @@ public class ExtraDefaultOptionsHandler implements DefaultOptionsHandler {
     }
 
     @Override
-    public void saveCurrentOptions() {
+    public void saveCurrentOptions(DefaultOptionsContext context) {
     }
 
     @Override
-    public void saveCurrentOptionsAsDefault() {
+    public void saveCurrentOptionsAsDefault(DefaultOptionsContext context) {
     }
 
     @Override
-    public boolean hasDefaults() {
-        final var files = getCustomDefaultOptionsFolder().listFiles();
+    public boolean hasDefaults(DefaultOptionsContext context) {
+        File[] files = getCustomDefaultOptionsFolder(context).listFiles();
         return files != null && files.length > 0;
     }
 
     @Override
-    public boolean shouldLoadDefaults() {
+    public boolean shouldLoadDefaults(DefaultOptionsContext context) {
         return true;
     }
 
     @Override
-    public void loadDefaults() throws DefaultOptionsHandlerException {
-        Path defaultOptionsPath = getCustomDefaultOptionsFolder().toPath();
+    public void loadDefaults(DefaultOptionsContext context) throws DefaultOptionsHandlerException {
+        Path defaultOptionsPath = getCustomDefaultOptionsFolder(context).toPath();
         try (final var files = Files.walk(defaultOptionsPath)) {
             List<Path> paths = files.toList();
             for (Path path : paths) {
                 File defaultOptionsFile = path.toFile();
                 if (defaultOptionsFile.isFile()) {
                     Path relativeDefaultOptionsPath = defaultOptionsPath.relativize(defaultOptionsFile.toPath());
-                    File optionsFile = new File(DefaultOptions.getMinecraftDataDir(), relativeDefaultOptionsPath.toString());
+                    File optionsFile = new File(context.getMinecraftDataDir(), relativeDefaultOptionsPath.toString());
                     if (!optionsFile.exists()) {
                         FileUtils.copyFile(defaultOptionsFile, optionsFile);
                         DefaultOptions.logger.info("Populated {} with default options from {}", optionsFile, defaultOptionsFile);
