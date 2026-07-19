@@ -7,6 +7,7 @@
   "mixins": [
   ],
   "client": [
+    "GameConfigMixin",
     "OptionsMixin",
     "KeyMappingAccessor",
     "ForgeKeyMappingAccessor",

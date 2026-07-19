@@ -2,8 +2,11 @@ package net.blay09.mods.defaultoptions;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
-import net.blay09.mods.defaultoptions.api.*;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsAPI;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
+import net.blay09.mods.defaultoptions.api.DefaultOptionsPlugin;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 
 import java.util.HashSet;
@@ -13,6 +16,7 @@ import java.util.Set;
 public class DefaultOptionsInitializer {
 
     private static final Set<String> userSeenKeys = new HashSet<>();
+    private static boolean earlyLoaded;
 
     static {
         DefaultOptionsAPI.__internalMethods = new InternalMethodsImpl();
@@ -21,29 +25,36 @@ public class DefaultOptionsInitializer {
         loader.forEach(DefaultOptionsPlugin::initialize);
     }
 
+    public static void earlyLoad(DefaultOptionsContext context) {
+        if (!earlyLoaded) {
+            earlyLoaded = true;
+            loadDefaults(DefaultOptionsLoadStage.EARLY_LOAD, context);
+        }
+    }
+
     public static void preLoad(Options options) {
         if (options.getFile().exists()) {
             DefaultOptions.logger.info("options.txt already exists - last modified {}", options.getFile().lastModified());
         }
         DefaultOptionsInitializer.collectSeenKeys(options);
-        loadDefaults(DefaultOptionsLoadStage.PRE_LOAD);
+        loadDefaults(DefaultOptionsLoadStage.PRE_LOAD, new DefaultOptionsContext(Minecraft.getInstance().gameDirectory));
     }
 
     public static void postLoad() {
-        loadDefaults(DefaultOptionsLoadStage.POST_LOAD);
+        loadDefaults(DefaultOptionsLoadStage.POST_LOAD, new DefaultOptionsContext(Minecraft.getInstance().gameDirectory));
     }
 
-    private static void loadDefaults(DefaultOptionsLoadStage stage) {
+    private static void loadDefaults(DefaultOptionsLoadStage stage, DefaultOptionsContext context) {
         for (DefaultOptionsHandler handler : DefaultOptions.getDefaultOptionsHandlers()) {
             if (handler.getLoadStage() == stage) {
-                if (handler.shouldLoadDefaults()) {
+                if (handler.shouldLoadDefaults(context)) {
                     try {
-                        handler.loadDefaults();
+                        handler.loadDefaults(context);
                         DefaultOptions.logger.info("Loaded default options for {}", handler.getId());
                     } catch (DefaultOptionsHandlerException e) {
                         DefaultOptions.logger.error("Failed to load default options for {}", e.getHandlerId(), e);
                     }
-                } else if (handler.hasDefaults()) {
+                } else if (handler.hasDefaults(context)) {
                     DefaultOptions.logger.debug("Skipping default options for {}; defaults are present but should not be loaded", handler.getId());
                 } else {
                     DefaultOptions.logger.debug("Skipping default options for {}; no defaults available", handler.getId());

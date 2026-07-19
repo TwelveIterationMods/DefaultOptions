@@ -2,13 +2,10 @@ package net.blay09.mods.defaultoptions.keys;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
-import net.blay09.mods.defaultoptions.DefaultOptions;
-import net.blay09.mods.defaultoptions.DefaultOptionsInitializer;
-import net.blay09.mods.defaultoptions.PlatformBindings;
+import net.blay09.mods.defaultoptions.*;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsLoadStage;
-import net.blay09.mods.defaultoptions.DefaultOptionsKeyMapping;
 import net.blay09.mods.defaultoptions.mixin.KeyMappingAccessor;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -24,8 +21,8 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
     private static final Pattern KEY_PATTERN = Pattern.compile("key_([^:]+):([^:]+)(?::(.+))?");
     private static final Map<String, DefaultKeyMapping> defaultKeys = new HashMap<>();
 
-    private File getDefaultOptionsFile() {
-        return new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt");
+    private File getDefaultOptionsFile(DefaultOptionsContext context) {
+        return context.getDefaultOptionsFile("keybindings.txt");
     }
 
     @Override
@@ -44,13 +41,13 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
     }
 
     @Override
-    public void saveCurrentOptions() {
+    public void saveCurrentOptions(DefaultOptionsContext context) {
         Minecraft.getInstance().options.save();
     }
 
     @Override
-    public void saveCurrentOptionsAsDefault() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt")))) {
+    public void saveCurrentOptionsAsDefault(DefaultOptionsContext context) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(getDefaultOptionsFile(context)))) {
             for (KeyMapping keyMapping : Minecraft.getInstance().options.keyMappings) {
                 final var key = PlatformBindings.INSTANCE.getKey(keyMapping);
                 KeyModifier keyModifier = PlatformBindings.INSTANCE.getKeyModifier(keyMapping);
@@ -60,28 +57,28 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
             DefaultOptions.logger.error("Failed to save default key mappings", e);
         }
 
-        loadDefaults();
+        loadDefaults(context);
     }
 
     @Override
-    public boolean hasDefaults() {
-        return getDefaultOptionsFile().exists();
+    public boolean hasDefaults(DefaultOptionsContext context) {
+        return getDefaultOptionsFile(context).exists();
     }
 
     @Override
-    public boolean shouldLoadDefaults() {
+    public boolean shouldLoadDefaults(DefaultOptionsContext context) {
         return true;
     }
 
     @Override
-    public void loadDefaults() {
+    public void loadDefaults(DefaultOptionsContext context) {
         DefaultOptionsInitializer.markUserSeenKeys(Minecraft.getInstance().options);
 
         // Clear old values
         defaultKeys.clear();
 
         // Load the default keys from the config
-        File defaultKeysFile = new File(DefaultOptions.getDefaultOptionsFolder(), "keybindings.txt");
+        File defaultKeysFile = context.getDefaultOptionsFile("keybindings.txt");
         if (defaultKeysFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(defaultKeysFile))) {
                 String line;
@@ -144,7 +141,7 @@ public class KeyMappingDefaultsHandler implements DefaultOptionsHandler {
         DefaultOptions.logger.info("Applied {} defaults to key mappings ({} keys were reconfigured).", defaultsApplied, bindingsOverridden);
         if (bindingsOverridden > 0) {
             KeyMapping.resetMapping();
-            saveCurrentOptions();
+            saveCurrentOptions(context);
         }
     }
 }

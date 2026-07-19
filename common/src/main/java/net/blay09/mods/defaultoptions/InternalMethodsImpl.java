@@ -3,6 +3,7 @@ package net.blay09.mods.defaultoptions;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.api.InternalMethods;
 import net.blay09.mods.defaultoptions.api.SimpleDefaultOptionsHandler;
+import net.minecraft.client.Minecraft;
 
 import java.io.File;
 
@@ -21,6 +22,6 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     public File getDefaultOptionsFolder() {
-        return DefaultOptions.getDefaultOptionsFolder();
+        return new DefaultOptionsContext(Minecraft.getInstance().gameDirectory).getDefaultOptionsFolder();
     }
 }

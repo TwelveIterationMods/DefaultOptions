@@ -4,11 +4,13 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.DefaultOptionsContext;
 import net.blay09.mods.defaultoptions.DefaultOptionsHandlerException;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public class DefaultOptionsCommand {
@@ -25,9 +27,10 @@ public class DefaultOptionsCommand {
 
     private static int saveDefaultOptions(CommandContext<CommandSourceStack> context, DefaultOptionsCategory categoryFilter) throws CommandRuntimeException {
         CommandSourceStack source = context.getSource();
+        DefaultOptionsContext defaultOptionsContext = new DefaultOptionsContext(Minecraft.getInstance().gameDirectory);
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.KEYS) {
             try {
-                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.KEYS);
+                DefaultOptions.saveDefaultOptions(defaultOptionsContext, DefaultOptionsCategory.KEYS);
                 source.sendSuccess(() -> Component.literal("Successfully saved the key configuration."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
@@ -37,7 +40,7 @@ public class DefaultOptionsCommand {
 
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.OPTIONS) {
             try {
-                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.OPTIONS);
+                DefaultOptions.saveDefaultOptions(defaultOptionsContext, DefaultOptionsCategory.OPTIONS);
                 source.sendSuccess(() -> Component.literal("Successfully saved the configuration."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
@@ -47,7 +50,7 @@ public class DefaultOptionsCommand {
 
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.SERVERS) {
             try {
-                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.SERVERS);
+                DefaultOptions.saveDefaultOptions(defaultOptionsContext, DefaultOptionsCategory.SERVERS);
                 source.sendSuccess(() -> Component.literal("Successfully saved the server list."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);
@@ -57,7 +60,7 @@ public class DefaultOptionsCommand {
 
         if (categoryFilter == null || categoryFilter == DefaultOptionsCategory.RESOURCE_PACKS) {
             try {
-                DefaultOptions.saveDefaultOptions(DefaultOptionsCategory.RESOURCE_PACKS);
+                DefaultOptions.saveDefaultOptions(defaultOptionsContext, DefaultOptionsCategory.RESOURCE_PACKS);
                 source.sendSuccess(() -> Component.literal("Successfully saved the resource pack selection."), true);
             } catch(DefaultOptionsHandlerException e) {
                 DefaultOptions.logger.error("Failed to save default options for {}", e.getHandlerId(), e);

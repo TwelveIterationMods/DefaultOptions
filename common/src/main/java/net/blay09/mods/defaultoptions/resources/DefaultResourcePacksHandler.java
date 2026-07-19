@@ -2,6 +2,7 @@ package net.blay09.mods.defaultoptions.resources;
 
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.DefaultOptionsContext;
 import net.blay09.mods.defaultoptions.DefaultOptionsHandlerException;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
@@ -36,27 +37,27 @@ public class DefaultResourcePacksHandler implements DefaultOptionsHandler {
     }
 
     @Override
-    public void saveCurrentOptions() {
+    public void saveCurrentOptions(DefaultOptionsContext context) {
     }
 
     @Override
-    public void saveCurrentOptionsAsDefault() {
+    public void saveCurrentOptionsAsDefault(DefaultOptionsContext context) {
         final var selectedPacks = List.copyOf(Minecraft.getInstance().options.resourcePacks);
         Balm.getConfig().updateLocalConfig(DefaultOptionsConfigData.class, config -> config.defaultResourcePacks = selectedPacks);
     }
 
     @Override
-    public boolean hasDefaults() {
+    public boolean hasDefaults(DefaultOptionsContext context) {
         return !DefaultOptionsConfig.getActive().defaultResourcePacks.isEmpty();
     }
 
     @Override
-    public boolean shouldLoadDefaults() {
-        return hasDefaults() && !DefaultOptionsJournal.load().contains(ID);
+    public boolean shouldLoadDefaults(DefaultOptionsContext context) {
+        return hasDefaults(context) && !DefaultOptionsJournal.load(context).contains(ID);
     }
 
     @Override
-    public void loadDefaults() throws DefaultOptionsHandlerException {
+    public void loadDefaults(DefaultOptionsContext context) throws DefaultOptionsHandlerException {
         final var minecraft = Minecraft.getInstance();
         final var repository = minecraft.getResourcePackRepository();
         final var selectedPacks = resolveConfiguredPacks(repository, DefaultOptionsConfig.getActive().defaultResourcePacks);
@@ -65,7 +66,7 @@ public class DefaultResourcePacksHandler implements DefaultOptionsHandler {
         minecraft.options.updateResourcePacks(repository);
 
         try {
-            DefaultOptionsJournal.load().markApplied(ID);
+            DefaultOptionsJournal.load(context).markApplied(ID);
         } catch (IOException e) {
             throw new DefaultOptionsHandlerException(this, "Failed to record resource pack defaults in the journal", e);
         }
