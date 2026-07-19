@@ -13,17 +13,17 @@ public class DefaultOptionsDefaultHandlers implements DefaultOptionsPlugin {
 
     @Override
     public void initialize() {
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "options.txt"))
+        DefaultOptionsAPI.registerOptionsFile(new File("options.txt"))
                 .withLinePredicate(line -> !line.startsWith("key_"))
                 .withSaveHandler(() -> Minecraft.getInstance().options.save());
 
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "servers.dat"))
+        DefaultOptionsAPI.registerOptionsFile(new File("servers.dat"))
                 .withCategory(DefaultOptionsCategory.SERVERS);
 
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "optionsof.txt"))
+        DefaultOptionsAPI.registerOptionsFile(new File("optionsof.txt"))
                 .withSaveHandler(() -> Minecraft.getInstance().options.save());
 
-        DefaultOptionsAPI.registerOptionsFile(new File(DefaultOptions.getMinecraftDataDir(), "optionsviveprofiles.txt"));
+        DefaultOptionsAPI.registerOptionsFile(new File("optionsviveprofiles.txt"));
 
         DefaultOptionsAPI.registerOptionsHandler(new KeyMappingDefaultsHandler());
         DefaultOptionsAPI.registerOptionsHandler(new ExtraDefaultOptionsHandler());

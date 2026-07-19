@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.blay09.mods.defaultoptions.DefaultOptions;
+import net.blay09.mods.defaultoptions.DefaultOptionsContext;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,8 +33,8 @@ public class DefaultOptionsJournal {
         this.root = root;
     }
 
-    public static DefaultOptionsJournal load() {
-        final var path = DefaultOptions.getMinecraftDataDir().toPath().resolve(JOURNAL_FILE_NAME);
+    public static DefaultOptionsJournal load(DefaultOptionsContext context) {
+        final var path = context.getMinecraftDataDir().toPath().resolve(JOURNAL_FILE_NAME);
         if (!Files.exists(path)) {
             return new DefaultOptionsJournal(path, new JsonObject());
         }
