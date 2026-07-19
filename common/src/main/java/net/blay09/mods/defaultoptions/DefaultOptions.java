@@ -1,7 +1,6 @@
 package net.blay09.mods.defaultoptions;
 
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsCategory;
 import net.blay09.mods.defaultoptions.api.DefaultOptionsHandler;
 import net.blay09.mods.defaultoptions.command.DefaultOptionsCommand;
@@ -28,23 +27,20 @@ public class DefaultOptions {
         DefaultDifficultyHandler.initialize();
     }
 
+    @Deprecated
     public static void saveDefaultOptions(DefaultOptionsCategory category) throws DefaultOptionsHandlerException {
+        saveDefaultOptions(new DefaultOptionsContext(Minecraft.getInstance().gameDirectory), category);
+    }
+
+    public static void saveDefaultOptions(DefaultOptionsContext context, DefaultOptionsCategory category) throws DefaultOptionsHandlerException {
         for (DefaultOptionsHandler handler : defaultOptionsHandlers) {
             if (handler.getCategory() == category) {
-                handler.saveCurrentOptionsAsDefault();
+                handler.saveCurrentOptionsAsDefault(context);
             }
         }
     }
 
-    public static File getDefaultOptionsFolder() {
-        File defaultOptions = new File(getMinecraftDataDir(), "config/defaultoptions");
-        if (!defaultOptions.exists() && !defaultOptions.mkdirs()) {
-            throw new IllegalStateException("Could not create default options directory.");
-        }
-
-        return defaultOptions;
-    }
-
+    @Deprecated
     public static File getMinecraftDataDir() {
         return Minecraft.getInstance().gameDirectory;
     }

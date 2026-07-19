@@ -14,6 +14,7 @@ public class DefaultOptionsAPI {
         __internalMethods.registerOptionsHandler(handler);
     }
 
+    @Deprecated
     public static File getDefaultOptionsFolder() {
         return __internalMethods.getDefaultOptionsFolder();
     }
