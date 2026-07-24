@@ -1,3 +1,1 @@
-- Added `defaultResourcePacks` option, as a more stable alternative to a default `options.txt`
-  - Some launchers manage the `options.txt` on their own, and it becomes unclear whether its initial state is intended by the user or not.
-  - With resource packs being separated out into its own option, they can now be managed by Default Options without interfering with an existing `options.txt`.
+- Fixed `extra` folder options not being applied correctly on all Fabric mods, since Fabric mod initialization ran earlier
