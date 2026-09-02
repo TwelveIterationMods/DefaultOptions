@@ -1,1 +1,1 @@
-- Fixed `extra` folder options not being applied correctly on all Fabric mods, since Fabric mod initialization ran earlier
+- Updated to Minecraft 26.3
