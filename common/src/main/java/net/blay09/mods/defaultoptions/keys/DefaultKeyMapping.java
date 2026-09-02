@@ -20,11 +20,8 @@ public record DefaultKeyMapping(InputConstants.Key input, Set<KeyModifier> modif
 
         final var key = ((KeyMappingAccessor) keyMapping).getKey();
         switch (input.getType()) {
-            case KEYSYM -> {
-                return key.getType() == InputConstants.Type.KEYSYM && key.getValue() == input.getValue();
-            }
-            case SCANCODE -> {
-                return key.getType() == InputConstants.Type.SCANCODE && key.getValue() == input.getValue();
+            case KEYBOARD -> {
+                return key.getType() == InputConstants.Type.KEYBOARD && key.getValue() == input.getValue();
             }
             case MOUSE -> {
                 return key.getType() == InputConstants.Type.MOUSE && key.getValue() == input.getValue();
